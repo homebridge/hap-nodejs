@@ -35,7 +35,7 @@ There is also a pretty detailed guide on [how to start developing with HAP-NodeJ
 Or you may just have a look at our [examples][examples-repo] repository
 (or some of the old [accessory examples][example-accessories]).
 
-The documentation (WIP) can be found [here](https://developers.homebridge.io/HAP-NodeJS/modules.html).
+The API documentation can be found [here](https://developers.homebridge.io/hap-nodejs/).
 
 See the FAQ on how to enable [debug output][faq-debug] for HAP-NodeJS.
 
