@@ -38,12 +38,13 @@ import {
   Perms,
 } from './Characteristic.js'
 import {
-  CameraController,
   Controller,
   ControllerConstructor,
   ControllerIdentifier,
   ControllerServiceMap,
   isSerializableController,
+  isSnapshotController,
+  SnapshotController,
 } from './controller/index.js'
 import {
   AccessoriesCallback,
@@ -432,7 +433,7 @@ export class Accessory extends EventEmitter {
 
   private controllers: Record<ControllerIdentifier, ControllerContext> = {}
   private serializedControllers?: Record<ControllerIdentifier, ControllerServiceMap> // store uninitialized controller data after a Accessory.deserialize call
-  private activeCameraController?: CameraController
+  private activeCameraController?: SnapshotController
 
   /**
    * @private
@@ -847,7 +848,7 @@ export class Accessory extends EventEmitter {
 
     this.controllers[id] = context
 
-    if (controller instanceof CameraController) { // save CameraController for Snapshot handling
+    if (isSnapshotController(controller)) { // save the controller for snapshot handling
       this.activeCameraController = controller
     }
   }
@@ -1911,7 +1912,7 @@ export class Accessory extends EventEmitter {
       const aid = data.aid // aid is optionally supplied by HomeKit (for example when camera is bridged, multiple cams, etc)
 
       let accessory: Accessory | undefined
-      let controller: CameraController | undefined
+      let controller: SnapshotController | undefined
       if (aid) {
         accessory = this.getAccessoryByAID(aid)
         if (accessory && accessory.activeCameraController) {

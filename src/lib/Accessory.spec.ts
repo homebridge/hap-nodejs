@@ -34,7 +34,7 @@ import {
   Units,
 } from './Characteristic.js'
 import { createCameraControllerOptions, MOCK_IMAGE } from './controller/CameraController.spec.js'
-import { CameraController, Controller, ControllerIdentifier, ControllerServiceMap } from './controller/index.js'
+import { CameraController, Controller, ControllerIdentifier, ControllerServiceMap, ResourceRequestReason, SnapshotController } from './controller/index.js'
 import { HAPHTTPCode, HAPServer, HAPStatus, IdentifyCallback, TLVErrorCode } from './HAPServer.js'
 import { AccessoryInfo, PairingInformation, PermissionTypes } from './model/AccessoryInfo.js'
 import { IdentifierCache } from './model/IdentifierCache.js'
@@ -2382,6 +2382,23 @@ describe('accessory', () => {
 
         await testRequestResponse({ aid: 1 })
         expect(callback).toHaveBeenCalledWith(undefined, MOCK_IMAGE)
+      })
+
+      it('retrieve image resource from any snapshot controller', async () => {
+        accessory.removeController(cameraController)
+        const snapshotController: SnapshotController = {
+          controllerId: () => 'snapshot',
+          constructServices: () => ({}),
+          initWithServices: () => undefined,
+          configureServices: () => undefined,
+          handleControllerRemoved: () => undefined,
+          handleSnapshotRequest: vi.fn().mockResolvedValue(MOCK_IMAGE),
+        }
+        accessory.configureController(snapshotController)
+
+        await testRequestResponse({ reason: ResourceRequestReason.PERIODIC })
+        expect(callback).toHaveBeenCalledWith(undefined, MOCK_IMAGE)
+        expect(snapshotController.handleSnapshotRequest).toHaveBeenCalledWith(200, 200, accessory.displayName, ResourceRequestReason.PERIODIC)
       })
 
       it('retrieve image resource on bridge', async () => {
