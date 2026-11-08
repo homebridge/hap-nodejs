@@ -7,6 +7,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 ### Changes
 
 - docs: fix the api documentation link in the readme
+- fix: let generate-definitions find and write the es module import paths
 
 ### Homebridge Dependencies
 
