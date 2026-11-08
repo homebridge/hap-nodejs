@@ -8,6 +8,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 
 - docs: fix the api documentation link in the readme
 - fix: let generate-definitions find and write the es module import paths
+- feat: add the homekit definitions from apple's v891 metadata
 
 ### Homebridge Dependencies
 

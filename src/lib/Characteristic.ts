@@ -60,12 +60,14 @@ import type {
   DiagonalFieldOfView,
   DigitalZoom,
   DisplayOrder,
+  ErrorStatus,
   EventRetransmissionMaximum,
   EventSnapshotsActive,
   EventTransmissionCounters,
   FilterChangeIndication,
   FilterLifeLevel,
   FirmwareRevision,
+  FirmwareUpdateEnabled,
   FirmwareUpdateProtocolList,
   FirmwareUpdateReadiness,
   FirmwareUpdateStatus,
@@ -166,6 +168,7 @@ import type {
   SerialNumber,
   ServiceLabelIndex,
   ServiceLabelNamespace,
+  SessionTransportEndpointList,
   SetDuration,
   SetupDataStreamTransport,
   SetupEndpoints,
@@ -228,6 +231,8 @@ import type {
   TargetVisibilityState,
   TemperatureDisplayUnits,
   ThirdPartyCameraActive,
+  ThirdPartyCameraInUse,
+  ThirdPartyEcosystemEnabled,
   ThreadControlPoint,
   ThreadNodeCapabilities,
   ThreadOpenThreadVersion,
@@ -990,6 +995,10 @@ export class Characteristic extends EventEmitter {
   /**
    * @group Characteristic Definitions
    */
+  public static ErrorStatus: typeof ErrorStatus
+  /**
+   * @group Characteristic Definitions
+   */
   public static EventRetransmissionMaximum: typeof EventRetransmissionMaximum
   /**
    * @group Characteristic Definitions
@@ -1011,6 +1020,10 @@ export class Characteristic extends EventEmitter {
    * @group Characteristic Definitions
    */
   public static FirmwareRevision: typeof FirmwareRevision
+  /**
+   * @group Characteristic Definitions
+   */
+  public static FirmwareUpdateEnabled: typeof FirmwareUpdateEnabled
   /**
    * @group Characteristic Definitions
    */
@@ -1417,6 +1430,10 @@ export class Characteristic extends EventEmitter {
   /**
    * @group Characteristic Definitions
    */
+  public static SessionTransportEndpointList: typeof SessionTransportEndpointList
+  /**
+   * @group Characteristic Definitions
+   */
   public static SetDuration: typeof SetDuration
   /**
    * @group Characteristic Definitions
@@ -1663,6 +1680,14 @@ export class Characteristic extends EventEmitter {
    * @group Characteristic Definitions
    */
   public static ThirdPartyCameraActive: typeof ThirdPartyCameraActive
+  /**
+   * @group Characteristic Definitions
+   */
+  public static ThirdPartyCameraInUse: typeof ThirdPartyCameraInUse
+  /**
+   * @group Characteristic Definitions
+   */
+  public static ThirdPartyEcosystemEnabled: typeof ThirdPartyEcosystemEnabled
   /**
    * @group Characteristic Definitions
    */
