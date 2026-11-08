@@ -227,7 +227,7 @@ characteristicOutput.write('// THIS FILE IS AUTO-GENERATED - DO NOT MODIFY\n')
 characteristicOutput.write(`// V=${plistData.Version}\n`)
 characteristicOutput.write('\n')
 
-characteristicOutput.write('import { Access, Characteristic, Formats, Perms, Units } from "../Characteristic";\n\n')
+characteristicOutput.write('import { Access, Characteristic, Formats, Perms, Units } from "../Characteristic.js";\n\n')
 
 /**
  * Characteristics
@@ -423,8 +423,8 @@ serviceOutput.write('// THIS FILE IS AUTO-GENERATED - DO NOT MODIFY\n')
 serviceOutput.write(`// V=${plistData.Version}\n`)
 serviceOutput.write('\n')
 
-serviceOutput.write('import { Characteristic } from "../Characteristic";\n')
-serviceOutput.write('import { Service } from "../Service";\n\n')
+serviceOutput.write('import { Characteristic } from "../Characteristic.js";\n')
+serviceOutput.write('import { Service } from "../Service.js";\n\n')
 
 const generatedServices: Record<string, GeneratedService> = {} // indexed by id
 const writtenServiceEntries: Record<string, GeneratedService> = {} // indexed by class name
@@ -693,7 +693,7 @@ function rewriteProperties(className: string, properties: [key: string, value: G
     const line = lines[i]
     if (line === 'import type {') {
       importStart = i // save last import start;
-    } else if (line === '} from "./definitions";') {
+    } else if (/^\} from ['"]\.\/definitions(?:\/index\.js)?['"];?$/.test(line)) {
       importEnd = i
       foundImport = true
       break
@@ -771,8 +771,8 @@ function writeCharacteristicTestFile(): void {
   const testOutput = fs.createWriteStream(path.resolve(import.meta.dirname, './CharacteristicDefinitions.spec.ts'), { encoding: 'utf8' })
   testOutput.write('// THIS FILE IS AUTO-GENERATED - DO NOT MODIFY\n')
   testOutput.write('import { describe, expect, it } from "vitest";\n')
-  testOutput.write('import "./";\n\n')
-  testOutput.write('import { Characteristic } from "../Characteristic";\n\n')
+  testOutput.write('import "./index.js";\n\n')
+  testOutput.write('import { Characteristic } from "../Characteristic.js";\n\n')
   testOutput.write('describe("CharacteristicDefinitions", () => {')
 
   for (const generated of characteristics) {
@@ -801,9 +801,9 @@ function writeServicesTestFile(): void {
   const testOutput = fs.createWriteStream(path.resolve(import.meta.dirname, './ServiceDefinitions.spec.ts'), { encoding: 'utf8' })
   testOutput.write('// THIS FILE IS AUTO-GENERATED - DO NOT MODIFY\n')
   testOutput.write('import { describe, expect, it } from "vitest";\n')
-  testOutput.write('import "./";\n\n')
-  testOutput.write('import { Characteristic } from "../Characteristic";\n')
-  testOutput.write('import { Service } from "../Service";\n\n')
+  testOutput.write('import "./index.js";\n\n')
+  testOutput.write('import { Characteristic } from "../Characteristic.js";\n')
+  testOutput.write('import { Service } from "../Service.js";\n\n')
   testOutput.write('describe("ServiceDefinitions", () => {')
 
   for (const generated of services) {
