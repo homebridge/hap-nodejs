@@ -372,6 +372,12 @@ describe('characteristicDefinitions', () => {
     })
   })
 
+  describe('errorStatus', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.ErrorStatus()).not.toThrow()
+    })
+  })
+
   describe('eventRetransmissionMaximum', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.EventRetransmissionMaximum()).not.toThrow()
@@ -405,6 +411,12 @@ describe('characteristicDefinitions', () => {
   describe('firmwareRevision', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.FirmwareRevision()).not.toThrow()
+    })
+  })
+
+  describe('firmwareUpdateEnabled', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.FirmwareUpdateEnabled()).not.toThrow()
     })
   })
 
@@ -1008,6 +1020,12 @@ describe('characteristicDefinitions', () => {
     })
   })
 
+  describe('sessionTransportEndpointList', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.SessionTransportEndpointList()).not.toThrow()
+    })
+  })
+
   describe('setDuration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SetDuration()).not.toThrow()
@@ -1377,6 +1395,18 @@ describe('characteristicDefinitions', () => {
   describe('thirdPartyCameraActive', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ThirdPartyCameraActive()).not.toThrow()
+    })
+  })
+
+  describe('thirdPartyCameraInUse', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.ThirdPartyCameraInUse()).not.toThrow()
+    })
+  })
+
+  describe('thirdPartyEcosystemEnabled', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.ThirdPartyEcosystemEnabled()).not.toThrow()
     })
   })
 

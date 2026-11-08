@@ -38,6 +38,7 @@ import type {
   LightSensor,
   LockManagement,
   LockMechanism,
+  ManufacturerFirmwareUpdate,
   Microphone,
   MotionSensor,
   NFCAccess,
@@ -327,6 +328,10 @@ export class Service extends EventEmitter {
    * @group Service Definitions
    */
   public static LockMechanism: typeof LockMechanism
+  /**
+   * @group Service Definitions
+   */
+  public static ManufacturerFirmwareUpdate: typeof ManufacturerFirmwareUpdate
   /**
    * @group Service Definitions
    */

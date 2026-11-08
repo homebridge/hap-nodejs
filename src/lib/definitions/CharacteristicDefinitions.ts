@@ -1,5 +1,5 @@
 // THIS FILE IS AUTO-GENERATED - DO NOT MODIFY
-// V=889
+// V=891
 
 import { Access, Characteristic, Formats, Perms, Units } from '../Characteristic.js'
 
@@ -1213,6 +1213,22 @@ export class DisplayOrder extends Characteristic {
 Characteristic.DisplayOrder = DisplayOrder
 
 /**
+ * Characteristic "Error Status"
+ */
+export class ErrorStatus extends Characteristic {
+  public static readonly UUID: string = '00000330-0000-1000-8000-0026BB765291'
+
+  constructor() {
+    super('Error Status', ErrorStatus.UUID, {
+      format: Formats.TLV8,
+      perms: [Perms.NOTIFY, Perms.PAIRED_READ],
+    })
+    this.value = this.getDefaultValue()
+  }
+}
+Characteristic.ErrorStatus = ErrorStatus
+
+/**
  * Characteristic "Event Retransmission Maximum"
  * @since iOS 14
  */
@@ -1325,6 +1341,22 @@ export class FirmwareRevision extends Characteristic {
   }
 }
 Characteristic.FirmwareRevision = FirmwareRevision
+
+/**
+ * Characteristic "Firmware Update Enabled"
+ */
+export class FirmwareUpdateEnabled extends Characteristic {
+  public static readonly UUID: string = '00000318-0000-1000-8000-0026BB765291'
+
+  constructor() {
+    super('Firmware Update Enabled', FirmwareUpdateEnabled.UUID, {
+      format: Formats.BOOL,
+      perms: [Perms.NOTIFY, Perms.PAIRED_READ, Perms.PAIRED_WRITE],
+    })
+    this.value = this.getDefaultValue()
+  }
+}
+Characteristic.FirmwareUpdateEnabled = FirmwareUpdateEnabled
 
 /**
  * Characteristic "Firmware Update Protocol List"
@@ -1559,12 +1591,12 @@ export class ImageRotation extends Characteristic {
 
   constructor() {
     super('Image Rotation', ImageRotation.UUID, {
-      format: Formats.INT,
+      format: Formats.FLOAT,
       perms: [Perms.NOTIFY, Perms.PAIRED_READ, Perms.PAIRED_WRITE],
       unit: Units.ARC_DEGREE,
       minValue: 0,
-      maxValue: 360,
-      minStep: 1,
+      maxValue: 270,
+      minStep: 90,
     })
     this.value = this.getDefaultValue()
   }
@@ -1939,7 +1971,12 @@ export class ManuallyDisabled extends Characteristic {
   constructor() {
     super('Manually Disabled', ManuallyDisabled.UUID, {
       format: Formats.UINT8,
-      perms: [Perms.NOTIFY, Perms.PAIRED_READ],
+      perms: [
+        Perms.NOTIFY,
+        Perms.PAIRED_READ,
+        Perms.PAIRED_WRITE,
+        Perms.TIMED_WRITE,
+      ],
       minValue: 0,
       maxValue: 1,
       minStep: 1,
@@ -3305,6 +3342,22 @@ export class ServiceLabelNamespace extends Characteristic {
 Characteristic.ServiceLabelNamespace = ServiceLabelNamespace
 
 /**
+ * Characteristic "Session Transport Endpoint List"
+ */
+export class SessionTransportEndpointList extends Characteristic {
+  public static readonly UUID: string = '00000279-0000-1000-8000-0026BB765291'
+
+  constructor() {
+    super('Session Transport Endpoint List', SessionTransportEndpointList.UUID, {
+      format: Formats.TLV8,
+      perms: [Perms.PAIRED_WRITE],
+    })
+    this.value = this.getDefaultValue()
+  }
+}
+Characteristic.SessionTransportEndpointList = SessionTransportEndpointList
+
+/**
  * Characteristic "Set Duration"
  */
 export class SetDuration extends Characteristic {
@@ -4481,6 +4534,44 @@ export class ThirdPartyCameraActive extends Characteristic {
   }
 }
 Characteristic.ThirdPartyCameraActive = ThirdPartyCameraActive
+
+/**
+ * Characteristic "Third Party Camera In Use"
+ */
+export class ThirdPartyCameraInUse extends Characteristic {
+  public static readonly UUID: string = '00000277-0000-1000-8000-0026BB765291'
+
+  constructor() {
+    super('Third Party Camera In Use', ThirdPartyCameraInUse.UUID, {
+      format: Formats.UINT8,
+      perms: [Perms.NOTIFY, Perms.PAIRED_READ],
+      minValue: 0,
+      maxValue: 1,
+      minStep: 1,
+    })
+    this.value = this.getDefaultValue()
+  }
+}
+Characteristic.ThirdPartyCameraInUse = ThirdPartyCameraInUse
+
+/**
+ * Characteristic "Third Party Ecosystem Enabled"
+ */
+export class ThirdPartyEcosystemEnabled extends Characteristic {
+  public static readonly UUID: string = '00000276-0000-1000-8000-0026BB765291'
+
+  constructor() {
+    super('Third Party Ecosystem Enabled', ThirdPartyEcosystemEnabled.UUID, {
+      format: Formats.UINT8,
+      perms: [Perms.NOTIFY, Perms.PAIRED_READ],
+      minValue: 0,
+      maxValue: 1,
+      minStep: 1,
+    })
+    this.value = this.getDefaultValue()
+  }
+}
+Characteristic.ThirdPartyEcosystemEnabled = ThirdPartyEcosystemEnabled
 
 /**
  * Characteristic "Thread Control Point"

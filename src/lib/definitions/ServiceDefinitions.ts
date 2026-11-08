@@ -1,5 +1,5 @@
 // THIS FILE IS AUTO-GENERATED - DO NOT MODIFY
-// V=889
+// V=891
 
 import { Characteristic } from '../Characteristic.js'
 import { Service } from '../Service.js'
@@ -107,8 +107,10 @@ export class AccessoryRuntimeInformation extends Service {
     this.addOptionalCharacteristic(Characteristic.ConnectionHealthMonitor)
     this.addOptionalCharacteristic(Characteristic.HeartBeat)
     this.addOptionalCharacteristic(Characteristic.SelectedSessionKeepaliveConfigurationList)
+    this.addOptionalCharacteristic(Characteristic.SessionTransportEndpointList)
     this.addOptionalCharacteristic(Characteristic.SleepInterval)
     this.addOptionalCharacteristic(Characteristic.SupportedSessionKeepaliveConfigurationList)
+    this.addOptionalCharacteristic(Characteristic.ThirdPartyEcosystemEnabled)
   }
 }
 Service.AccessoryRuntimeInformation = AccessoryRuntimeInformation
@@ -836,6 +838,22 @@ export class LockMechanism extends Service {
   }
 }
 Service.LockMechanism = LockMechanism
+
+/**
+ * Service "Manufacturer Firmware Update"
+ */
+export class ManufacturerFirmwareUpdate extends Service {
+  public static readonly UUID: string = '00000317-0000-1000-8000-0026BB765291'
+
+  constructor(displayName?: string, subtype?: string) {
+    super(displayName, ManufacturerFirmwareUpdate.UUID, subtype)
+
+    // Required Characteristics
+    this.addCharacteristic(Characteristic.FirmwareUpdateEnabled)
+    this.addCharacteristic(Characteristic.FirmwareUpdateStatus)
+  }
+}
+Service.ManufacturerFirmwareUpdate = ManufacturerFirmwareUpdate
 
 /**
  * Service "Microphone"
