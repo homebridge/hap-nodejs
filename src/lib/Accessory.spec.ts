@@ -238,6 +238,16 @@ describe('accessory', () => {
   })
 
   describe('bridged accessories', () => {
+    it('should refuse a second bridged accessory with the same UUID', () => {
+      const bridge = new Bridge('TestBridge', uuid.generate('bridge duplicate uuid test'))
+      const sharedUUID = uuid.generate('bridged twice')
+      bridge.addBridgedAccessory(new Accessory('One', sharedUUID))
+
+      expect(() => bridge.addBridgedAccessory(new Accessory('Two', sharedUUID)))
+        .toThrow(/Cannot bridge Two: an accessory with the same UUID .* is already bridged/)
+      expect(bridge.bridgedAccessories).toHaveLength(1)
+    })
+
     it('addBridgedAccessory', () => {
       const bridge = new Bridge('TestBridge', uuid.generate('bridge test'))
 

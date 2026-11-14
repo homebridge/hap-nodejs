@@ -683,6 +683,11 @@ export class Accessory extends EventEmitter {
       throw new Error(`Tried to bridge ${accessory.displayName} while it was already bridged by ${accessory.bridge.displayName}`)
     }
 
+    if (this.bridgedAccessories.some(bridgedAccessory => bridgedAccessory.UUID === accessory.UUID)) {
+      // both would get the same accessory id, and HomeKit refuses an accessory database with a repeated id
+      throw new Error(`Cannot bridge ${accessory.displayName}: an accessory with the same UUID (${accessory.UUID}) is already bridged`)
+    }
+
     if (this.bridgedAccessories.length >= MAX_ACCESSORIES) {
       throw new Error(`Cannot Bridge more than ${MAX_ACCESSORIES} Accessories`)
     }
