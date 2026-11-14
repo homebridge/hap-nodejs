@@ -138,6 +138,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(datastream): refuse a terminator tag which does not end an array or a dictionary
 - fix(datastream): refuse a message with arrays or dictionaries nested more than 32 levels deep
 - fix(datastream): keep a data stream server usable after destroy was called before it started
+- fix(camera): do not prepare a stream for a session which ended while its proxy sockets were bound
 
 ### Homebridge Dependencies
 

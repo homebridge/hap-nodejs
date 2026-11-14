@@ -1126,6 +1126,9 @@ export class RTPStreamManagement {
     }
 
     const promises: Promise<void>[] = []
+    // kept in local variables, as the fields are cleared, or belong to the next session, once this session ended
+    let videoProxy: RTPProxy | undefined
+    let audioProxy: RTPProxy | undefined
 
     if (this.requireProxy) {
       try {
@@ -1142,34 +1145,45 @@ export class RTPStreamManagement {
         return
       }
 
-      this.videoProxy = new RTPProxy({
+      this.videoProxy = videoProxy = new RTPProxy({
         outgoingAddress: controllerAddress,
         outgoingPort: targetVideoPort,
         outgoingSSRC: crypto.randomBytes(4).readUInt32LE(0), // videoSSRC
         disabled: false,
       })
 
-      promises.push(this.videoProxy.setup().then(() => {
-        prepareRequest.video.proxy_rtp = this.videoProxy!.incomingRTPPort()
-        prepareRequest.video.proxy_rtcp = this.videoProxy!.incomingRTCPPort()
-      }))
+      promises.push(videoProxy.setup())
 
       if (!this.disableAudioProxy) {
-        this.audioProxy = new RTPProxy({
+        this.audioProxy = audioProxy = new RTPProxy({
           outgoingAddress: controllerAddress,
           outgoingPort: targetAudioPort,
           outgoingSSRC: crypto.randomBytes(4).readUInt32LE(0), // audioSSRC
           disabled: this.videoOnly,
         })
 
-        promises.push(this.audioProxy.setup().then(() => {
-          prepareRequest.audio.proxy_rtp = this.audioProxy!.incomingRTPPort()
-          prepareRequest.audio.proxy_rtcp = this.audioProxy!.incomingRTCPPort()
-        }))
+        promises.push(audioProxy.setup())
       }
     }
 
     Promise.all(promises).then(() => {
+      if (this.sessionIdentifier !== sessionIdentifier) {
+        // The session ended while the proxy sockets were being bound (e.g. the connection closed), which closed its
+        // proxies. The delegate must not prepare a stream nobody waits for.
+        debug('Not preparing the stream for session %s which is not the current session anymore', sessionIdentifier)
+        callback(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
+        return
+      }
+
+      if (videoProxy) {
+        prepareRequest.video.proxy_rtp = videoProxy.incomingRTPPort()
+        prepareRequest.video.proxy_rtcp = videoProxy.incomingRTCPPort()
+      }
+      if (audioProxy) {
+        prepareRequest.audio.proxy_rtp = audioProxy.incomingRTPPort()
+        prepareRequest.audio.proxy_rtcp = audioProxy.incomingRTCPPort()
+      }
+
       this.delegate.prepareStream(prepareRequest, once((error?: Error, response?: PrepareStreamResponse) => {
         if (this.sessionIdentifier !== sessionIdentifier) {
           // The session ended while the delegate was preparing it (e.g. the connection closed), and another one
