@@ -502,6 +502,33 @@ describe('accessory', () => {
       expect(accessory.initialized).toBe(false)
     })
 
+    it('should report a service without characteristics added after publish instead of throwing from the timer', () => {
+      vi.useFakeTimers()
+      const error = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+      try {
+        accessory = new Accessory(TEST_DISPLAY_NAME, TEST_UUID)
+        vi.advanceTimersByTime(1500) // the configuration update queued by the constructor
+        const advertiser = {
+          updateAdvertisement: vi.fn(),
+          destroy: vi.fn(),
+        }
+        const internals = accessory as any
+        internals._accessoryInfo = accessoryInfoUnpaired
+        internals._identifierCache = new IdentifierCache(serverUsername)
+        internals._advertiser = advertiser
+
+        // without a name the service does not even get a Name characteristic
+        accessory.addService(new Service('', uuid.generate('a service without characteristics')))
+
+        expect(() => vi.advanceTimersByTime(1500)).not.toThrow()
+        expect(error).toHaveBeenCalledWith(expect.stringMatching(/\[Test Accessory\].*does not have any characteristics/))
+        expect(advertiser.updateAdvertisement).not.toHaveBeenCalled()
+      } finally {
+        error.mockRestore()
+        vi.useRealTimers()
+      }
+    })
+
     describe('a configuration change that is still pending at destroy', () => {
       // an advertiser whose goodbye takes longer than the one second the configuration update waits
       function publishedWithSlowAdvertiser(): { updateAdvertisement: Mock } {

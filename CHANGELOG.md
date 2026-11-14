@@ -18,6 +18,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(advertiser): free the old avahi entry group before registering again
 - fix(accessory): cancel a pending configuration update when the accessory is unpublished
 - fix(datastream): encode integers that need more than 32 bits instead of throwing
+- fix(accessory): report an invalid configuration change instead of throwing from a timer
 
 ### Homebridge Dependencies
 
