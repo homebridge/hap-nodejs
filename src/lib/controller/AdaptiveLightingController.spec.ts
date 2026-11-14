@@ -116,6 +116,19 @@ describe('adaptiveLightingController', () => {
     controller.disableAdaptiveLighting()
   })
 
+  it.each(['my-plugin', 42, true])('should turn off after a manual color write with the context %j', async (context) => {
+    const { lightbulb, controller } = createController()
+    await writeTransitionControl(lightbulb, buildUpdateTransition(lightbulb, Date.now(), curve(5)))
+    expect(controller.isAdaptiveLightingActive()).toBeTruthy()
+
+    // what characteristic.setValue(300, context) does
+    await expect(lightbulb.getCharacteristic(Characteristic.ColorTemperature).handleSetRequest(300, undefined, context))
+      .resolves
+      .toBeUndefined()
+
+    expect(controller.isAdaptiveLightingActive()).toBeFalsy()
+  })
+
   describe('control point errors', () => {
     it('should reject a read for another characteristic without disabling adaptive lighting', async () => {
       const { lightbulb, controller } = createController()
