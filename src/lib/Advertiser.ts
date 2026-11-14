@@ -259,6 +259,12 @@ export class BonjourHAPAdvertiser extends EventEmitter implements Advertiser {
   private publish(port: number): Promise<void> {
     assert(!this.destroyed, 'Can\'t advertise on a destroyed bonjour instance!')
 
+    if (this.accessoryInfo.displayName.includes('.')) {
+      // bonjour-hap splits a name at every dot when it builds the packet, so the name announced is not the one given
+      console.warn(`[${this.accessoryInfo.displayName}] The name contains a dot, so Apple devices will not find this accessory `
+        + 'with the "bonjour-hap" advertiser. Remove the dot from the name, or use the "ciao" advertiser.')
+    }
+
     const hostname = `${this.accessoryInfo.username.replace(/:/g, '_')}.local`
 
     this.advertisement = this.bonjour.publish({
