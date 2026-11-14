@@ -23,6 +23,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(datastream): report an error of the data stream tcp server instead of crashing
 - fix(datastream): decode the integer 39 instead of dropping the message
 - fix(characteristic): accept the maximum of a float characteristic whose step does not divide evenly
+- fix(characteristic): keep a write response of 0, false or an empty string
 
 ### Homebridge Dependencies
 

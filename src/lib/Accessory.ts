@@ -1904,8 +1904,8 @@ export class Accessory extends EventEmitter {
       }).then((value) => {
         debug('[%s] Setting Characteristic "%s" to value %s', this.displayName, characteristic.displayName, data.value)
         return {
-          // if write response is requests and value is provided, return that
-          value: data.r && value
+          // if write response is requested and a value is provided (0, false and '' are values too), return that
+          value: data.r && value != null
             ? formatOutgoingCharacteristicValue(value, characteristic.props)
             : undefined,
 
