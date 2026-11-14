@@ -134,6 +134,20 @@ export const enum DataFormatTags {
  */
 export class DataStreamParser {
   public static decode(buffer: DataStreamReader): unknown {
+    const value = this.decodeNext(buffer)
+
+    // a terminator only has a meaning where an array or a dictionary without a length looks for its end
+    if (value === Magics.TERMINATOR) {
+      throw new Error(`HDSDecoder: unexpected terminator tag on index ${buffer.readerIndex - 1}`)
+    }
+
+    return value
+  }
+
+  /**
+   * Decodes the next value. Unlike {@link decode} it returns the terminator marker for a terminator tag.
+   */
+  private static decodeNext(buffer: DataStreamReader): unknown {
     const tag = buffer.readTag()
 
     if (tag === DataFormatTags.INVALID) {
@@ -215,7 +229,7 @@ export class DataStreamParser {
 
       let element
       // eslint-disable-next-line no-cond-assign
-      while ((element = this.decode(buffer)) !== Magics.TERMINATOR) {
+      while ((element = this.decodeNext(buffer)) !== Magics.TERMINATOR) {
         array.push(element)
       }
 
@@ -236,7 +250,7 @@ export class DataStreamParser {
 
       let key
       // eslint-disable-next-line no-cond-assign
-      while ((key = this.decode(buffer)) !== Magics.TERMINATOR) {
+      while ((key = this.decodeNext(buffer)) !== Magics.TERMINATOR) {
         this.setDictionaryEntry(dictionary, key, this.decode(buffer))
       }
 

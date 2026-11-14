@@ -212,6 +212,51 @@ describe('dataStreamParser', () => {
     })
   })
 
+  describe('terminator tag in the wrong place', () => {
+    it.each([
+      [
+        'as the whole value',
+        [0x03],
+      ],
+      [
+        'as an element of an array with its length in the tag',
+        [0xD1, 0x03],
+      ],
+      [
+        'as a key of a dictionary with its length in the tag',
+        [0xE1, 0x03, 0x09],
+      ],
+      [
+        'as a value of a dictionary with its length in the tag',
+        [0xE1, 0x41, 0x78, 0x03],
+      ],
+      [
+        'as a value of a dictionary which ends with a terminator',
+        [0xEF, 0x41, 0x78, 0x03, 0x03],
+      ],
+    ])('should refuse a terminator %s', (_name, bytes) => {
+      expect(() => DataStreamParser.decode(new DataStreamReader(Buffer.from(bytes)))).toThrow('unexpected terminator tag')
+    })
+
+    it('should still end an array and a dictionary without a length', () => {
+      const data = Buffer.from([
+        0xDF,
+        0x09,
+        0xEF,
+        0x41,
+        0x78,
+        0x0A,
+        0x03,
+        0x03,
+      ])
+
+      expect(DataStreamParser.decode(new DataStreamReader(data))).toEqual([
+        1,
+        { x: 2 },
+      ])
+    })
+  })
+
   describe('back-references', () => {
     function roundTrip(value: any): any {
       const writer = new DataStreamWriter()
