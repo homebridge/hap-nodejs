@@ -117,6 +117,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(storage): let getItem name the type of the stored value
 - refactor(datastream): add the HDSMessage type and use it for data stream messages
 - refactor(camera): use the HDSMessage type in the recording management
+- refactor(remote): use the HDSMessage type in the remote controller
 
 ### Homebridge Dependencies
 
