@@ -36,7 +36,14 @@ export interface PreparedDataStreamSession {
  *
  * @group HomeKit Data Streams (HDS)
  */
-export type HDSMessage = Record<string, any>
+export type HDSMessage = Record<string, unknown>
+
+/**
+ * Tells whether a decoded value is a dictionary, which is the shape of the header and of the body of a message.
+ */
+function isHDSMessage(value: unknown): value is HDSMessage {
+  return typeof value === 'object' && value !== null && !Array.isArray(value) && !Buffer.isBuffer(value)
+}
 
 /**
  * @group HomeKit Data Streams (HDS)
@@ -201,6 +208,55 @@ export interface DataStreamMessage {
   status?: HDSStatus // for responses
 
   message: HDSMessage
+}
+
+/**
+ * Reads the fields of the header of a message.
+ *
+ * @returns undefined for a header which is neither an event, a request nor a response, or which has a field of the wrong type.
+ */
+function parseHeader(header: HDSMessage): Omit<DataStreamMessage, 'message'> | undefined {
+  const protocol = header.protocol
+  const id = header.id
+  const status = header.status
+  if (typeof protocol !== 'string') {
+    return undefined
+  }
+
+  if (header.event !== undefined) {
+    return typeof header.event === 'string'
+      ? {
+          type: MessageType.EVENT,
+          protocol,
+          topic: header.event,
+          id: undefined,
+          status: undefined,
+        }
+      : undefined
+  } else if (header.request !== undefined) {
+    return typeof header.request === 'string' && typeof id === 'number'
+      ? {
+          type: MessageType.REQUEST,
+          protocol,
+          topic: header.request,
+          id,
+          status: undefined,
+        }
+      : undefined
+  } else if (header.response !== undefined) {
+    // a response without a status is passed on like before
+    return typeof header.response === 'string' && typeof id === 'number' && (status === undefined || typeof status === 'number')
+      ? {
+          type: MessageType.RESPONSE,
+          protocol,
+          topic: header.response,
+          id,
+          status,
+        }
+      : undefined
+  }
+
+  return undefined
 }
 
 /**
@@ -1075,9 +1131,8 @@ export class DataStreamConnection extends EventEmitter {
       const headerPayload = new DataStreamReader(payload.subarray(headerBegin, headerBegin + headerLength))
       const messagePayload = new DataStreamReader(payload.subarray(messageBegin, messageBegin + messageLength))
 
-      let headerDictionary: HDSMessage
-
-      let messageDictionary: HDSMessage
+      let headerDictionary: unknown
+      let messageDictionary: unknown
       try {
         headerDictionary = DataStreamParser.decode(headerPayload)
         headerPayload.finished()
@@ -1094,43 +1149,28 @@ export class DataStreamConnection extends EventEmitter {
         return
       }
 
-      if (headerDictionary === null || typeof headerDictionary !== 'object') {
+      if (!isHDSMessage(headerDictionary)) {
         debug('[%s] Encountered payload header which is not a dictionary: %o', this.remoteAddress, headerDictionary)
         return
       }
 
-      let type: MessageType
-      const protocol: string = headerDictionary.protocol
-      let topic: string
-      let id: number | undefined
-      let status: HDSStatus | undefined
-
-      if (headerDictionary.event !== undefined) {
-        type = MessageType.EVENT
-        topic = headerDictionary.event
-      } else if (headerDictionary.request !== undefined) {
-        type = MessageType.REQUEST
-        topic = headerDictionary.request
-        id = headerDictionary.id
-      } else if (headerDictionary.response !== undefined) {
-        type = MessageType.RESPONSE
-        topic = headerDictionary.response
-        id = headerDictionary.id
-        status = headerDictionary.status
-      } else {
+      // the payload is sent by the controller, so nothing is known about its shape before it is checked.
+      // a message which is not of the expected shape is dropped, so that no handler is called with something it can not read
+      const header = parseHeader(headerDictionary)
+      if (!header) {
         debug('[%s] Encountered unknown payload header format: %o (message: %o)', this.remoteAddress, headerDictionary, messageDictionary)
         return
       }
 
-      const message: DataStreamMessage = {
-        type,
-        protocol,
-        topic,
-        id,
-        status,
-        message: messageDictionary,
+      if (!isHDSMessage(messageDictionary)) {
+        debug('[%s] Encountered message which is not a dictionary: %o (header: %o)', this.remoteAddress, messageDictionary, headerDictionary)
+        return
       }
-      messages.push(message)
+
+      messages.push({
+        ...header,
+        message: messageDictionary,
+      })
     })
 
     return messages
