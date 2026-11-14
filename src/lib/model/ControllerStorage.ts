@@ -289,7 +289,12 @@ export class ControllerStorage {
     this.username = username
 
     const key = ControllerStorage.persistKey(username)
-    const saved: StorageLayout | undefined = HAPStorage.storage().getItem(key)
+    const stored: StorageLayout | undefined = HAPStorage.storage().getItem(key)
+    // The storage hands out the object it keeps in memory. Entries are removed below as they are handed to their
+    // accessories, and that must happen on a copy: otherwise the next load in this process finds nothing.
+    const saved: StorageLayout | undefined = stored && {
+      accessories: { ...stored.accessories },
+    }
 
     let ownData
     if (saved) {
