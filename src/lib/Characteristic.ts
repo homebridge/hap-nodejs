@@ -3106,7 +3106,14 @@ export class Characteristic extends EventEmitter {
    * @private
    */
   replaceBy(characteristic: Characteristic): void {
-    this.props = characteristic.props
+    // a copy, lists included: otherwise a later setProps() on one of the two would change the other as well
+    this.props = {
+      ...characteristic.props,
+      perms: [...characteristic.props.perms],
+      validValues: characteristic.props.validValues && [...characteristic.props.validValues],
+      validValueRanges: characteristic.props.validValueRanges && [...characteristic.props.validValueRanges],
+      adminOnlyAccess: characteristic.props.adminOnlyAccess && [...characteristic.props.adminOnlyAccess],
+    }
     this.updateValue(characteristic.value)
 
     const getListeners = characteristic.listeners(CharacteristicEventTypes.GET)
