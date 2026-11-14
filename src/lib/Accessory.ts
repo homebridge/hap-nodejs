@@ -734,7 +734,6 @@ export class Accessory extends EventEmitter {
   }
 
   public removeBridgedAccessory(accessory: Accessory, deferUpdate = false): void {
-    // check for UUID conflict
     const accessoryIndex = this.bridgedAccessories.indexOf(accessory)
     if (accessoryIndex === -1) {
       throw new Error('Cannot find the bridged Accessory to remove.')
@@ -928,7 +927,7 @@ export class Accessory extends EventEmitter {
   private handleAccessoryUnpairedForControllers(): void {
     for (const context of Object.values(this.controllers)) {
       const controller = context.controller
-      if (controller.handleFactoryReset) { // if the controller implements handleFactoryReset, setup event handlers for this controller
+      if (controller.handleFactoryReset) { // handleFactoryReset is optional for a controller
         controller.handleFactoryReset()
       }
 
@@ -1245,16 +1244,12 @@ export class Accessory extends EventEmitter {
    *   Must be globally unique from all Accessories on your local network.
    * - `info.pincode` - the 8-digit pin code for clients to use when pairing this Accessory.
    *   Must be formatted as a string like `031-45-154`.
-   * - `info.category` - one of the values of the `Accessory.Category` enum, like `Accessory.Category.SWITCH`.
+   * - `info.category` - one of the values of the {@link Categories} enum, like `Categories.SWITCH`.
    *   This is a hint to iOS clients about what "type" of Accessory this represents, so
    *   that for instance an appropriate icon can be drawn for the user while adding a
    *   new Accessory.
-   * @param {{
-   *   username: string;
-   *   pincode: string;
-   *   category: Accessory.Categories;
-   * }} info - Required info for publishing.
-   * @param {boolean} allowInsecureRequest - Will allow unencrypted and unauthenticated access to the http server
+   * @param info - Required info for publishing.
+   * @param allowInsecureRequest - Will allow unencrypted and unauthenticated access to the http server
    */
   public async publish(info: PublishInfo, allowInsecureRequest?: boolean): Promise<void> {
     if (this.bridged) {
@@ -1348,7 +1343,7 @@ export class Accessory extends EventEmitter {
     // get our accessory information in HAP format and determine if our configuration (that is, our
     // Accessories/Services/Characteristics) has changed since the last time we were published. make
     // sure to omit actual values since these are not part of the "configuration".
-    const config = this.internalHAPRepresentation(false) // TODO ensure this stuff is ordered
+    const config = this.internalHAPRepresentation(false)
     // TODO queue this check until about 5 seconds after startup, allowing some last changes after the publish call
     //   without constantly incrementing the current config number
     this._accessoryInfo.checkForCurrentConfigurationNumberIncrement(config, true)
@@ -1478,7 +1473,7 @@ export class Accessory extends EventEmitter {
         // Accessories/Services/Characteristics) has changed since the last time we were published. make
         // sure to omit actual values since these are not part of the "configuration".
         try {
-          const config = this.internalHAPRepresentation() // TODO ensure this stuff is ordered
+          const config = this.internalHAPRepresentation()
           if (this._accessoryInfo?.checkForCurrentConfigurationNumberIncrement(config)) {
             this._advertiser.updateAdvertisement()
           }
