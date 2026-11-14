@@ -257,6 +257,46 @@ describe('dataStreamParser', () => {
     })
   })
 
+  describe('nesting depth', () => {
+    function nested(depth: number, tag: number): Buffer {
+      // every array holds the next one, the innermost one is empty
+      return Buffer.concat([
+        Buffer.alloc(depth - 1, tag),
+        Buffer.from([0xD0]),
+        Buffer.alloc(tag === 0xDF
+          ? depth - 1
+          : 0, 0x03),
+      ])
+    }
+
+    it.each([
+      [
+        'arrays with their length in the tag',
+        Buffer.alloc(200_000, 0xD1),
+      ],
+      [
+        'arrays which end with a terminator',
+        Buffer.alloc(200_000, 0xDF),
+      ],
+      [
+        'dictionaries',
+        Buffer.concat(Array.from({ length: 50_000 }, () => Buffer.from([0xE1, 0x41, 0x78]))),
+      ],
+    ])('should refuse a message made of deeply nested %s with a clear error', (_name, data) => {
+      expect(() => DataStreamParser.decode(new DataStreamReader(data))).toThrow('nested more than 32 levels deep')
+    })
+
+    it.each([0xD1, 0xDF])('should decode 32 arrays in each other but not 33 (tag %d)', (tag) => {
+      let expected: unknown[] = []
+      for (let i = 1; i < 32; i++) {
+        expected = [expected]
+      }
+
+      expect(DataStreamParser.decode(new DataStreamReader(nested(32, tag)))).toEqual(expected)
+      expect(() => DataStreamParser.decode(new DataStreamReader(nested(33, tag)))).toThrow('nested more than 32 levels deep')
+    })
+  })
+
   describe('back-references', () => {
     function roundTrip(value: any): any {
       const writer = new DataStreamWriter()

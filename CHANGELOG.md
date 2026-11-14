@@ -136,6 +136,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(core): let the process exit while a slow read, adaptive lighting, recording or idle timer waits
 - fix(datastream): store a decoded dictionary key named __proto__ instead of replacing the prototype
 - fix(datastream): refuse a terminator tag which does not end an array or a dictionary
+- fix(datastream): refuse a message with arrays or dictionaries nested more than 32 levels deep
 
 ### Homebridge Dependencies
 

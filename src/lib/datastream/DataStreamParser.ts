@@ -133,8 +133,23 @@ export const enum DataFormatTags {
  * @group HomeKit Data Streams (HDS)
  */
 export class DataStreamParser {
+  /**
+   * How many arrays and dictionaries may be nested into each other. A real message is only a few levels deep,
+   * while a message made of nothing but array tags would otherwise use up the call stack.
+   */
+  private static readonly MAX_NESTING_DEPTH = 32
+
   public static decode(buffer: DataStreamReader): unknown {
-    const value = this.decodeNext(buffer)
+    return this.decodeValue(buffer, 0)
+  }
+
+  /**
+   * Decodes the next value, which must not be a terminator.
+   * @param buffer - The reader to take the value from.
+   * @param depth - The number of arrays and dictionaries around this value.
+   */
+  private static decodeValue(buffer: DataStreamReader, depth: number): unknown {
+    const value = this.decodeNext(buffer, depth)
 
     // a terminator only has a meaning where an array or a dictionary without a length looks for its end
     if (value === Magics.TERMINATOR) {
@@ -145,10 +160,14 @@ export class DataStreamParser {
   }
 
   /**
-   * Decodes the next value. Unlike {@link decode} it returns the terminator marker for a terminator tag.
+   * Decodes the next value. Unlike {@link decodeValue} it returns the terminator marker for a terminator tag.
    */
-  private static decodeNext(buffer: DataStreamReader): unknown {
+  private static decodeNext(buffer: DataStreamReader, depth: number): unknown {
     const tag = buffer.readTag()
+
+    if (tag >= DataFormatTags.ARRAY_LENGTH_START && tag <= DataFormatTags.DICTIONARY_TERMINATED && depth >= this.MAX_NESTING_DEPTH) {
+      throw new Error(`HDSDecoder: arrays and dictionaries are nested more than ${this.MAX_NESTING_DEPTH} levels deep on index ${buffer.readerIndex - 1}`)
+    }
 
     if (tag === DataFormatTags.INVALID) {
       throw new Error(`HDSDecoder: zero tag detected on index ${buffer.readerIndex}`)
@@ -220,7 +239,7 @@ export class DataStreamParser {
       const array = []
 
       for (let i = 0; i < length; i++) {
-        array.push(this.decode(buffer))
+        array.push(this.decodeValue(buffer, depth + 1))
       }
 
       return array
@@ -229,7 +248,7 @@ export class DataStreamParser {
 
       let element
       // eslint-disable-next-line no-cond-assign
-      while ((element = this.decodeNext(buffer)) !== Magics.TERMINATOR) {
+      while ((element = this.decodeNext(buffer, depth + 1)) !== Magics.TERMINATOR) {
         array.push(element)
       }
 
@@ -240,8 +259,8 @@ export class DataStreamParser {
       const dictionary: HDSMessage = {}
 
       for (let i = 0; i < length; i++) {
-        const key = this.decode(buffer)
-        this.setDictionaryEntry(dictionary, key, this.decode(buffer))
+        const key = this.decodeValue(buffer, depth + 1)
+        this.setDictionaryEntry(dictionary, key, this.decodeValue(buffer, depth + 1))
       }
 
       return dictionary
@@ -250,8 +269,8 @@ export class DataStreamParser {
 
       let key
       // eslint-disable-next-line no-cond-assign
-      while ((key = this.decodeNext(buffer)) !== Magics.TERMINATOR) {
-        this.setDictionaryEntry(dictionary, key, this.decode(buffer))
+      while ((key = this.decodeNext(buffer, depth + 1)) !== Magics.TERMINATOR) {
+        this.setDictionaryEntry(dictionary, key, this.decodeValue(buffer, depth + 1))
       }
 
       return dictionary
