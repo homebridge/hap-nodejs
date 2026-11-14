@@ -709,6 +709,12 @@ export class RemoteController extends EventEmitter
     if (!targetConfiguration) {
       return HAPStatus.INVALID_VALUE_IN_REQUEST
     }
+    if (targetConfiguration.targetName === undefined || targetConfiguration.targetCategory === undefined) {
+      // Checked before it is stored: a target without them can't be put into the target list we answer with,
+      // so every later request would fail as well.
+      debug(`Rejected new target with targetIdentifier '${targetConfiguration.targetIdentifier}' as it has no name or no category`)
+      return HAPStatus.INVALID_VALUE_IN_REQUEST
+    }
 
     this.targetConfigurations.set(targetConfiguration.targetIdentifier, targetConfiguration)
 
