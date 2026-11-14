@@ -147,6 +147,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(camera): turn the const enums of the camera code into normal enums
 - refactor(datastream): turn the const enums of the data stream code into normal enums
 - refactor(controller): turn the const enums of the controllers and access control into normal enums
+- refactor(types): turn the const enums in types.ts and internal-types.ts into normal enums
 
 ### Homebridge Dependencies
 
