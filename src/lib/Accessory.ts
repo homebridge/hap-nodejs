@@ -68,6 +68,7 @@ import { IdentifierCache } from './model/IdentifierCache.js'
 import { SerializedService, Service, ServiceCharacteristicChange, ServiceEventTypes, ServiceId } from './Service.js'
 import { checkName } from './util/checkName.js'
 import { clone } from './util/clone.js'
+import { errorMessage, errorStack } from './util/errors.js'
 import { EventName, HAPConnection, HAPUsername } from './util/eventedhttp.js'
 import { HapStatusError } from './util/hapStatusError.js'
 import { once } from './util/once.js'
@@ -536,7 +537,7 @@ export class Accessory extends EventEmitter {
           }
         }))
       } catch (error) {
-        this.sendCharacteristicWarning(characteristic, CharacteristicWarningType.ERROR_MESSAGE, `Unhandled error thrown inside identify handler: ${error?.message}`)
+        this.sendCharacteristicWarning(characteristic, CharacteristicWarningType.ERROR_MESSAGE, `Unhandled error thrown inside identify handler: ${errorMessage(error)}`)
         reject(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
       }
     })
@@ -1479,9 +1480,9 @@ export class Accessory extends EventEmitter {
         } catch (error) {
           // e.g. a service without characteristics or with an invalid UUID was added after publish.
           // Nothing can catch what is thrown out of a timer, so it would end the process.
-          console.error(`[${this.displayName}] The changed accessory configuration is invalid and was not announced: ${error?.message ?? error}`)
-          if (error?.stack) {
-            debug(`Detailed error: ${error.stack}`)
+          console.error(`[${this.displayName}] The changed accessory configuration is invalid and was not announced: ${errorMessage(error)}`)
+          if (errorStack(error)) {
+            debug(`Detailed error: ${errorStack(error)}`)
           }
         }
       }
@@ -1904,7 +1905,7 @@ export class Accessory extends EventEmitter {
         try {
           allowWrite = characteristic.additionalAuthorizationHandler(data.authData)
         } catch (error) {
-          console.warn(`[${this.displayName}] Additional authorization handler has thrown an error when checking authData: ${error.stack}`)
+          console.warn(`[${this.displayName}] Additional authorization handler has thrown an error when checking authData: ${errorStack(error) ?? errorMessage(error)}`)
           allowWrite = false
         }
 

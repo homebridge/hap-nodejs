@@ -6,6 +6,7 @@ import createDebug from 'debug'
 import { MacAddress } from '../../types.js'
 import { Accessory } from '../Accessory.js'
 import { ControllerIdentifier, SerializableController } from '../controller/index.js'
+import { errorMessage, errorStack } from '../util/errors.js'
 import { HAPStorage } from './HAPStorage.js'
 
 const debug = createDebug('HAP-NodeJS:ControllerStorage')
@@ -224,7 +225,7 @@ export class ControllerStorage {
       try {
         controller.deserialize(controllerData.data)
       } catch (error) {
-        console.warn(`Could not initialize controller of type '${controller.controllerId()}' from data stored on disk. Resetting to default: ${error.stack}`)
+        console.warn(`Could not initialize controller of type '${controller.controllerId()}' from data stored on disk. Resetting to default: ${errorStack(error) ?? errorMessage(error)}`)
         // the reset must be saved, otherwise the unreadable data stays on disk
         this.restoring = false
         controller.handleFactoryReset()
