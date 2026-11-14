@@ -502,6 +502,60 @@ describe('accessory', () => {
       expect(accessory.initialized).toBe(false)
     })
 
+    describe('a configuration change that is still pending at destroy', () => {
+      // an advertiser whose goodbye takes longer than the one second the configuration update waits
+      function publishedWithSlowAdvertiser(): { updateAdvertisement: Mock } {
+        // made after the timers were faked: the constructor already queues the first configuration update
+        accessory = new Accessory(TEST_DISPLAY_NAME, TEST_UUID)
+        vi.advanceTimersByTime(1500)
+
+        const advertiser = {
+          updateAdvertisement: vi.fn(),
+          destroy: vi.fn(() => new Promise<void>(resolve => setTimeout(resolve, 5000))),
+        }
+        const internals = accessory as any
+        internals._accessoryInfo = accessoryInfoUnpaired
+        internals._identifierCache = new IdentifierCache(serverUsername)
+        internals._advertiser = advertiser
+        internals._server = {
+          destroy: vi.fn(),
+        }
+        return advertiser
+      }
+
+      afterEach(() => {
+        vi.useRealTimers()
+      })
+
+      it('should not run when the change was made before destroy', async () => {
+        vi.useFakeTimers()
+        const advertiser = publishedWithSlowAdvertiser()
+
+        accessory.addService(Service.Switch)
+        const destroyed = accessory.destroy()
+
+        expect(() => vi.advanceTimersByTime(1500)).not.toThrow()
+        expect(advertiser.updateAdvertisement).not.toHaveBeenCalled()
+
+        await vi.advanceTimersByTimeAsync(5000)
+        await destroyed
+      })
+
+      it('should not run when the change was made while the goodbye is on its way', async () => {
+        vi.useFakeTimers()
+        const advertiser = publishedWithSlowAdvertiser()
+
+        const destroyed = accessory.destroy()
+        accessory.addService(Service.Switch)
+
+        expect(() => vi.advanceTimersByTime(1500)).not.toThrow()
+        expect(advertiser.updateAdvertisement).not.toHaveBeenCalled()
+
+        await vi.advanceTimersByTimeAsync(5000)
+        await destroyed
+      })
+    })
+
     it('validates bridged accessories when the bridge is validated', () => {
       const bridge = new Bridge('TestBridge', uuid.generate('bridge validation delegation'))
       const bridgedAccessory = new Accessory('Bridged Accessory', uuid.generate('validated bridged accessory'))
