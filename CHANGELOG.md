@@ -165,6 +165,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - docs(examples): fix three comments which name the wrong value in the light example
 - refactor(server): drop the unused request parameter of the pairing steps and a catch variable
 - fix(crypto): stop naming node 10 in the error for a missing chacha20-poly1305 cipher
+- refactor(camera): drop a branch which can never run and a repeated assignment of the proxy port
 
 ### Homebridge Dependencies
 
