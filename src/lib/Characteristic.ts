@@ -2941,9 +2941,15 @@ export class Characteristic extends EventEmitter {
         if (stepValue != null && stepValue > 0) {
           const minValue = this.props.minValue ?? 0
           if (numericMax != null) {
-            numericMax = stepValue * Math.floor((numericMax - minValue) / stepValue) + minValue
+            // (0.3 - 0) / 0.1 comes out as 2.9999999999999996. That is three whole steps, not two,
+            // so the floating point error is rounded away before the number of steps is rounded down.
+            const steps = Math.floor(Number.parseFloat(((numericMax - minValue) / stepValue).toFixed(9)))
+            numericMax = Math.min(numericMax, stepValue * steps + minValue)
           }
           value = stepValue * Math.round((value - minValue) / stepValue) + minValue
+          if (numericMax != null && value > numericMax && value - numericMax < 1e-9) {
+            value = numericMax // 0.1 * 3 comes out as 0.30000000000000004, which is the maximum of 0.3 and not above it
+          }
         }
 
         if (numericMin != null && value < numericMin) {

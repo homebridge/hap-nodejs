@@ -1294,6 +1294,46 @@ describe('characteristic', () => {
   })
 
   describe('#validateUserInput()', () => {
+    it.each([
+      [0, 0.3, 0.1],
+      [0, 0.6, 0.1],
+      [0, 0.7, 0.1],
+      [0, 1.2, 0.1],
+      [0, 4.3, 0.1],
+      [10, 38, 0.1],
+      [0.5, 2.3, 0.3],
+      [0, 100, 1],
+    ])('should accept the maximum of a float characteristic with min %d, max %d and step %d', (minValue, maxValue, minStep) => {
+      const characteristic = createCharacteristicWithProps({
+        format: Formats.FLOAT,
+        perms: [Perms.PAIRED_READ, Perms.NOTIFY],
+        minValue,
+        maxValue,
+        minStep,
+      })
+      const warning = vi.fn()
+      characteristic.on(CharacteristicEventTypes.CHARACTERISTIC_WARNING, warning)
+
+      characteristic.updateValue(maxValue)
+
+      expect(characteristic.value).toBe(maxValue)
+      expect(warning).not.toHaveBeenCalled()
+    })
+
+    it('should still cut a float maximum down to the last whole step below it', () => {
+      const characteristic = createCharacteristicWithProps({
+        format: Formats.FLOAT,
+        perms: [Perms.PAIRED_READ, Perms.NOTIFY],
+        minValue: 0,
+        maxValue: 25,
+        minStep: 2,
+      })
+
+      characteristic.updateValue(25)
+
+      expect(characteristic.value).toBe(24)
+    })
+
     it('should validate an integer property', () => {
       const VALUE = 1024
       const characteristic = createCharacteristic(Formats.INT)
