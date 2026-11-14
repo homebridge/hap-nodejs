@@ -49,6 +49,8 @@ export default class RTPProxy {
   serverRTPPort?: number
   serverRTCPPort?: number
 
+  private destroyed = false
+
   constructor(public options: RTPProxyOptions) {
     this.type = options.isIPV6 ? 'udp6' : 'udp4'
 
@@ -73,21 +75,24 @@ export default class RTPProxy {
       })
       .then((socket) => {
         this.outgoingSocket = socket
+        if (this.destroyed) {
+          // destroy() was called while the sockets were being bound, when there was nothing to close yet
+          this.destroy()
+          return
+        }
         this.onBound()
       })
   }
 
   destroy(): void {
-    if (this.incomingRTPSocket) {
-      this.incomingRTPSocket.close()
-    }
+    this.destroyed = true
 
-    if (this.incomingRTCPSocket) {
-      this.incomingRTCPSocket.close()
-    }
-
-    if (this.outgoingSocket) {
-      this.outgoingSocket.close()
+    for (const socket of [this.incomingRTPSocket, this.incomingRTCPSocket, this.outgoingSocket]) {
+      try {
+        socket?.close()
+      } catch {
+        // it is closed already
+      }
     }
   }
 
