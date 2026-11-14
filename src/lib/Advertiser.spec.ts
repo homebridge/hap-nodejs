@@ -64,6 +64,52 @@ describe('ciaoAdvertiser', () => {
   })
 })
 
+describe('ciaoAdvertiser destroy', () => {
+  function accessoryInfo(username: string, displayName: string): AccessoryInfo {
+    const info = AccessoryInfo.create(username)
+    info.displayName = displayName
+    info.model = 'Test'
+    info.setupID = 'ABCD'
+    info.category = 1
+    return info
+  }
+
+  it('should stop advertising its own service while another advertiser shares the responder', async () => {
+    const first = new CiaoAdvertiser(accessoryInfo('AA:BB:CC:DD:EE:01', 'Destroy Test One'))
+    const second = new CiaoAdvertiser(accessoryInfo('AA:BB:CC:DD:EE:02', 'Destroy Test Two'))
+    const responder = (first as any).responder
+    const service = (first as any).advertisedService
+    const destroyService = vi.spyOn(service, 'destroy')
+
+    try {
+      expect((second as any).responder).toBe(responder) // the reason shutdown() alone is not enough
+
+      await first.destroy()
+
+      expect(destroyService).toHaveBeenCalledTimes(1)
+      expect(service.destroyed).toBe(true)
+    } finally {
+      await first.destroy()
+      await second.destroy()
+    }
+  })
+
+  it('should only destroy the service once when destroy is called again', async () => {
+    const advertiser = new CiaoAdvertiser(accessoryInfo('AA:BB:CC:DD:EE:03', 'Destroy Test Three'))
+    const destroyService = vi.spyOn((advertiser as any).advertisedService, 'destroy')
+    const shutdown = vi.spyOn((advertiser as any).responder, 'shutdown')
+
+    await Promise.all([
+      advertiser.destroy(),
+      advertiser.destroy(),
+    ])
+    await advertiser.destroy()
+
+    expect(destroyService).toHaveBeenCalledTimes(1)
+    expect(shutdown).toHaveBeenCalledTimes(1)
+  })
+})
+
 describe('dBusInvokeError', () => {
   it('should take the D-Bus error name from a dbus-native DBusError', () => {
     const error = new DBusInvokeError(dbusError('org.freedesktop.DBus.Error.AccessDenied', 'Access denied'))
