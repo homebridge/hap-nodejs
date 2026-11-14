@@ -818,7 +818,17 @@ export class RTPStreamManagement {
     const streamCallback: CharacteristicSetCallback = (error, writeResponse) => {
       callback(error, writeResponse) // does not support writeResponse, but how knows what comes in the future.
       if (error) {
-        this.handleSessionClosed()
+        if (requestType !== SessionControlCommand.END_SESSION && this.sessionIdentifier === sessionIdentifier) {
+          // The session is given up, but the delegate may still be streaming for it (it does after a failed
+          // reconfigure). The controller's END_SESSION won't reach it anymore, so it is told to stop here.
+          try {
+            this._handleStopStream()
+          } catch (stopError) {
+            debug('Failed to stop the stream after a failed request: %s', (stopError as Error).message)
+          }
+        } else {
+          this.handleSessionClosed()
+        }
       }
     }
 

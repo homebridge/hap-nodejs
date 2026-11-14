@@ -272,6 +272,50 @@ describe('rTPStreamManagement', () => {
     })
   })
 
+  describe('a failed reconfigure', () => {
+    it('should tell the delegate to stop the stream of the session it gives up', () => {
+      const controller = new CameraController(buildControllerOptions(baseStreamingOptions))
+      controller.constructServices()
+      controller.configureServices()
+      const rtp = controller.streamManagements[0] as RTPStreamManagement
+      const sessionId = '11111111-1111-1111-1111-111111111111'
+      rtp.sessionIdentifier = sessionId // a stream is running
+
+      const requests: string[] = []
+      const handleStreamRequest = (request: { type: string }, callback: (error?: Error) => void) => {
+        requests.push(request.type)
+        callback(request.type === 'reconfigure'
+          ? new Error('could not change the resolution')
+          : undefined)
+      }
+      vi.spyOn(MockDelegate.prototype, 'handleStreamRequest').mockImplementation(handleStreamRequest as () => void)
+
+      const maxBitRate = Buffer.alloc(2)
+      maxBitRate.writeUInt16LE(300)
+      const reconfigure = tlv.encode(
+        0x01, tlv.encode(0x01, uuid.write(sessionId), 0x02, 0x04), // session control: RECONFIGURE_SESSION
+        0x02, tlv.encode(
+          0x03, tlv.encode(0x01, tlv.writeUInt16(1280), 0x02, tlv.writeUInt16(720), 0x03, 30), // attributes
+          0x04, tlv.encode(0x03, maxBitRate, 0x04, tlv.writeFloat32LE(0.5)), // rtp parameters
+        ),
+      ).toString('base64')
+      const callback = vi.fn()
+
+      try {
+        // @ts-expect-error: private method access
+        rtp._handleSelectedStreamConfigurationWrite(reconfigure, callback)
+
+        expect(callback).toHaveBeenCalledTimes(1)
+        expect(callback.mock.calls[0][0]).toBeInstanceOf(Error)
+        expect(requests).toEqual(['reconfigure', 'stop'])
+        expect(rtp.sessionIdentifier).toBeUndefined()
+      } finally {
+        vi.restoreAllMocks()
+        controller.handleFactoryReset()
+      }
+    })
+  })
+
   describe('handleSetupEndpoints proxy rejection (fix 0ce74c4e)', () => {
     let controller: CameraController
     let setupSpy: MockInstance
