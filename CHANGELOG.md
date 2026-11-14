@@ -131,6 +131,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(datastream): type data stream message values as unknown and drop malformed messages
 - perf(server): skip the stack trace for each listener change when its debug namespace is off
 - perf(accessory): skip hashing the whole identifier cache on a save when no id changed
+- perf(core): read the library version from package.json only once
 
 ### Homebridge Dependencies
 

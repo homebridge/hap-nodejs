@@ -14,10 +14,12 @@ import { HAPStorage } from './HAPStorage.js'
 
 const debug = createDebug('HAP-NodeJS:AccessoryInfo')
 
+let libraryVersion: string | undefined
+
 function getVersion(): string {
-  const packageJson = JSON.parse(readFileSync(new URL('../../../package.json', import.meta.url), 'utf-8'))
-  const { version } = packageJson
-  return version
+  // the version cannot change while the process runs, so the file is read only once
+  libraryVersion ??= JSON.parse(readFileSync(new URL('../../../package.json', import.meta.url), 'utf-8')).version as string
+  return libraryVersion
 }
 
 /**
