@@ -233,6 +233,30 @@ describe('remoteController', () => {
     })
   })
 
+  describe('an active target which is not configured', () => {
+    it('should not mark the remote as active when the write is refused', () => {
+      const controller = createController()
+      controller.activeIdentifier = 5 // no target with this identifier exists
+      const connection = new EventEmitter()
+      const callback = vi.fn()
+
+      // @ts-expect-error: private access
+      controller.handleActiveWrite(true, callback, connection)
+
+      expect(callback).toHaveBeenCalledExactlyOnceWith(HAPStatus.INVALID_VALUE_IN_REQUEST)
+      expect(controller.isActive()).toBe(false)
+      expect(connection.listenerCount(HAPConnectionEvent.CLOSED)).toBe(0)
+    })
+
+    it('should not restore an active target which is not among the saved targets', () => {
+      const controller = createController()
+
+      controller.deserialize({ activeIdentifier: 5, targetConfigurations: {} })
+
+      expect(controller.activeIdentifier).toBe(0)
+    })
+  })
+
   describe('restoring the services', () => {
     class Producer {
       startAudioProduction = vi.fn()
