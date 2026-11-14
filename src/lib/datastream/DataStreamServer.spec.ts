@@ -270,6 +270,43 @@ describe('dataStreamServer', () => {
     })
   })
 
+  describe('requests sent by the accessory', () => {
+    function identifiedSession(): TestSession {
+      const session = setupSession()
+      session.socket.emit('data', encryptedFrame(session, messagePayload({ protocol: 'control', request: 'hello', id: 1 })))
+      return session
+    }
+
+    it('should only throw, and not time out later, for a request on a closing connection', () => {
+      const session = identifiedSession()
+      session.connection.close()
+      const callback = vi.fn()
+
+      expect(() => session.connection.sendRequest('dataSend', 'open', {}, callback)).toThrow('closing/closed socket')
+      vi.advanceTimersByTime(11000)
+
+      expect(callback).not.toHaveBeenCalled()
+      // @ts-expect-error: private property access
+      expect(Object.keys(session.connection.responseHandlers)).toHaveLength(0)
+      // @ts-expect-error: private property access
+      expect(Object.keys(session.connection.responseTimers)).toHaveLength(0)
+    })
+
+    it('should only throw, and not time out later, for a request which is too large to send', () => {
+      const session = identifiedSession()
+      const callback = vi.fn()
+
+      expect(() => session.connection.sendRequest('dataSend', 'open', {
+        data: Buffer.alloc(0x100000),
+      }, callback))
+        .toThrow('larger than the maximum')
+      vi.advanceTimersByTime(11000)
+
+      expect(callback).not.toHaveBeenCalled()
+      expect(session.socket.end).not.toHaveBeenCalled() // the timeout would have closed the connection
+    })
+  })
+
   describe('unhandled requests', () => {
     // decrypts the n-th frame the accessory wrote and returns its decoded header
     function sentHeader(session: TestSession, index: number): Record<string, any> {
