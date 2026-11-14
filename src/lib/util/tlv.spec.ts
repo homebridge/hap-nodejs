@@ -14,6 +14,11 @@ describe('tlv', () => {
         .toEqual('01012a')
     })
 
+    it('should reject a further type which is not a number', () => {
+      // the types can not tell a type from a value in the list of further arguments, so this compiles
+      expect(() => encode(1, 42, 'two', 43)).toThrow(new TypeError('A TLV type must be a number, got string'))
+    })
+
     it('encode simple string', () => {
       const encoded = encode(2, 'Hello World!')
       expect(encoded.toString('hex'))

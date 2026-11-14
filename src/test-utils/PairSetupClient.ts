@@ -155,7 +155,7 @@ export class PairSetupClient {
     const subTLV_M5 = tlv.encode(
       TLVValues.IDENTIFIER, clientInfo.username,
       TLVValues.PUBLIC_KEY, clientInfo.publicKey,
-      TLVValues.SIGNATURE, iOSDeviceSignature,
+      TLVValues.SIGNATURE, Buffer.from(iOSDeviceSignature),
     )
 
     const sessionKey = hapCrypto.HKDF(

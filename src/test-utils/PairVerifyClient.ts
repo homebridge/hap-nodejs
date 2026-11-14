@@ -95,7 +95,7 @@ export class PairVerifyClient {
       '/pair-verify',
       tlv.encode(
         TLVValues.STATE, PairingStates.M1,
-        TLVValues.PUBLIC_KEY, this.ephemeralKeyPair.publicKey,
+        TLVValues.PUBLIC_KEY, Buffer.from(this.ephemeralKeyPair.publicKey),
       ),
       { contentType: HAPMimeTypes.PAIRING_TLV8 },
     )
