@@ -68,6 +68,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(characteristic): refuse a client write of a number which is not whole to an integer format
 - fix(characteristic): keep the value of a string characteristic which is given no string
 - fix(camera): keep the SRTP keys of a stream out of the debug log
+- build: stop publishing the example accessories and the definitions generator
 
 ### Homebridge Dependencies
 

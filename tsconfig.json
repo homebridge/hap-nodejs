@@ -22,6 +22,11 @@
   ],
   "exclude": [
     "**/*.spec.ts",
-    "src/test-utils"
+    "src/test-utils",
+    // examples and tooling, which are not part of the published package
+    "src/accessories/*_accessory.ts",
+    "src/accessories/gstreamer-audioProducer.ts",
+    "src/lib/definitions/generate-definitions.ts",
+    "src/lib/definitions/generator-configuration.ts"
   ]
 }
