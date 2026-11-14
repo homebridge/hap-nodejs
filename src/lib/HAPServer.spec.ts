@@ -549,6 +549,24 @@ describe('hAPServer', () => {
     })
   })
 
+  describe('prepare write pid', () => {
+    it.each([
+      [0, HAPHTTPCode.OK, HAPStatus.SUCCESS],
+      [11122333, HAPHTTPCode.OK, HAPStatus.SUCCESS],
+      ['11122333', HAPHTTPCode.BAD_REQUEST, HAPStatus.INVALID_VALUE_IN_REQUEST],
+    ])('pUT /prepare with pid %j should be answered with %d', async (pid, httpCode, status) => {
+      server = new HAPServer(accessoryInfoUnpaired)
+      server.allowInsecureRequest = true
+      const [port] = await bindServer(server)
+      const client = await connectClient(port)
+
+      const response = await client.writeHTTPRequest('PUT', '/prepare', Buffer.from(JSON.stringify({ ttl: 1000, pid })))
+
+      expect(response.statusCode).toBe(httpCode)
+      expect(JSON.parse(response.body.toString())).toEqual({ status })
+    })
+  })
+
   describe('malformed JSON bodies', () => {
     it.each([
       ['PUT', '/prepare', '{'],

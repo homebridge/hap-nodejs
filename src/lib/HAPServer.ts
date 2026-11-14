@@ -1189,7 +1189,8 @@ export class HAPServer extends EventEmitter {
       }
 
       const ttl = prepareRequest.ttl
-      if (prepareRequest.pid && typeof ttl === 'number' && ttl > 0 && ttl <= HAPServer.MAX_TIMED_WRITE_TTL) {
+      // the pid is a number picked at random by the controller, so 0 is as good as any other
+      if (typeof prepareRequest.pid === 'number' && typeof ttl === 'number' && ttl > 0 && ttl <= HAPServer.MAX_TIMED_WRITE_TTL) {
         debug('[%s] Received prepare write request with pid %d and ttl %d', this.accessoryInfo.username, prepareRequest.pid, prepareRequest.ttl)
 
         if (connection.timedWriteTimeout) { // clear any currently existing timeouts
