@@ -458,9 +458,13 @@ export class HAPConnection extends EventEmitter {
   }
 
   private debugListenerRegistration(event: string | symbol, registration = true, beforeCount = -1): void {
+    if (!debugEvents.enabled) {
+      return // capturing a stack for every listener change is costly, and nobody reads it
+    }
+
     // eslint-disable-next-line unicorn/error-message -- only here to capture the stack
     const stackTrace = new Error().stack!.split('\n')[3]
-    const eventCount = this.listeners(event).length
+    const eventCount = this.listenerCount(event)
 
     const tabs1 = event === HAPConnectionEvent.AUTHENTICATED
       ? '\t'
@@ -487,14 +491,14 @@ export class HAPConnection extends EventEmitter {
   }
 
   removeListener(event: string | symbol, listener: (...args: any[]) => void): this {
-    const beforeCount = this.listeners(event).length
+    const beforeCount = this.listenerCount(event)
     const result = super.removeListener(event, listener)
     this.debugListenerRegistration(event, false, beforeCount)
     return result
   }
 
   off(event: string | symbol, listener: (...args: any[]) => void): this {
-    const beforeCount = this.listeners(event).length
+    const beforeCount = this.listenerCount(event)
     const result = super.off(event, listener)
     this.debugListenerRegistration(event, false, beforeCount)
     return result
