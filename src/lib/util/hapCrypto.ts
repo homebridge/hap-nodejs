@@ -6,8 +6,6 @@ import { Buffer } from 'node:buffer'
 import crypto from 'node:crypto'
 import process from 'node:process'
 
-import hkdf from 'futoin-hkdf'
-
 if (!crypto.getCiphers().includes('chacha20-poly1305')) {
   // every supported Node.js version has this cipher, unless its OpenSSL was built without it or runs in FIPS mode
   assert.fail(`The cipher 'chacha20-poly1305' is not supported by your Node.js ${process.version}. HAP-NodeJS cannot work without it!`)
@@ -140,7 +138,7 @@ export function ed25519Verify(message: Uint8Array, signature: Uint8Array, public
  * @group Cryptography
  */
 export function HKDF(hashAlg: string, salt: Buffer, ikm: Buffer, info: Buffer, size: number): Buffer {
-  return hkdf(ikm, size, { hash: hashAlg, salt, info })
+  return Buffer.from(crypto.hkdfSync(hashAlg, ikm, salt, info, size))
 }
 
 const MAX_UINT32 = 0x00000000FFFFFFFF

@@ -70,6 +70,45 @@ describe('hapCrypto', () => {
     })
   })
 
+  describe('HKDF with the values the futoin-hkdf package gave', () => {
+    // computed with futoin-hkdf 1.5.3 before it was replaced by the hkdf of Node.js
+    it.each([
+      [
+        'sha512',
+        'Pair-Verify-Encrypt-Salt',
+        'secret-material-0123456789',
+        'Pair-Verify-Encrypt-Info',
+        'a14c41958343c24ffd21ed0d3043177a95f44ea61e3cd5419fc5cd7db1ec785c',
+      ],
+      [
+        'sha512',
+        'Control-Salt',
+        'x'.repeat(32),
+        'Control-Read-Encryption-Key',
+        'c4b1e191c01ca57b434b9044ca128c3ecaacffe11b86fd5721f79e1f4ae7a129',
+      ],
+      [
+        'sha256',
+        'salt',
+        'ikm',
+        '',
+        '3e9e116c61874b3d590acaf28c914b6a',
+      ],
+    ])('should derive the same %s key for the salt "%s"', (hash, salt, ikm, info, expected) => {
+      const key = hapCrypto.HKDF(hash, Buffer.from(salt), Buffer.from(ikm), Buffer.from(info), expected.length / 2)
+
+      expect(key).toBeInstanceOf(Buffer)
+      expect(key.toString('hex')).toBe(expected)
+    })
+
+    it('should accept an empty salt and a size of 64 bytes', () => {
+      const key = hapCrypto.HKDF('sha512', Buffer.alloc(0), Buffer.from('ikm'), Buffer.from('info'), 64)
+
+      expect(key).toHaveLength(64)
+      expect(key.toString('hex').startsWith('3a602ee52593d4f927d57495b18ea66a5f4cf7dfdb1a7ddaf22459db5d3da294')).toBe(true)
+    })
+  })
+
   describe('layer encryption', () => {
     let serverEncryption: HAPEncryption
     let clientEncryption: HAPEncryption

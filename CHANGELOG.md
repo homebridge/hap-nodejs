@@ -213,6 +213,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor: prefix parameters which are never read with an underscore and turn on noUnusedParameters
 - refactor: import types with import type and turn on the consistent-type-imports lint rule
 - fix(types): export PairingStates so a plugin can name the type of the pairing state of a connection
+- chore(deps): replace futoin-hkdf with the hkdf of node.js and remove unused packages
 
 ### Homebridge Dependencies
 
