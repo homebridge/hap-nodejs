@@ -17,6 +17,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(advertiser): register names with a slash or percent sign with systemd-resolved
 - fix(advertiser): free the old avahi entry group before registering again
 - fix(accessory): cancel a pending configuration update when the accessory is unpublished
+- fix(datastream): encode integers that need more than 32 bits instead of throwing
 
 ### Homebridge Dependencies
 

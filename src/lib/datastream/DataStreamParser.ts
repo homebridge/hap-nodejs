@@ -706,7 +706,7 @@ export class DataStreamWriter {
       this.writeInt16LE(new Int16(number))
     } else if (number >= -2147483648 && number <= 2147483647) {
       this.writeInt32LE(new Int32(number))
-    } else if (number >= Number.MIN_SAFE_INTEGER && number <= Number.MAX_SAFE_INTEGER) { // use correct uin64 restriction when we convert to bigint
+    } else if (number >= Number.MIN_SAFE_INTEGER && number <= Number.MAX_SAFE_INTEGER) { // a number can't hold a larger integer exactly
       this.writeInt64LE(new Int64(number))
     } else {
       throw new Error(`Tried writing unrepresentable number (${number})`)
@@ -752,8 +752,7 @@ export class DataStreamWriter {
 
     this.ensureLength(9)
     this.writeTag(DataFormatTags.INT64LE)
-    this.data.writeUInt32LE(int64.value, this.writerIndex)// TODO correctly implement int64; currently it's basically an int32
-    this.data.writeUInt32LE(0, this.writerIndex + 4)
+    this.data.writeBigInt64LE(BigInt(Math.trunc(int64.value)), this.writerIndex)
     this.writerIndex += 8
   }
 
