@@ -85,7 +85,6 @@ const MAX_SERVICES = 100
  *
  * @group Accessory
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum Categories {
   // noinspection JSUnusedGlobalSymbols
   OTHER = 1,
@@ -168,7 +167,6 @@ export interface ControllerContext {
 /**
  * @group Accessory
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum CharacteristicWarningType {
   SLOW_WRITE = 'slow-write',
   TIMEOUT_WRITE = 'timeout-write',
@@ -278,7 +276,6 @@ export interface PublishInfo {
 /**
  * @group Accessory
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum MDNSAdvertiser {
   /**
    * Use the `@homebridge/ciao` module as advertiser.
@@ -316,7 +313,6 @@ export interface ServiceConfigurationChange {
   service: Service
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum WriteRequestState {
   REGULAR_REQUEST,
   TIMED_WRITE_AUTHENTICATED,
@@ -335,7 +331,6 @@ interface PermsViolation {
 /**
  * @group Accessory
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum AccessoryEventTypes {
   /**
    * Emitted when an iOS device wishes for this Accessory to identify itself. If `paired` is false, then

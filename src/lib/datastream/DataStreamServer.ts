@@ -73,7 +73,6 @@ export interface DataStreamProtocolHandler {
 /**
  * @group HomeKit Data Streams (HDS)
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum Protocols { // a collection of currently known protocols
   CONTROL = 'control',
   TARGET_CONTROL = 'targetControl',
@@ -83,7 +82,6 @@ export const enum Protocols { // a collection of currently known protocols
 /**
  * @group HomeKit Data Streams (HDS)
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum Topics { // a collection of currently known topics grouped by their protocol
   // control
   HELLO = 'hello',
@@ -149,7 +147,6 @@ export class HDSProtocolError extends Error {
   }
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum ServerState {
   UNINITIALIZED, // server socket hasn't been created
   BINDING, // server is created and is currently trying to bind
@@ -157,7 +154,6 @@ const enum ServerState {
   CLOSING,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum ConnectionState {
   UNIDENTIFIED,
   EXPECTING_HELLO,
@@ -179,7 +175,6 @@ export interface HDSFrame {
 /**
  * @group HomeKit Data Streams (HDS)
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum MessageType {
   EVENT = 1,
   REQUEST = 2,
@@ -203,7 +198,6 @@ export interface DataStreamMessage {
 /**
  * @group HomeKit Data Streams (HDS)
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum DataStreamServerEvent {
   /**
    * This event is emitted when a new client socket is received. At this point we have no idea to what
@@ -563,7 +557,6 @@ export type IdentificationCallback = (identifiedSession?: PreparedDataStreamSess
 /**
  * @group HomeKit Data Streams (HDS)
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum DataStreamConnectionEvent {
   /**
    * This event is emitted when the first HDSFrame is received from a new connection.
@@ -596,7 +589,6 @@ export declare interface DataStreamConnection {
 /**
  * @group HomeKit Data Streams (HDS)
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum HDSConnectionErrorType {
   ILLEGAL_STATE = 1,
   CLOSED_SOCKET = 2,

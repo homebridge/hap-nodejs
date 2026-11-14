@@ -50,7 +50,6 @@ import {
 
 const debug = createDebug('HAP-NodeJS:Remote:Controller')
 
-// eslint-disable-next-line no-restricted-syntax
 const enum TargetControlCommands {
   MAXIMUM_TARGETS = 0x01,
   TICKS_PER_SECOND = 0x02,
@@ -58,7 +57,6 @@ const enum TargetControlCommands {
   TYPE = 0x04,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SupportedButtonConfigurationTypes {
   BUTTON_ID = 0x01,
   BUTTON_TYPE = 0x02,
@@ -85,7 +83,6 @@ export enum ButtonType {
   GENERIC = 0x0D,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum TargetControlList {
   OPERATION = 0x01,
   TARGET_CONFIGURATION = 0x02,
@@ -101,7 +98,6 @@ enum Operation {
   UPDATE = 0x05,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum TargetConfigurationTypes {
   TARGET_IDENTIFIER = 0x01,
   TARGET_NAME = 0x02,
@@ -112,21 +108,18 @@ const enum TargetConfigurationTypes {
 /**
  * @group Apple TV Remote
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum TargetCategory {
   // noinspection JSUnusedGlobalSymbols
   UNDEFINED = 0x00,
   APPLE_TV = 0x18,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum ButtonConfigurationTypes {
   BUTTON_ID = 0x01,
   BUTTON_TYPE = 0x02,
   BUTTON_NAME = 0x03,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum ButtonEvent {
   BUTTON_ID = 0x01,
   BUTTON_STATE = 0x02,
@@ -179,21 +172,18 @@ export interface ButtonConfiguration {
   buttonName?: string
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SelectedAudioInputStreamConfigurationTypes {
   SELECTED_AUDIO_INPUT_STREAM_CONFIGURATION = 0x01,
 }
 
 // ----------
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SupportedAudioStreamConfigurationTypes {
   // noinspection JSUnusedGlobalSymbols
   AUDIO_CODEC_CONFIGURATION = 0x01,
   COMFORT_NOISE_SUPPORT = 0x02,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum AudioCodecConfigurationTypes {
   CODEC_TYPE = 0x01,
   CODEC_PARAMETERS = 0x02,
@@ -202,7 +192,6 @@ const enum AudioCodecConfigurationTypes {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum AudioCodecTypes { // only really by HAP supported codecs are AAC-ELD and OPUS
   // noinspection JSUnusedGlobalSymbols
   PCMU = 0x00,
@@ -214,7 +203,6 @@ export const enum AudioCodecTypes { // only really by HAP supported codecs are A
   AMR_WB = 0x06,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum AudioCodecParametersTypes {
   CHANNEL = 0x01,
   BIT_RATE = 0x02,
@@ -255,7 +243,6 @@ export interface AudioCodecParameters {
  */
 export type RTPTime = 20 | 30 | 40 | 60
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SiriAudioSessionState {
   STARTING = 0, // we are currently waiting for a response for the start request
   SENDING = 1, // we are sending data
@@ -325,7 +312,6 @@ export interface SiriAudioStreamProducerConstructor {
 /**
  * @group Apple TV Remote
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum TargetUpdates {
   NAME,
   CATEGORY,
@@ -336,7 +322,6 @@ export const enum TargetUpdates {
 /**
  * @group Apple TV Remote
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum RemoteControllerEvents {
   /**
    * This event is emitted when the active state of the remote has changed.
@@ -1491,7 +1476,6 @@ export class RemoteController extends EventEmitter
 /**
  * @group Apple TV Remote
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum SiriAudioSessionEvents {
   CLOSE = 'close',
 }

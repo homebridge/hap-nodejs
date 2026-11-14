@@ -23,7 +23,6 @@ function getVersion(): string {
 /**
  * @group Model
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum PermissionTypes {
   // noinspection JSUnusedGlobalSymbols
   USER = 0x00,

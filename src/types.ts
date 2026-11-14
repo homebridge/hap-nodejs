@@ -300,7 +300,6 @@ export interface PrepareWriteRequest {
 /**
  * @group HAP Accessory Server
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum ResourceRequestType {
   IMAGE = 'image',
 }

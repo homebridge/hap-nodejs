@@ -78,7 +78,6 @@ export interface CameraRecordingOptions {
  *
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum EventTriggerOption {
   /**
    * The Motion trigger. If enabled motion should trigger the start of a recording.
@@ -98,7 +97,6 @@ export const enum EventTriggerOption {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum MediaContainerType {
   FRAGMENTED_MP4 = 0x00,
 }
@@ -214,14 +212,12 @@ export interface SelectedH264CodecParameters {
   iFrameInterval: number
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum VideoCodecConfigurationTypes {
   CODEC_TYPE = 0x01,
   CODEC_PARAMETERS = 0x02,
   ATTRIBUTES = 0x03,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum VideoCodecParametersTypes {
   PROFILE_ID = 0x01,
   LEVEL = 0x02,
@@ -229,14 +225,12 @@ const enum VideoCodecParametersTypes {
   IFRAME_INTERVAL = 0x04,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum VideoAttributesTypes {
   IMAGE_WIDTH = 0x01,
   IMAGE_HEIGHT = 0x02,
   FRAME_RATE = 0x03,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SelectedCameraRecordingConfigurationTypes {
   SELECTED_RECORDING_CONFIGURATION = 0x01,
   SELECTED_VIDEO_CONFIGURATION = 0x02,
@@ -246,7 +240,6 @@ const enum SelectedCameraRecordingConfigurationTypes {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum AudioRecordingCodecType {
   AAC_LC = 0,
   AAC_ELD = 1,
@@ -255,7 +248,6 @@ export const enum AudioRecordingCodecType {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum AudioRecordingSamplerate {
   KHZ_8 = 0,
   KHZ_16 = 1,
@@ -265,30 +257,25 @@ export const enum AudioRecordingSamplerate {
   KHZ_48 = 5,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SupportedVideoRecordingConfigurationTypes {
   VIDEO_CODEC_CONFIGURATION = 0x01,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SupportedCameraRecordingConfigurationTypes {
   PREBUFFER_LENGTH = 0x01,
   EVENT_TRIGGER_OPTIONS = 0x02,
   MEDIA_CONTAINER_CONFIGURATIONS = 0x03,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum MediaContainerConfigurationTypes {
   MEDIA_CONTAINER_TYPE = 0x01,
   MEDIA_CONTAINER_PARAMETERS = 0x02,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum MediaContainerParameterTypes {
   FRAGMENT_LENGTH = 0x01,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum AudioCodecParametersTypes {
   CHANNEL = 0x01,
   BIT_RATE = 0x02,
@@ -296,13 +283,11 @@ const enum AudioCodecParametersTypes {
   MAX_AUDIO_BITRATE = 0x04, // only present in selected audio codec parameters tlv
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum AudioCodecConfigurationTypes {
   CODEC_TYPE = 0x01,
   CODEC_PARAMETERS = 0x02,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SupportedAudioRecordingConfigurationTypes {
   AUDIO_CODEC_CONFIGURATION = 0x01,
 }
@@ -310,7 +295,6 @@ const enum SupportedAudioRecordingConfigurationTypes {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum PacketDataType {
   /**
    * mp4 moov box
@@ -974,7 +958,6 @@ export class RecordingManagement {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 const enum CameraRecordingStreamEvents {
   /**
    * This event is fired when the recording stream is closed.

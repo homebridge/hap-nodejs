@@ -7,7 +7,6 @@ import { Characteristic } from '../Characteristic.js'
 import { Service } from '../Service.js'
 import * as tlv from '../util/tlv.js'
 
-// eslint-disable-next-line no-restricted-syntax
 const enum AccessControlTypes {
   PASSWORD = 0x01,
   PASSWORD_REQUIRED = 0x02,
@@ -19,7 +18,6 @@ const enum AccessControlTypes {
  *
  * @group Television
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum AccessLevel {
   // noinspection JSUnusedGlobalSymbols
   /**
@@ -43,7 +41,6 @@ export const enum AccessLevel {
 /**
  * @group Television
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum AccessControlEvent {
   ACCESS_LEVEL_UPDATED = 'update-control-level',
   PASSWORD_SETTING_UPDATED = 'update-password',

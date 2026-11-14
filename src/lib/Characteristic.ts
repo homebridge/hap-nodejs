@@ -289,7 +289,6 @@ const debug = createDebug('HAP-NodeJS:Characteristic')
 /**
  * @group Characteristic
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum Formats {
   BOOL = 'bool',
   /**
@@ -333,7 +332,6 @@ export const enum Formats {
 /**
  * @group Characteristic
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum Units {
   /**
    * Celsius is the only temperature unit in the HomeKit Accessory Protocol.
@@ -350,7 +348,6 @@ export const enum Units {
 /**
  * @group Characteristic
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum Perms {
   PAIRED_READ = 'pr',
   PAIRED_WRITE = 'pw',
@@ -470,7 +467,6 @@ export interface CharacteristicProps {
  *
  * @group Characteristic
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum Access {
   READ = 0x00,
   WRITE = 0x01,
@@ -491,7 +487,6 @@ export interface CharacteristicChange {
 /**
  * @group Characteristic
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum ChangeReason {
   /**
    * Reason used when HomeKit writes a value or the API user calls {@link Characteristic.setValue}.
@@ -543,7 +538,6 @@ export interface SerializedCharacteristic {
 /**
  * @group Characteristic
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum CharacteristicEventTypes {
   /**
    * This event is thrown when a HomeKit controller wants to read the current value of the characteristic.

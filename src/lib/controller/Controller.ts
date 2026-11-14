@@ -23,7 +23,6 @@ export type ControllerType = string | DefaultControllerType
 /**
  * @group Controller API
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum DefaultControllerType {
   CAMERA = 'camera', // or doorbell
   REMOTE = 'remote',

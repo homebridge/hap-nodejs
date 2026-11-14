@@ -129,7 +129,6 @@ export type ServiceCharacteristicChange = CharacteristicChange & { characteristi
 /**
  * @group Service
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum ServiceEventTypes {
   CHARACTERISTIC_CHANGE = 'characteristic-change',
   SERVICE_CONFIGURATION_CHANGE = 'service-configurationChange',

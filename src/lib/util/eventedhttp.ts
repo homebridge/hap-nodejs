@@ -63,7 +63,6 @@ export class HAPEncryption {
 /**
  * @group HAP Accessory Server
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum EventedHTTPServerEvent {
   LISTENING = 'listening',
   CONNECTION_OPENED = 'connection-opened',
@@ -317,7 +316,6 @@ export class EventedHTTPServer extends EventEmitter {
  * @private
  * @group HAP Accessory Server
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum HAPConnectionState {
   CONNECTING, // initial state, setup is going on
   FULLY_SET_UP, // internal http server is running and connection is established
@@ -333,7 +331,6 @@ export const enum HAPConnectionState {
 /**
  * @group HAP Accessory Server
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum HAPConnectionEvent {
   REQUEST = 'request',
   AUTHENTICATED = 'authenticated',

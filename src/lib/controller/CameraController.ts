@@ -135,7 +135,6 @@ export type StreamRequestCallback = (error?: Error) => void
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum ResourceRequestReason {
   /**
    * The reason describes periodic resource requests.
@@ -345,7 +344,6 @@ export interface CameraControllerState {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum CameraControllerEvents {
   /**
    *  Emitted when the mute state or the volume changed. The Apple Home App typically does not set those values

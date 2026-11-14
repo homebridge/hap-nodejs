@@ -30,7 +30,6 @@ export function consideredTrue(input: string | null): boolean {
 /**
  * @group HAP Accessory Server
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum TLVValues {
   // noinspection JSUnusedGlobalSymbols
   REQUEST_TYPE = 0x00,
@@ -61,7 +60,6 @@ export const enum TLVValues {
 /**
  * @group HAP Accessory Server
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum PairMethods {
   // noinspection JSUnusedGlobalSymbols
   PAIR_SETUP = 0x00,
@@ -77,7 +75,6 @@ export const enum PairMethods {
  *
  * @group HAP Accessory Server
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum PairingStates {
   M1 = 0x01,
   M2 = 0x02,
@@ -90,7 +87,6 @@ export const enum PairingStates {
 /**
  * @group HAP Accessory Server
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum HAPMimeTypes {
   PAIRING_TLV8 = 'application/pairing+tlv8',
   HAP_JSON = 'application/hap+json',
