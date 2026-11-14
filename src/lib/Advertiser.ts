@@ -43,7 +43,7 @@ export enum PairingFeatureFlag {
  */
 export enum AdvertiserEvent {
   /**
-   * Emitted if the underlying mDNS advertisers signals, that the service name
+   * Emitted if the underlying mDNS advertiser signals that the service name
    * was automatically changed due to some naming conflicts on the network.
    */
   UPDATED_NAME = 'updated-name',
@@ -207,7 +207,7 @@ export class CiaoAdvertiser extends EventEmitter implements Advertiser {
 }
 
 /**
- * Advertiser base on the legacy "bonjour-hap" library.
+ * Advertiser based on the legacy "bonjour-hap" library.
  *
  * @group Advertiser
  */

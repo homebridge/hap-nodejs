@@ -106,7 +106,7 @@ export declare interface EventedHTTPServer {
  * @group HAP Accessory Server
  */
 export class EventedHTTPServer extends EventEmitter {
-  private static readonly CONNECTION_TIMEOUT_LIMIT = 16 // if we have more (or equal) # connections we start the timeout
+  private static readonly CONNECTION_TIMEOUT_LIMIT = 16 // if we have more (or equal) connections, we start the timeout
   private static readonly MAX_CONNECTION_IDLE_TIME = 60 * 60 * 1000 // 1h
 
   private readonly tcpServer: net.Server
@@ -214,7 +214,7 @@ export class EventedHTTPServer extends EventEmitter {
    * @param iid - The instance id of the updated characteristic.
    * @param value - The newly set value of the characteristic.
    * @param originator - If specified, the connection will not get an event message.
-   * @param immediateDelivery - The HAP spec requires some characteristics to be delivery immediately.
+   * @param immediateDelivery - The HAP spec requires some characteristics to be delivered immediately.
    * Namely, for the {@link Characteristic.ButtonEvent} and the {@link Characteristic.ProgrammableSwitchEvent} characteristics.
    */
   public broadcastEvent(aid: number, iid: number, value: Nullable<CharacteristicValue>, originator?: HAPConnection, immediateDelivery?: boolean): void {
@@ -296,7 +296,7 @@ export class EventedHTTPServer extends EventEmitter {
    * This method is to be called when a given {@link HAPConnection} performs a request that should result in the disconnection
    * of all other {@link HAPConnection} with the same {@link HAPUsername}.
    *
-   * The initiator MUST be in the middle of a http request were the response was not served yet.
+   * The initiator MUST be in the middle of a http request where the response was not served yet.
    * Otherwise, the initiator connection might reside in a state where it isn't disconnected and can't make any further requests.
    *
    * @param initiator - The connection that requested to disconnect all connections of the same username.
@@ -507,7 +507,7 @@ export class HAPConnection extends EventEmitter {
 
   /**
    * This method is called once the connection has gone through pair-verify.
-   * As any HomeKit controller will initiate a pair-verify after the pair-setup procedure, this method gets
+   * As any HomeKit controller will initiate a pair-verify after the pair-setup procedure, this method is
    * not called on the initial pair-setup.
    *
    * Once this method has been called, the connection is authenticated and encryption is turned on.
@@ -762,7 +762,7 @@ export class HAPConnection extends EventEmitter {
 
   /**
    * This event handler is called when we receive data from a HomeKit controller on our tcp socket.
-   * We store the data if the internal http server is not read yet, or forward it to the http server.
+   * We store the data if the internal http server is not ready yet, or forward it to the http server.
    */
   private onTCPSocketData(data: Buffer): void {
     if (this.state > HAPConnectionState.AUTHENTICATED) {
@@ -824,7 +824,7 @@ export class HAPConnection extends EventEmitter {
 
   /**
    * This event handler is called when the internal http server receives a request.
-   * Meaning we received data from the HomeKit controller in {@link onTCPSocketData}, which then send the
+   * Meaning we received data from the HomeKit controller in {@link onTCPSocketData}, which then sent the
    * data unencrypted to the internal http server. And now it landed here, fully parsed as a http request.
    */
   private handleHttpServerRequest(request: IncomingMessage, response: ServerResponse): void {

@@ -35,7 +35,7 @@ export function awaitEventOnce<Obj extends EventEmitter, Event extends string, T
 
     timeoutId = setTimeout(() => {
       element.removeListener(event, resolveListener)
-      reject(new Error(`awaitEvent for event ${event} timed out!`))
+      reject(new Error(`awaitEventOnce for event ${event} timed out!`))
     }, timeout)
 
     element.once(event, resolveListener)

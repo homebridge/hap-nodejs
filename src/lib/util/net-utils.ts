@@ -46,13 +46,13 @@ export function findLoopbackAddress(): string {
   }
   return address
 }
-let loopbackAddress: string | undefined // loopback addressed used for the internal http server (::1 or 127.0.0.1)
+let loopbackAddress: string | undefined // loopback address used for the internal http server (::1 or 127.0.0.1)
 
 /**
  * Returns the loopback address for the machine.
  * Uses IPV4 loopback address by default and falls back to global unique IPv6 loopback and then
  * link local IPv6 loopback address.
- * If no loopback interface could be found a error is thrown.
+ * If no loopback interface could be found an error is thrown.
  *
  * @group Utils
  */
