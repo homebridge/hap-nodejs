@@ -640,16 +640,14 @@ export class Service extends EventEmitter {
       if (typeof name === 'string' && characteristic.displayName === name) {
         return characteristic
       } else {
-        // @ts-expect-error ('UUID' does not exist on type 'never')
-        if (typeof name === 'function' && ((characteristic instanceof name) || (name.UUID === characteristic.UUID))) {
+        if (typeof name === 'function' && ((name.UUID === characteristic.UUID) || (characteristic instanceof name))) {
           return characteristic
         }
       }
     }
     if (typeof name === 'function') {
       for (const characteristic of this.optionalCharacteristics) {
-        // @ts-expect-error ('UUID' does not exist on type 'never')
-        if ((characteristic instanceof name) || (name.UUID === characteristic.UUID)) {
+        if ((name.UUID === characteristic.UUID) || (characteristic instanceof name)) {
           return this.addCharacteristic(name)
         }
       }
@@ -671,8 +669,7 @@ export class Service extends EventEmitter {
       if (typeof name === 'string' && characteristic.displayName === name) {
         return true
       } else {
-        // @ts-expect-error ('UUID' does not exist on type 'never')
-        if (typeof name === 'function' && ((characteristic instanceof name) || (name.UUID === characteristic.UUID))) {
+        if (typeof name === 'function' && ((name.UUID === characteristic.UUID) || (characteristic instanceof name))) {
           return true
         }
       }
@@ -851,7 +848,7 @@ export class Service extends EventEmitter {
 
       const service: ServiceJsonObject = {
         type: toShortForm(this.UUID),
-        iid: this.iid!,
+        iid: this.iid,
         characteristics: [],
         hidden: this.isHiddenService ? true : undefined,
         primary: this.isPrimaryService ? true : undefined,
@@ -869,7 +866,7 @@ export class Service extends EventEmitter {
             debug(`iid of linked service '${linked.displayName}' ${linked.UUID} is undefined on service '${this.displayName}'`)
             continue
           }
-          service.linked.push(linked.iid!)
+          service.linked.push(linked.iid)
         }
       }
 
@@ -927,7 +924,7 @@ export class Service extends EventEmitter {
 
     const service: ServiceJsonObject = {
       type: toShortForm(this.UUID),
-      iid: this.iid!,
+      iid: this.iid,
       characteristics: this.characteristics.map(characteristic => characteristic.internalHAPRepresentation()),
       hidden: this.isHiddenService ? true : undefined,
       primary: this.isPrimaryService ? true : undefined,
@@ -945,7 +942,7 @@ export class Service extends EventEmitter {
           debug(`iid of linked service '${linked.displayName}' ${linked.UUID} is undefined on service '${this.displayName}'`)
           continue
         }
-        service.linked.push(linked.iid!)
+        service.linked.push(linked.iid)
       }
     }
 
