@@ -36,6 +36,33 @@ describe('hAPStorage', () => {
       expect(localStore2).toBe(localStore)
     })
 
+    it('should fail again, and not hand out an empty store, after the first init failed', () => {
+      fs.writeFileSync(path.join(storagePath, 'AccessoryInfo.AABBCCDDEEFF.json'), JSON.stringify({ displayName: 'Paired' }))
+      const storage = new HAPStorage()
+      storage.setCustomStoragePath(storagePath)
+
+      const readFileSync = vi.spyOn(fs, 'readFileSync').mockImplementation(() => {
+        throw Object.assign(new Error('EIO: i/o error, read'), { code: 'EIO' })
+      })
+      try {
+        expect(() => storage.storage()).toThrow('EIO')
+        expect(() => storage.storage()).toThrow('EIO') // returned a store with nothing loaded before
+      } finally {
+        readFileSync.mockRestore()
+      }
+
+      // once the files can be read, the saved data is there
+      expect(storage.storage().getItem('AccessoryInfo.AABBCCDDEEFF.json')).toEqual({ displayName: 'Paired' })
+    })
+
+    it('should refuse a relative custom path on every call', () => {
+      const storage = new HAPStorage()
+      storage.setCustomStoragePath('relative/dir')
+
+      expect(() => storage.storage()).toThrow()
+      expect(() => storage.storage()).toThrow() // fell back to "persist" in the working directory before
+    })
+
     it('should init into the default \'persist\' directory when no custom path was set', () => {
       const storage = new HAPStorage()
 
