@@ -486,6 +486,69 @@ describe('hAPServer', () => {
     })
   })
 
+  describe('pairing requests with a missing or malformed key', () => {
+    function expectPairingError(response: { statusCode: number, headers: Record<string, string>, body: Buffer }, state: PairingStates): void {
+      expect(response.statusCode).toBe(HAPPairingHTTPCode.OK)
+      expect(response.headers['Content-Type']).toEqual(HAPMimeTypes.PAIRING_TLV8)
+      const objects = tlv.decode(response.body)
+      expect(objects[TLVValues.STATE].readUInt8(0)).toEqual(state)
+      expect(objects[TLVValues.ERROR_CODE].readUInt8(0)).toEqual(TLVErrorCode.UNKNOWN)
+    }
+
+    it.each([
+      [
+        'no public key',
+        tlv.encode(TLVValues.STATE, PairingStates.M1),
+      ],
+      [
+        'a public key of 5 bytes',
+        tlv.encode(TLVValues.STATE, PairingStates.M1, TLVValues.PUBLIC_KEY, Buffer.alloc(5, 1)),
+      ],
+    ])('/pair-verify M1 with %s should be answered with a pairing error', async (_name, body) => {
+      server = new HAPServer(accessoryInfoPaired)
+      const [port] = await bindServer(server)
+      const client = await connectClient(port)
+
+      const response = await client.writeHTTPRequest('POST', '/pair-verify', body, { contentType: HAPMimeTypes.PAIRING_TLV8 })
+
+      expect(response.statusCode).not.toBe(HAPHTTPCode.INTERNAL_SERVER_ERROR)
+      expectPairingError(response, PairingStates.M2)
+    })
+
+    it.each([
+      [
+        'no public key',
+        tlv.encode(TLVValues.STATE, PairingStates.M3, TLVValues.PASSWORD_PROOF, Buffer.alloc(64, 1)),
+      ],
+      [
+        'no proof',
+        tlv.encode(TLVValues.STATE, PairingStates.M3, TLVValues.PUBLIC_KEY, Buffer.alloc(384, 1)),
+      ],
+      [
+        'a public key of only zero bytes',
+        tlv.encode(
+          TLVValues.STATE,
+          PairingStates.M3,
+          TLVValues.PUBLIC_KEY,
+          Buffer.alloc(384),
+          TLVValues.PASSWORD_PROOF,
+          Buffer.alloc(64, 1),
+        ),
+      ],
+    ])('/pair-setup M3 with %s should be answered with a pairing error', async (_name, body) => {
+      server = new HAPServer(accessoryInfoUnpaired)
+      const [port] = await bindServer(server)
+      const client = await connectClient(port)
+      await new PairSetupClient(client).sendM1()
+
+      const response = await client.writeHTTPRequest('POST', '/pair-setup', body, { contentType: HAPMimeTypes.PAIRING_TLV8 })
+
+      expectPairingError(response, PairingStates.M4)
+      // @ts-expect-error: private access
+      expect(server.unsuccessfulPairAttempts).toBe(0) // only a wrong pincode counts as an attempt
+    })
+  })
+
   describe('malformed JSON bodies', () => {
     it.each([
       ['PUT', '/prepare', '{'],

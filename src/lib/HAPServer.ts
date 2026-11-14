@@ -603,7 +603,18 @@ export class HAPServer extends EventEmitter {
     const M1 = tlvData[TLVValues.PASSWORD_PROOF] // "M1 is the proof that you actually know your own password."
     // pull the SRP server we created in stepOne out of the current session
     const srpServer = connection.srpServer!
-    srpServer.setA(A)
+    try {
+      if (!A || !M1) {
+        throw new Error('the public key or the proof is missing')
+      }
+      srpServer.setA(A) // throws for a key the SRP exchange can not use, like one of only zero bytes
+    } catch (err) {
+      debug('[%s] M3: Invalid request: %s', this.accessoryInfo.username, err.message)
+      response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
+      response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M4, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
+      connection._pairSetupState = undefined
+      return
+    }
     try {
       srpServer.checkM1(M1)
     } catch (err) {
@@ -782,6 +793,13 @@ export class HAPServer extends EventEmitter {
   private handlePairVerifyM1(connection: HAPConnection, request: IncomingMessage, response: ServerResponse, tlvData: Record<number, Buffer>): void {
     debug('[%s] Pair verify step 1/2', this.accessoryInfo.username)
     const clientPublicKey = tlvData[TLVValues.PUBLIC_KEY] // Buffer
+    if (!clientPublicKey || clientPublicKey.length !== 32) {
+      debug('[%s] M1: The Curve25519 public key is missing or does not have 32 bytes', this.accessoryInfo.username)
+      response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
+      response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M2, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
+      connection._pairVerifyState = undefined
+      return
+    }
     // generate new encryption keys for this session
     const keyPair = hapCrypto.generateCurve25519KeyPair()
     const secretKey = Buffer.from(keyPair.secretKey)
