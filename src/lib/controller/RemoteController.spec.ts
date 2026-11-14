@@ -376,6 +376,31 @@ describe('remoteController', () => {
       ])
     })
 
+    it('should not take a message without a stream id for a session which is still starting', () => {
+      const { session, open } = createSession()
+      const closed = vi.fn()
+      session.on('close', closed)
+      const controller = createController()
+      // @ts-expect-error: private access
+      controller.activeAudioSession = session
+
+      // @ts-expect-error: private access
+      expect(() => controller.handleDataSendAckEvent({ endOfStream: true })).not.toThrow()
+      // @ts-expect-error: private access
+      controller.handleDataSendCloseEvent({ reason: 0 })
+      expect(closed).not.toHaveBeenCalled()
+
+      // an acknowledgment which does not report the end of the stream is ignored as well
+      open()
+      // @ts-expect-error: private access
+      expect(() => controller.handleDataSendAckEvent({ streamId: 1, endOfStream: false })).not.toThrow()
+      expect(closed).not.toHaveBeenCalled()
+
+      // @ts-expect-error: private access
+      controller.handleDataSendAckEvent({ streamId: 1, endOfStream: true })
+      expect(closed).toHaveBeenCalledTimes(1)
+    })
+
     it('should stop sending and stay closed after a packet could not be sent', () => {
       const { session, connection, stopAudioProduction, produce, open } = createSession()
       const closed = vi.fn()

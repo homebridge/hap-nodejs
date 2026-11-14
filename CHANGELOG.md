@@ -50,6 +50,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(remote): send every queued siri audio frame when the stream opens and when it ends
 - fix(remote): stop sending siri audio and stay closed after a packet could not be sent
 - fix(remote): do not mark the remote as active when its active target is not configured
+- fix(remote): ignore a siri audio message without a stream id while a session is starting
 
 ### Homebridge Dependencies
 
