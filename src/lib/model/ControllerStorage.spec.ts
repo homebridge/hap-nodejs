@@ -249,6 +249,36 @@ describe('controllerStorage', () => {
     expect(HAPStorage.storage().getItem(ControllerStorage.persistKey(username))).toBeUndefined()
   })
 
+  it('restores the stored data again on a second load in the same process', () => {
+    const username = 'AA:BB:CC:00:00:07'
+    const accessoryUUID = uuid.generate('controller-storage-loaded-twice')
+    const stored = {
+      accessories: {
+        [accessoryUUID]: [
+          {
+            type: 'stepped',
+            controllerData: {
+              data: { first: 'a', second: 'b' },
+            },
+          },
+        ],
+      },
+    }
+    HAPStorage.storage().setItemSync(ControllerStorage.persistKey(username), stored)
+
+    // the same accessory, created and published again without a restart
+    for (let run = 0; run < 2; run++) {
+      const accessory = new Accessory('Accessory', accessoryUUID)
+      const controller = new SteppedController()
+      accessory.controllerStorage.trackController(controller)
+      accessory.controllerStorage.load(username)
+
+      expect(controller.state).toEqual({ first: 'a', second: 'b' })
+    }
+
+    expect(HAPStorage.storage().getItem(ControllerStorage.persistKey(username)).accessories[accessoryUUID]).toBeDefined()
+  })
+
   it('controller data cleared after it was saved once is not saved again', () => {
     const username = 'AA:BB:CC:00:00:06'
     const accessoryUUID = uuid.generate('controller-storage-saved-then-cleared-child')

@@ -25,6 +25,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(characteristic): accept the maximum of a float characteristic whose step does not divide evenly
 - fix(characteristic): keep a write response of 0, false or an empty string
 - fix(controller-storage): stop saving cleared controller data again after an earlier save
+- fix(controller-storage): restore the stored data again on a second load in one process
 
 ### Homebridge Dependencies
 
