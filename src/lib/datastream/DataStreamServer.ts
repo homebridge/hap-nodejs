@@ -577,11 +577,12 @@ export class DataStreamServer extends EventEmitter {
   }
 
   private checkCloseable() {
-    if (this.connections.length === 0 && this.preparedSessions.length === 0 && this.state < ServerState.CLOSING) {
+    // without a TCP server (it never started, or failed to listen) there is nothing to close
+    if (this.tcpServer && this.connections.length === 0 && this.preparedSessions.length === 0 && this.state < ServerState.CLOSING) {
       debug('Last connection disconnected. Closing the server now.')
 
       this.state = ServerState.CLOSING
-      this.tcpServer!.close()
+      this.tcpServer.close()
     }
   }
 
@@ -589,16 +590,21 @@ export class DataStreamServer extends EventEmitter {
    * This method will fully stop the DataStreamServer
    */
   public destroy(): void {
-    if (this.state > ServerState.UNINITIALIZED && this.state < ServerState.CLOSING) {
-      this.tcpServer!.close()
+    if (this.tcpServer && this.state < ServerState.CLOSING) {
+      // Only a TCP server reports `close`, which is what leaves the closing state again.
+      // A server which never started would stay in it for ever, and could not prepare a session anymore.
+      this.state = ServerState.CLOSING
+      this.tcpServer.close()
       for (const connection of this.connections) {
         connection.close()
       }
     }
 
-    this.state = ServerState.CLOSING
-
-    this.removeListenersOnceClosed = true
+    if (this.connections.length > 0) {
+      this.removeListenersOnceClosed = true // the connections still have to report that they closed
+    } else {
+      this.removeAllListeners()
+    }
     this.internalEventEmitter.removeAllListeners()
   }
 

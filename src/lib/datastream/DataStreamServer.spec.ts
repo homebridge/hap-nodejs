@@ -11,7 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import * as hapCrypto from '../util/hapCrypto.js'
 import { DataStreamParser, DataStreamReader, DataStreamWriter } from './DataStreamParser.js'
-import { DataStreamServer, HDSStatus } from './DataStreamServer.js'
+import { DataStreamServer, DataStreamServerEvent, HDSStatus } from './DataStreamServer.js'
 
 class FakeSocket extends EventEmitter {
   remoteAddress = '192.0.2.1'
@@ -84,6 +84,15 @@ function messagePayload(header: Record<string, unknown>, message: unknown = {}):
 }
 
 describe('dataStreamServer', () => {
+  function hapConnection(): HAPConnection {
+    return {
+      sessionID: 'test-session',
+      encryption: {
+        sharedSecret: crypto.randomBytes(32),
+      },
+    } as unknown as HAPConnection
+  }
+
   beforeEach(() => {
     vi.useFakeTimers()
   })
@@ -93,15 +102,6 @@ describe('dataStreamServer', () => {
   })
 
   describe('tcp server errors', () => {
-    function hapConnection(): HAPConnection {
-      return {
-        sessionID: 'test-session',
-        encryption: {
-          sharedSecret: crypto.randomBytes(32),
-        },
-      } as unknown as HAPConnection
-    }
-
     it('should answer the waiting sessions with the error when the server can not listen', () => {
       const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
       try {
@@ -147,6 +147,44 @@ describe('dataStreamServer', () => {
       } finally {
         warn.mockRestore()
       }
+    })
+  })
+
+  describe('destroy of a server which never started', () => {
+    it('should still prepare a session afterwards', async () => {
+      vi.useRealTimers()
+      const server = new DataStreamServer()
+
+      server.destroy()
+      expect((server as any).state).toBe(0) // not closing: there is no tcp server which could report that it closed
+
+      const session = await new Promise<PreparedDataStreamSession | undefined>((resolve, reject) => {
+        server.prepareSession(hapConnection(), crypto.randomBytes(32), (error, prepared) => error
+          ? reject(error)
+          : resolve(prepared))
+      })
+      expect(session?.port).toBeGreaterThan(0)
+
+      server.destroy()
+      clearTimeout(session?.connectTimeout)
+    })
+
+    it('should remove all listeners', () => {
+      const server = new DataStreamServer()
+      server.on(DataStreamServerEvent.CONNECTION_OPENED, () => undefined)
+      server.onRequestMessage('control', 'hello', () => undefined)
+
+      server.destroy()
+
+      expect(server.listenerCount(DataStreamServerEvent.CONNECTION_OPENED)).toBe(0)
+      expect((server as any).internalEventEmitter.eventNames()).toEqual([])
+    })
+
+    it('should not try to close a tcp server which does not exist when the last prepared session timed out', () => {
+      const server = new DataStreamServer()
+
+      expect(() => (server as any).checkCloseable()).not.toThrow()
+      expect((server as any).state).toBe(0)
     })
   })
 
