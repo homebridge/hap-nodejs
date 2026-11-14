@@ -824,7 +824,7 @@ describe('accessory', () => {
 
       await accessory.publish(publishInfo)
 
-      expect(accessory.displayName.startsWith(TEST_DISPLAY_NAME))
+      expect(accessory.displayName.startsWith(TEST_DISPLAY_NAME)).toBe(true)
       expect(accessory.displayName.length).toEqual(TEST_DISPLAY_NAME.length + 1 + 4) // added hash!
 
       await awaitEventOnce(accessory, AccessoryEventTypes.ADVERTISED)
@@ -861,7 +861,7 @@ describe('accessory', () => {
 
       await accessory.publish(publishInfo)
 
-      expect(accessory.displayName.startsWith(TEST_DISPLAY_NAME))
+      expect(accessory.displayName.startsWith(TEST_DISPLAY_NAME)).toBe(true)
       expect(accessory.displayName.length).toEqual(TEST_DISPLAY_NAME.length + 1 + 4) // added hash!
 
       await awaitEventOnce(accessory, AccessoryEventTypes.ADVERTISED)

@@ -118,10 +118,7 @@ export default antfu(
       'test/prefer-called-exactly-once-with': 'error',
       'test/require-local-test-context-for-concurrent-snapshots': 'error',
       'test/valid-describe-callback': 'error',
-      // Off due to an upstream false positive in @vitest/eslint-plugin: it misreads the
-      // `expect.any()` asymmetric matcher as an invalid `.any` chai chain and reports
-      // "Expect has an unknown modifier". Re-enable if that bug is fixed upstream.
-      'test/valid-expect': 'off',
+      'test/valid-expect': 'error',
       'test/valid-expect-in-promise': 'error',
       'test/valid-title': 'error',
     },
