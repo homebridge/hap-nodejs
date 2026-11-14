@@ -352,6 +352,37 @@ describe('remoteController', () => {
       ])
     })
 
+    it('should stop sending and stay closed after a packet could not be sent', () => {
+      const { session, connection, stopAudioProduction, produce, open } = createSession()
+      const closed = vi.fn()
+      session.on('close', closed)
+      connection.sendEvent.mockImplementation(() => {
+        throw new Error('could not encode the message')
+      })
+
+      produce(24) // while the stream is still being opened
+      open()
+
+      expect(connection.sendEvent).toHaveBeenCalledTimes(1)
+      expect(stopAudioProduction).toHaveBeenCalledTimes(1)
+      expect(closed).toHaveBeenCalledTimes(1)
+      expect(session.isClosing()).toBe(true)
+    })
+
+    it('should stay closed when the last packet could not be sent on stop', () => {
+      const { session, connection, stopAudioProduction, produce, open } = createSession()
+      open()
+      produce(2)
+      connection.sendEvent.mockImplementation(() => {
+        throw new Error('could not encode the message')
+      })
+
+      session.stop()
+
+      expect(stopAudioProduction).toHaveBeenCalledTimes(1)
+      expect(session.state).toBe(3) // SiriAudioSessionState.CLOSED, and not back to CLOSING
+    })
+
     it('should stop the audio producer when the controller refuses the stream', async () => {
       const startAudioProduction = vi.fn()
       const stopAudioProduction = vi.fn()

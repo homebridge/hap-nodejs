@@ -1598,7 +1598,9 @@ export class SiriAudioSession extends EventEmitter {
     if (this.state === SiriAudioSessionState.SENDING) {
       this.handleSiriAudioFrame(undefined) // send out last few audio frames with endOfStream property set
 
-      this.state = SiriAudioSessionState.CLOSING // we are waiting for an acknowledgment (triggered by endOfStream property)
+      if (this.state === SiriAudioSessionState.SENDING) { // sending them might have failed and closed the session
+        this.state = SiriAudioSessionState.CLOSING // we are waiting for an acknowledgment (triggered by endOfStream property)
+      }
     } else { // if state is not SENDING (aka state is STARTING) the callback for DATA_SEND OPEN did not yet return (or never will)
       this.closed()
     }
@@ -1679,8 +1681,11 @@ export class SiriAudioSession extends EventEmitter {
       } catch (error) {
         debug('Error occurred when trying to send audio frame of hds connection: %s', error.message)
 
-        this.stopAudioProducer()
+        if (this.producerRunning) {
+          this.stopAudioProducer()
+        }
         this.closed()
+        return // the session is closed, nothing more is to be sent
       }
 
       if (lastPacket) {
