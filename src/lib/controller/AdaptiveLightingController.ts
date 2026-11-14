@@ -1080,11 +1080,11 @@ export class AdaptiveLightingController
 
     return tlv.encode(SupportedCharacteristicValueTransitionConfigurationsTypes.SUPPORTED_TRANSITION_CONFIGURATION, [
       tlv.encode(
-        SupportedValueTransitionConfigurationTypes.CHARACTERISTIC_IID, tlv.writeVariableUIntLE(brightnessIID!),
+        SupportedValueTransitionConfigurationTypes.CHARACTERISTIC_IID, tlv.writeVariableUIntLE(brightnessIID),
         SupportedValueTransitionConfigurationTypes.TRANSITION_TYPE, TransitionType.BRIGHTNESS,
       ),
       tlv.encode(
-        SupportedValueTransitionConfigurationTypes.CHARACTERISTIC_IID, tlv.writeVariableUIntLE(temperatureIID!),
+        SupportedValueTransitionConfigurationTypes.CHARACTERISTIC_IID, tlv.writeVariableUIntLE(temperatureIID),
         SupportedValueTransitionConfigurationTypes.TRANSITION_TYPE, TransitionType.COLOR_TEMPERATURE,
       ),
     ]).toString('base64')
@@ -1113,7 +1113,7 @@ export class AdaptiveLightingController
     }
 
     const status = tlv.encode(
-      ValueTransitionConfigurationStatusTypes.CHARACTERISTIC_IID, tlv.writeVariableUIntLE(active.iid!),
+      ValueTransitionConfigurationStatusTypes.CHARACTERISTIC_IID, tlv.writeVariableUIntLE(active.iid),
       ValueTransitionConfigurationStatusTypes.TRANSITION_PARAMETERS, parameters,
       ValueTransitionConfigurationStatusTypes.TIME_SINCE_START, timeSinceStartBuffer,
     )

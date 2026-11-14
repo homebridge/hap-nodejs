@@ -106,6 +106,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(storage): type the saved accessory info and drop two ts-expect-error
 - refactor(advertiser): drop two needless non-null assertions in the ciao advertiser
 - refactor(camera): drop two needless non-null assertions in the stream management
+- refactor(controller): drop needless non-null assertions in the adaptive lighting controller
 
 ### Homebridge Dependencies
 
