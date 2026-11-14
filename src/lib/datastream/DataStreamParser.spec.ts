@@ -2,7 +2,7 @@ import { Buffer } from 'node:buffer'
 
 import { describe, expect, it } from 'vitest'
 
-import { DataStreamParser, DataStreamReader, DataStreamWriter, Float64 } from './DataStreamParser.js'
+import { DataStreamParser, DataStreamReader, DataStreamWriter, Float64, Int64 } from './DataStreamParser.js'
 
 describe('dataStreamParser', () => {
   describe('writeNumber Int32 range check', () => {
@@ -44,6 +44,29 @@ describe('dataStreamParser', () => {
 
       const reader = new DataStreamReader(data)
       expect(DataStreamParser.decode(reader)).toBe(-2147483648)
+    })
+
+    it.each([
+      4294967295,
+      4294967296,
+      -2147483649,
+      -4294967297,
+      Number.MAX_SAFE_INTEGER,
+      Number.MIN_SAFE_INTEGER,
+    ])('should encode %d as Int64 and decode it again', (value) => {
+      const writer = new DataStreamWriter()
+      writer.writeNumber(value)
+      const data = writer.getData()
+
+      expect(data.length).toBe(9) // 1 tag byte + 8 data bytes
+      expect(DataStreamParser.decode(new DataStreamReader(data))).toBe(value)
+    })
+
+    it('should encode a negative number wrapped in Int64', () => {
+      const writer = new DataStreamWriter()
+      writer.writeInt64LE(new Int64(-5))
+
+      expect(DataStreamParser.decode(new DataStreamReader(writer.getData()))).toBe(-5)
     })
 
     it('should encode numbers beyond Int32 range as Int64', () => {
