@@ -20,6 +20,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(datastream): encode integers that need more than 32 bits instead of throwing
 - fix(accessory): report an invalid configuration change instead of throwing from a timer
 - fix(camera): free a recording stream whose open response can not be sent instead of crashing
+- fix(datastream): report an error of the data stream tcp server instead of crashing
 
 ### Homebridge Dependencies
 
