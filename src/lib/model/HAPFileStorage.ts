@@ -140,15 +140,17 @@ export class HAPFileStorage {
   /**
    * Returns the in-memory value for the given key.
    * node-persist's legacy `getItem(key, callback)` form throws, like every other removed API.
+   *
+   * The value is whatever was stored, or read from the file, under this key. Name the type you expect with `T`
+   * and check it before relying on it; without `T` the value is typed as `any`, like node-persist did.
    */
-
-  getItem(key: string, ...legacyCallback: never[]): any {
+  getItem<T = any>(key: string, ...legacyCallback: never[]): T | undefined {
     if (legacyCallback.length > 0) {
       throw new Error('getItem() with a callback is not supported anymore: HAP-NodeJS replaced node-persist with a minimal file storage '
         + `which only implements ${SUPPORTED_METHODS} (see https://github.com/homebridge/HAP-NodeJS/issues/1107).`)
     }
 
-    return this.data.get(key)
+    return this.data.get(key) as T | undefined
   }
 
   /**
