@@ -103,6 +103,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(utils): drop the Node 18 numeric address family checks and their ts-expect-error
 - refactor(camera): type the legacy SRTP options check instead of using any
 - refactor(camera): close the recording generator without a ts-expect-error
+- refactor(storage): type the saved accessory info and drop two ts-expect-error
 
 ### Homebridge Dependencies
 
