@@ -22,15 +22,19 @@ export class HAPStorage {
 
   public storage(): HAPFileStorage {
     if (!this.localStore) {
-      this.localStore = new HAPFileStorage()
+      const localStore = new HAPFileStorage()
 
       if (this.customStoragePath) {
-        this.localStore.initSync({
+        localStore.initSync({
           dir: this.customStoragePath,
         })
       } else {
-        this.localStore.initSync()
+        localStore.initSync()
       }
+
+      // Only kept once it has read its files. A store whose init failed has nothing loaded, and returning it
+      // on the next call would make a paired accessory look new, and its saved identity be overwritten.
+      this.localStore = localStore
 
       this.checkStorageIsWritable()
     }
