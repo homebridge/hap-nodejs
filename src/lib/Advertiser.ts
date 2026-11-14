@@ -119,6 +119,8 @@ export class CiaoAdvertiser extends EventEmitter implements Advertiser {
   private readonly responder: Responder
   private readonly advertisedService: CiaoService
 
+  private destroyPromise?: Promise<void>
+
   constructor(accessoryInfo: AccessoryInfo, responderOptions?: MDNSServerOptions, serviceOptions?: ServiceNetworkOptions) {
     super()
     this.accessoryInfo = accessoryInfo
@@ -154,8 +156,15 @@ export class CiaoAdvertiser extends EventEmitter implements Advertiser {
     this.advertisedService!.updateTxt(txt, silent)
   }
 
-  public async destroy(): Promise<void> {
-    // advertisedService.destroy(); is called implicitly via the shutdown call
+  public destroy(): Promise<void> {
+    this.destroyPromise ??= this.destroyService()
+    return this.destroyPromise
+  }
+
+  private async destroyService(): Promise<void> {
+    // The responder is shared with every other advertiser created with the same options, and its shutdown()
+    // only does something for the last one of them. So the service must send its goodbye on its own first.
+    await this.advertisedService.destroy()
     await this.responder.shutdown()
     this.removeAllListeners()
   }
