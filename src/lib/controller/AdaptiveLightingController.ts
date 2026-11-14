@@ -1037,7 +1037,7 @@ export class AdaptiveLightingController
     this.transitionControl = undefined
     this.activeTransitionCount = undefined
 
-    this.removeAllListeners()
+    // The listeners stay: they belong to the plugin, and the controller must work when it is added again.
   }
 
   /**
