@@ -486,6 +486,36 @@ describe('hAPServer', () => {
     })
   })
 
+  describe('malformed JSON bodies', () => {
+    it.each([
+      ['PUT', '/prepare', '{'],
+      ['PUT', '/prepare', 'null'],
+      ['PUT', '/prepare', '[]'],
+      ['POST', '/resource', 'nope'],
+      ['POST', '/resource', '"text"'],
+      ['PUT', '/characteristics', '{"characteristics":'],
+      ['PUT', '/characteristics', '{}'],
+      ['PUT', '/characteristics', '{"characteristics":{}}'],
+    ] as const)('%s %s with body %s should be answered with an invalid value status', async (method, route, body) => {
+      // a pincode without the leading whitespace of the fixture, which can't be sent in a header
+      const info = AccessoryInfo.create(serverUsername)
+      info.displayName = 'Outlet'
+      info.category = 7
+      info.pincode = '031-45-154'
+      server = new HAPServer(info)
+      server.allowInsecureRequest = true
+      const [port] = await bindServer(server)
+      const client = await connectClient(port)
+
+      const response = await client.writeHTTPRequest(method, route, Buffer.from(body), {
+        headers: { authorization: info.pincode },
+      })
+
+      expect(response.statusCode).toBe(HAPHTTPCode.BAD_REQUEST)
+      expect(JSON.parse(response.body.toString())).toEqual({ status: HAPStatus.INVALID_VALUE_IN_REQUEST })
+    })
+  })
+
   describe('error argument in pairing debug logs (fix f12ed233)', () => {
     let originalEnable: string
     let originalLog: (...args: unknown[]) => void
