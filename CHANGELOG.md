@@ -69,6 +69,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(characteristic): keep the value of a string characteristic which is given no string
 - fix(camera): keep the SRTP keys of a stream out of the debug log
 - build: stop publishing the example accessories and the definitions generator
+- fix(hap-status-error): let it be subclassed and name it HapStatusError
 
 ### Homebridge Dependencies
 

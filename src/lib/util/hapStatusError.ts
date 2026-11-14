@@ -16,7 +16,7 @@ export class HapStatusError extends Error {
   constructor(status: HAPStatus) {
     super(`HAP Status Error: ${status}`)
 
-    Object.setPrototypeOf(this, HapStatusError.prototype)
+    this.name = 'HapStatusError'
 
     if (IsKnownHAPStatusError(status)) {
       this.hapStatus = status
