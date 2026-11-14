@@ -977,9 +977,10 @@ export class CameraController extends EventEmitter implements SerializableContro
    */
   handleSnapshotRequest(height: number, width: number, accessoryName?: string, reason?: ResourceRequestReason): Promise<Buffer> {
     // first step is to verify that the reason is applicable to our current policy
-    const streamingDisabled = this.streamManagements
-      .map(management => !management.getService().getCharacteristic(Characteristic.Active).value)
-      .reduce((previousValue, currentValue) => previousValue && currentValue)
+    // disabled if every stream is switched off. Without any stream (e.g. after the controller was removed) nothing is
+    // switched off, and a reduce() without a start value would throw.
+    const streamingDisabled = this.streamManagements.length > 0
+      && this.streamManagements.every(management => !management.getService().getCharacteristic(Characteristic.Active).value)
     if (streamingDisabled) {
       debug('[%s] Rejecting snapshot as streaming is disabled.', accessoryName)
       return Promise.reject(HAPStatus.NOT_ALLOWED_IN_CURRENT_STATE)
