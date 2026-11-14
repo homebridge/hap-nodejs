@@ -86,6 +86,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(camera): type caught errors as unknown in the camera code
 - refactor(datastream): type caught errors as unknown in the data stream server
 - refactor(controller): type caught errors as unknown in the remote and adaptive lighting controllers
+- refactor: type caught errors as unknown everywhere by dropping useUnknownInCatchVariables: false
 
 ### Homebridge Dependencies
 

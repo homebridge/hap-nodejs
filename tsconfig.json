@@ -6,7 +6,6 @@
     "module": "NodeNext",
     "moduleResolution": "node16",
     "strict": true,
-    "useUnknownInCatchVariables": false,
     "declaration": true,
     "declarationMap": true,
     "importHelpers": true,
