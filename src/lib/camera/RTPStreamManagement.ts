@@ -333,7 +333,7 @@ export interface AudioStreamingCodec {
   type: AudioStreamingCodecType | string // string type for backwards compatibility
   audioChannels?: number // default 1
   bitrate?: AudioBitrate // default VARIABLE, AAC-ELD or OPUS MUST support VARIABLE bitrate
-  samplerate: AudioStreamingSamplerate[] | AudioStreamingSamplerate // OPUS or AAC-ELD must support samplerate at 16k and 25k
+  samplerate: AudioStreamingSamplerate[] | AudioStreamingSamplerate // OPUS or AAC-ELD must support samplerate at 16k and 24k
 }
 
 /**
@@ -645,7 +645,7 @@ export class RTPStreamManagement {
     this.resetSetupEndpointsResponse()
 
     this.service.updateCharacteristic(Characteristic.Active, true)
-    // on a factory reset the assumption is that all connections were already terminated and thus "handleStopStream" was already called
+    // on a factory reset the assumption is that all connections were already terminated and thus "_handleStopStream" was already called
   }
 
   public destroy(): void {
