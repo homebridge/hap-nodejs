@@ -88,9 +88,9 @@ export interface Advertiser {
 
   startAdvertising(): Promise<void>
 
-  updateAdvertisement(silent?: boolean): void
+  updateAdvertisement(silent?: boolean): void | Promise<void>
 
-  destroy(): void
+  destroy(): void | Promise<void>
 
   on(event: 'updated-name', listener: (name: string) => void): this
 
