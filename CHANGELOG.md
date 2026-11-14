@@ -31,6 +31,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix: restore a custom class named like a hap definition with its own uuid
 - fix(server): answer a failed pair-setup M5 with state M6
 - fix(server): answer a malformed JSON body with 400 and an invalid value status
+- fix(server): answer a pairing request with a missing or malformed key with a pairing error
 
 ### Homebridge Dependencies
 
