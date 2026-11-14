@@ -119,6 +119,31 @@ describe('bonjourHAPAdvertiser', () => {
     return result
   }
 
+  it('should warn about a name with a dot, and only then', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    try {
+      const plain = advertiser()
+      await plain.startAdvertising()
+      expect(warn).not.toHaveBeenCalled()
+
+      const info = AccessoryInfo.create('AA:BB:CC:DD:EE:05')
+      info.displayName = 'Bridge 1.2'
+      const dotted = new BonjourHAPAdvertiser(info)
+      dotted.initPort(51826)
+      await dotted.startAdvertising()
+
+      expect(warn).toHaveBeenCalledTimes(1)
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('[Bridge 1.2] The name contains a dot'))
+
+      // the ciao advertiser handles a dot itself, so it stays quiet
+      const ciaoAdvertiser = new CiaoAdvertiser(info)
+      await ciaoAdvertiser.destroy()
+      expect(warn).toHaveBeenCalledTimes(1)
+    } finally {
+      warn.mockRestore()
+    }
+  })
+
   it('should keep the new advertisement when advertising is started a second time', async () => {
     const instance = advertiser()
     const bonjour = (instance as any).bonjour

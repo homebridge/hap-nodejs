@@ -11,6 +11,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - feat: add the homekit definitions from apple's v891 metadata
 - fix(advertiser): stop advertising an unpublished accessory while others share the ciao responder
 - fix(advertiser): keep a restarted bonjour-hap advertisement and wait for the goodbye on destroy
+- fix(advertiser): warn when a name with a dot is used with the bonjour-hap advertiser
 
 ### Homebridge Dependencies
 
