@@ -16,6 +16,7 @@ import {
   EventHandler,
   HDSConnectionError,
   HDSConnectionErrorType,
+  HDSMessage,
   HDSProtocolError,
   HDSProtocolSpecificErrorReason,
   HDSStatus,
@@ -553,7 +554,7 @@ export class RecordingManagement {
       .onRequestMessage(Protocols.DATA_SEND, Topics.OPEN, this.handleDataSendOpen.bind(this))
   }
 
-  private handleDataSendOpen(connection: DataStreamConnection, id: number, message: Record<any, any>) {
+  private handleDataSendOpen(connection: DataStreamConnection, id: number, message: HDSMessage) {
     // for message fields see https://github.com/Supereg/secure-video-specification#41-start
     const streamId: number = message.streamId
     const type: string = message.type
@@ -1162,7 +1163,7 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
     debug('[HDS %s] Finished DATA_SEND transmission for stream %d!', this.connection.remoteAddress, this.streamId)
   }
 
-  private handleDataSendAck(message: Record<any, any>) {
+  private handleDataSendAck(message: HDSMessage) {
     const streamId: number = message.streamId
     const endOfStream: boolean = message.endOfStream
 
@@ -1179,7 +1180,7 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
     this.handleClosed(() => this.delegate.acknowledgeStream?.(this.streamId))
   }
 
-  private handleDataSendClose(message: Record<any, any>) {
+  private handleDataSendClose(message: HDSMessage) {
     // see https://github.com/Supereg/secure-video-specification#43-close
     const streamId: number = message.streamId
     const reason: HDSProtocolSpecificErrorReason = message.reason
