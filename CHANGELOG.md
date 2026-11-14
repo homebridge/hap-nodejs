@@ -176,6 +176,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - docs(typedoc): drop the stale MulticastOptions entry from the typedoc config
 - fix(core): log the start of the library under the debug name HAP-NodeJS:Init, not Advertiser
 - build: set moduleResolution to NodeNext like module and drop three options which are defaults now
+- build: drop the importHelpers option which does nothing at target ES2022
 
 ### Homebridge Dependencies
 
