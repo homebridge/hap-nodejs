@@ -639,7 +639,7 @@ export class RTPStreamManagement {
         options.srtp ? SRTPCryptoSuites.AES_CM_128_HMAC_SHA1_80 : SRTPCryptoSuites.NONE,
       ]
     } else {
-      this.supportedCryptoSuites = options.supportedCryptoSuites
+      this.supportedCryptoSuites = [...options.supportedCryptoSuites] // a copy: the options belong to the plugin, and are shared by all streams
     }
 
     if (this.supportedCryptoSuites.length === 0) {
@@ -1518,7 +1518,9 @@ export class RTPStreamManagement {
     // for it to start the video stream.
 
     const comfortNoise = audioOptions && !!audioOptions.comfort_noise
-    const supportedCodecs: AudioStreamingCodec[] = (audioOptions && audioOptions.codecs) || []
+    // Copies of the list and of its entries: both are changed below, and the options belong to the plugin.
+    // They are also shared by all streams of a camera, so a codec added for one stream would be real for the next.
+    const supportedCodecs: AudioStreamingCodec[] = (audioOptions?.codecs ?? []).map(codec => ({ ...codec }))
     this.checkForLegacyAudioCodecRepresentation(supportedCodecs)
 
     if (supportedCodecs.length === 0) { // Fake a Codec if we haven't got anything
