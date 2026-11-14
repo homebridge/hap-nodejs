@@ -36,6 +36,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(tlv): reject a truncated entry in decodeList instead of cutting it short
 - fix(server): accept a prepare write request with pid 0 and refuse a pid that is not a number
 - fix(accessory): refuse to bridge a second accessory with the same uuid
+- fix(accessory): build the setup uri again when the accessory is published again
 
 ### Homebridge Dependencies
 

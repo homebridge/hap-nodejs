@@ -539,6 +539,27 @@ describe('accessory', () => {
       }
     })
 
+    it('should build the setup URI again when it is published again with another pincode', async () => {
+      const publishInfo: PublishInfo = {
+        username: 'AB:CD:EF:00:11:99',
+        pincode: '123-45-678',
+        category: Categories.SWITCH,
+        advertiser: MDNSAdvertiser.BONJOUR,
+        setupID: 'ABCD',
+      }
+
+      await accessory.publish(publishInfo)
+      const first = accessory.setupURI()
+      await accessory.unpublish()
+
+      await accessory.publish({ ...publishInfo, pincode: '876-54-321', setupID: 'WXYZ' })
+      const second = accessory.setupURI()
+
+      expect(first).toMatch(/^X-HM:\/\/.*ABCD$/)
+      expect(second).toMatch(/^X-HM:\/\/.*WXYZ$/)
+      expect(second).not.toEqual(first)
+    })
+
     describe('a configuration change that is still pending at destroy', () => {
       // an advertiser whose goodbye takes longer than the one second the configuration update waits
       function publishedWithSlowAdvertiser(): { updateAdvertisement: Mock } {

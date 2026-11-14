@@ -1288,6 +1288,7 @@ export class Accessory extends EventEmitter {
     }
 
     this._accessoryInfo.setupID = this._setupID
+    this._setupURI = undefined // built from the pincode, the category and the setup id, which may all differ from the last publish
 
     // make sure we have up-to-date values in AccessoryInfo, then save it in case they changed (or if we just created it)
     this._accessoryInfo.displayName = this.displayName
