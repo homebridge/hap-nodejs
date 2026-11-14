@@ -33,17 +33,12 @@ const SPRINKLER = {
 const sprinklerUUID = uuid.generate('hap-nodejs:accessories:sprinkler')
 
 // This is the Accessory that we'll return to HAP-NodeJS that represents our fake motionSensor.
-const sprinkler = exports.accessory = new Accessory('Sprinkler', sprinklerUUID)
+export const accessory = new Accessory('Sprinkler', sprinklerUUID)
 
-// Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
-// @ts-expect-error: Core/BridgeCore API
-sprinkler.username = 'A3:AB:3D:4D:2E:A3'
-// @ts-expect-error: Core/BridgeCore API
-sprinkler.pincode = '123-44-567'
-sprinkler.category = Categories.SPRINKLER
+accessory.category = Categories.SPRINKLER
 
 // Add the actual Valve Service and listen for change events from iOS.
-const sprinklerService = sprinkler.addService(Service.Valve, 'Sprinkler')
+const sprinklerService = accessory.addService(Service.Valve, 'Sprinkler')
 
 // Sprinkler Controll
 function openVentile() {
@@ -82,11 +77,11 @@ sprinklerService
         SPRINKLER.timerEnd = SPRINKLER.defaultDuration + Math.floor(Date.now() / 1000)
         callback(null)
 
-        sprinkler
+        accessory
           .getService(Service.Valve)!
           .setCharacteristic(Characteristic.SetDuration, 0)
 
-        sprinkler
+        accessory
           .getService(Service.Valve)!
           .setCharacteristic(Characteristic.InUse, 0)
       }, 1000)
@@ -98,15 +93,15 @@ sprinklerService
         SPRINKLER.timerEnd = SPRINKLER.defaultDuration + Math.floor(Date.now() / 1000)
         callback(null, SPRINKLER.defaultDuration)
 
-        sprinkler
+        accessory
           .getService(Service.Valve)!
           .setCharacteristic(Characteristic.InUse, 1)
 
-        sprinkler
+        accessory
           .getService(Service.Valve)!
           .setCharacteristic(Characteristic.RemainingDuration, SPRINKLER.defaultDuration)
 
-        sprinkler
+        accessory
           .getService(Service.Valve)!
           .setCharacteristic(Characteristic.SetDuration, SPRINKLER.defaultDuration)
       }, 1000)

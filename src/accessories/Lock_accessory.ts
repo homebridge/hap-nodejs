@@ -30,24 +30,19 @@ const FAKE_LOCK = {
 const lockUUID = uuid.generate('hap-nodejs:accessories:lock')
 
 // This is the Accessory that we'll return to HAP-NodeJS that represents our fake lock.
-const lock = exports.accessory = new Accessory('Lock', lockUUID)
+export const accessory = new Accessory('Lock', lockUUID)
 
-// Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
-// @ts-expect-error: Core/BridgeCore API
-lock.username = 'C1:5D:3A:EE:5E:FA'
-// @ts-expect-error: Core/BridgeCore API
-lock.pincode = '031-45-154'
-lock.category = Categories.DOOR_LOCK
+accessory.category = Categories.DOOR_LOCK
 
 // set some basic properties (these values are arbitrary and setting them is optional)
-lock
+accessory
   .getService(Service.AccessoryInformation)!
   .setCharacteristic(Characteristic.Manufacturer, 'Lock Manufacturer')
   .setCharacteristic(Characteristic.Model, 'Rev-2')
   .setCharacteristic(Characteristic.SerialNumber, 'MY-Serial-Number')
 
 // listen for the "identify" event for this Accessory
-lock.on(AccessoryEventTypes.IDENTIFY, (paired, callback) => {
+accessory.on(AccessoryEventTypes.IDENTIFY, (paired, callback) => {
   FAKE_LOCK.identify()
   callback() // success
 })
@@ -89,4 +84,4 @@ service.getCharacteristic(Characteristic.LockCurrentState)
     }
   })
 
-lock.addService(service)
+accessory.addService(service)

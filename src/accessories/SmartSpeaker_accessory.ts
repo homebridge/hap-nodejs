@@ -11,13 +11,9 @@ import {
 } from '../index.js'
 
 const speakerUUID = uuid.generate('hap-nodejs:accessories:smart-speaker')
-const speaker = exports.accessory = new Accessory('SmartSpeaker', speakerUUID)
+export const accessory = new Accessory('SmartSpeaker', speakerUUID)
 
-// @ts-expect-error: Core/BridgeCore API
-speaker.username = '89:A8:E4:1E:95:EE'
-// @ts-expect-error: Core/BridgeCore API
-speaker.pincode = '676-54-344'
-speaker.category = Categories.SPEAKER
+accessory.category = Categories.SPEAKER
 
 const service = new Service.SmartSpeaker('Smart Speaker', '')
 
@@ -59,4 +55,4 @@ service.getCharacteristic(Characteristic.ConfiguredName)!
     callback()
   })
 
-speaker.addService(service)
+accessory.addService(service)

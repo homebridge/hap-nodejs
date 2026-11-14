@@ -18,17 +18,12 @@ import {
 const tvUUID = uuid.generate('hap-nodejs:accessories:tv')
 
 // This is the Accessory that we'll return to HAP-NodeJS.
-const tv = exports.accessory = new Accessory('TV', tvUUID)
+export const accessory = new Accessory('TV', tvUUID)
 
-// Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
-// @ts-expect-error: Core/BridgeCore API
-tv.username = 'A3:FB:3D:4D:2E:AC'
-// @ts-expect-error: Core/BridgeCore API
-tv.pincode = '031-45-154'
-tv.category = Categories.TELEVISION
+accessory.category = Categories.TELEVISION
 
 // Add the actual TV Service and listen for change events from iOS.
-const televisionService = tv.addService(Service.Television, 'Television', 'Television')
+const televisionService = accessory.addService(Service.Television, 'Television', 'Television')
 
 televisionService
   .setCharacteristic(Characteristic.ConfiguredName, 'Television')
@@ -79,7 +74,7 @@ televisionService
 
 // Speaker
 
-const speakerService = tv.addService(Service.TelevisionSpeaker)
+const speakerService = accessory.addService(Service.TelevisionSpeaker)
 
 speakerService
   .setCharacteristic(Characteristic.Active, Characteristic.Active.ACTIVE)
@@ -93,7 +88,7 @@ speakerService.getCharacteristic(Characteristic.VolumeSelector)!
 
 // HDMI 1
 
-const inputHDMI1 = tv.addService(Service.InputSource, 'hdmi1', 'HDMI 1')
+const inputHDMI1 = accessory.addService(Service.InputSource, 'hdmi1', 'HDMI 1')
 
 inputHDMI1
   .setCharacteristic(Characteristic.Identifier, 1)
@@ -103,7 +98,7 @@ inputHDMI1
 
 // HDMI 2
 
-const inputHDMI2 = tv.addService(Service.InputSource, 'hdmi2', 'HDMI 2')
+const inputHDMI2 = accessory.addService(Service.InputSource, 'hdmi2', 'HDMI 2')
 
 inputHDMI2
   .setCharacteristic(Characteristic.Identifier, 2)
@@ -113,7 +108,7 @@ inputHDMI2
 
 // Netflix
 
-const inputNetflix = tv.addService(Service.InputSource, 'netflix', 'Netflix')
+const inputNetflix = accessory.addService(Service.InputSource, 'netflix', 'Netflix')
 
 inputNetflix
   .setCharacteristic(Characteristic.Identifier, 3)
@@ -137,4 +132,4 @@ accessControl.on(AccessControlEvent.PASSWORD_SETTING_UPDATED, (password: string 
   }
 })
 
-tv.addService(accessControl.getService())
+accessory.addService(accessControl.getService())

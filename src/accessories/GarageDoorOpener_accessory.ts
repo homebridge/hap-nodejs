@@ -34,27 +34,22 @@ const FAKE_GARAGE = {
 }
 
 const garageUUID = uuid.generate('hap-nodejs:accessories:' + 'GarageDoor')
-const garage = exports.accessory = new Accessory('Garage Door', garageUUID)
+export const accessory = new Accessory('Garage Door', garageUUID)
 
-// Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
-// @ts-expect-error: Core/BridgeCore API
-garage.username = 'C1:5D:3F:EE:5E:FA' // edit this if you use Core.js
-// @ts-expect-error: Core/BridgeCore API
-garage.pincode = '031-45-154'
-garage.category = Categories.GARAGE_DOOR_OPENER
+accessory.category = Categories.GARAGE_DOOR_OPENER
 
-garage
+accessory
   .getService(Service.AccessoryInformation)!
   .setCharacteristic(Characteristic.Manufacturer, 'Liftmaster')
   .setCharacteristic(Characteristic.Model, 'Rev-1')
   .setCharacteristic(Characteristic.SerialNumber, 'TW000165')
 
-garage.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, callback: VoidCallback) => {
+accessory.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, callback: VoidCallback) => {
   FAKE_GARAGE.identify()
   callback()
 })
 
-garage
+accessory
   .addService(Service.GarageDoorOpener, 'Garage Door')
   .setCharacteristic(Characteristic.TargetDoorState, Characteristic.TargetDoorState.CLOSED) // force initial state to CLOSED
   .getCharacteristic(Characteristic.TargetDoorState)!
@@ -62,19 +57,19 @@ garage
     if (value === Characteristic.TargetDoorState.CLOSED) {
       FAKE_GARAGE.close()
       callback()
-      garage
+      accessory
         .getService(Service.GarageDoorOpener)!
         .setCharacteristic(Characteristic.CurrentDoorState, Characteristic.CurrentDoorState.CLOSED)
     } else if (value === Characteristic.TargetDoorState.OPEN) {
       FAKE_GARAGE.open()
       callback()
-      garage
+      accessory
         .getService(Service.GarageDoorOpener)!
         .setCharacteristic(Characteristic.CurrentDoorState, Characteristic.CurrentDoorState.OPEN)
     }
   })
 
-garage
+accessory
   .getService(Service.GarageDoorOpener)!
   .getCharacteristic(Characteristic.CurrentDoorState)!
   .on(CharacteristicEventTypes.GET, (callback: NodeCallback<CharacteristicValue>) => {
