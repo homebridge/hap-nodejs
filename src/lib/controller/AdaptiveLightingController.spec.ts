@@ -129,6 +129,35 @@ describe('adaptiveLightingController', () => {
     expect(controller.isAdaptiveLightingActive()).toBeFalsy()
   })
 
+  describe('a time before the first point of the curve', () => {
+    it('should stay active and readable when the clock is set back', async () => {
+      const { lightbulb, controller } = createController()
+      const start = Date.now()
+      await writeTransitionControl(lightbulb, buildUpdateTransition(lightbulb, start, curve(5)))
+
+      vi.setSystemTime(start - 10 * 60000)
+      await vi.advanceTimersByTimeAsync(61000) // the next scheduled update
+
+      expect(controller.isAdaptiveLightingActive()).toBeTruthy()
+      expect(controller.getCurrentAdaptiveLightingTransitionPoint()?.lowerBound.temperature).toBe(200)
+      await expect(lightbulb.getCharacteristic(Characteristic.CharacteristicValueTransitionControl).handleGetRequest())
+        .resolves
+        .toEqual(expect.any(String))
+      controller.disableAdaptiveLighting()
+    })
+
+    it('should stay active when the first point of the curve lies in the future', async () => {
+      const { lightbulb, controller } = createController()
+      const entries = curve(5)
+      entries[0].transitionOffset = 60000
+
+      await writeTransitionControl(lightbulb, buildUpdateTransition(lightbulb, Date.now(), entries))
+
+      expect(controller.isAdaptiveLightingActive()).toBeTruthy()
+      controller.disableAdaptiveLighting()
+    })
+  })
+
   describe('control point errors', () => {
     it('should reject a read for another characteristic without disabling adaptive lighting', async () => {
       const { lightbulb, controller } = createController()

@@ -780,8 +780,13 @@ export class AdaptiveLightingController
 
     // adjustedNow is the now() date corrected to the time of the initiating controller
     const adjustedNow = Date.now() - this.activeTransition.timeMillisOffset
-    // "offset" since the start of the transition schedule
-    const offset = adjustedNow - this.activeTransition.transitionStartMillis
+    // "offset" since the start of the transition schedule.
+    // Before the first point of the curve (the clock was set back since the schedule arrived, or the first point lies
+    // in the future) the schedule has not started yet: stay on the first point instead of taking it for finished.
+    const offset = Math.max(
+      adjustedNow - this.activeTransition.transitionStartMillis,
+      this.activeTransition.transitionCurve[0]?.transitionTime ?? 0,
+    )
 
     let i = this.lastTransitionPointInfo?.curveIndex ?? 0
     let lowerBoundTimeOffset = this.lastTransitionPointInfo?.lowerBoundTimeOffset ?? 0 // time offset to the lowerBound transition entry
@@ -1108,7 +1113,8 @@ export class AdaptiveLightingController
 
     const active = this.activeTransition
 
-    const timeSinceStart = time ?? (Date.now() - active.timeMillisOffset - active.transitionStartMillis)
+    // never negative (see getCurrentAdaptiveLightingTransitionPoint), which an unsigned integer could not hold
+    const timeSinceStart = Math.max(0, time ?? (Date.now() - active.timeMillisOffset - active.transitionStartMillis))
     const timeSinceStartBuffer = tlv.writeVariableUIntLE(timeSinceStart)
 
     let parameters = tlv.encode(
