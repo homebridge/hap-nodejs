@@ -12,6 +12,7 @@ import {
   CharacteristicId,
   CharacteristicsReadRequest,
   CharacteristicsWriteRequest,
+  CharacteristicValue,
   CharacteristicWrite,
   ConstructorArgs,
   HAPPincode,
@@ -449,7 +450,7 @@ export class Accessory extends EventEmitter {
   /**
    * @private
    */
-  controllerStorage!: ControllerStorage
+  controllerStorage: ControllerStorage
   /**
    * @private
    */
@@ -635,13 +636,12 @@ export class Accessory extends EventEmitter {
 
   public getService<T extends WithUUID<typeof Service>>(name: string | T): Service | undefined {
     for (const service of this.services) {
-      if (typeof name === 'string' && (service.displayName === name || service.name === name || service.subtype === name)) {
-        return service
-      } else {
-        // @ts-expect-error ('UUID' does not exist on type 'never')
-        if (typeof name === 'function' && ((service instanceof name) || (name.UUID === service.UUID))) {
+      if (typeof name === 'string') {
+        if (service.displayName === name || service.name === name || service.subtype === name) {
           return service
         }
+      } else if (typeof name === 'function' && ((name.UUID === service.UUID) || (service instanceof name))) {
+        return service
       }
     }
 
@@ -650,13 +650,12 @@ export class Accessory extends EventEmitter {
 
   public getServiceById<T extends WithUUID<typeof Service>>(uuid: string | T, subType: string): Service | undefined {
     for (const service of this.services) {
-      if (typeof uuid === 'string' && (service.displayName === uuid || service.name === uuid) && service.subtype === subType) {
-        return service
-      } else {
-        // @ts-expect-error ('UUID' does not exist on type 'never')
-        if (typeof uuid === 'function' && ((service instanceof uuid) || (uuid.UUID === service.UUID)) && service.subtype === subType) {
+      if (typeof uuid === 'string') {
+        if ((service.displayName === uuid || service.name === uuid) && service.subtype === subType) {
           return service
         }
+      } else if (typeof uuid === 'function' && ((uuid.UUID === service.UUID) || (service instanceof uuid)) && service.subtype === subType) {
+        return service
       }
     }
 
@@ -670,7 +669,7 @@ export class Accessory extends EventEmitter {
    * @returns the primary accessory
    */
   public getPrimaryAccessory = (): Accessory => {
-    return this.bridged ? this.bridge! : this
+    return (this.bridged && this.bridge) || this
   }
 
   public addBridgedAccessory(accessory: Accessory, deferUpdate = false): Accessory {
@@ -827,10 +826,11 @@ export class Accessory extends EventEmitter {
       throw new Error(`A Controller with the type/id '${id}' was already added to the accessory ${this.displayName}`)
     }
 
-    const savedServiceMap = this.serializedControllers && this.serializedControllers[id]
+    const serializedControllers = this.serializedControllers
+    const savedServiceMap = serializedControllers?.[id]
     let serviceMap: ControllerServiceMap
 
-    if (savedServiceMap) { // we found data to restore from
+    if (serializedControllers && savedServiceMap) { // we found data to restore from
       const clonedServiceMap = clone(savedServiceMap)
       const updatedServiceMap = controller.initWithServices(savedServiceMap) // init controller with existing services
       serviceMap = updatedServiceMap || savedServiceMap // initWithServices could return an updated serviceMap, otherwise just use the existing one
@@ -843,8 +843,8 @@ export class Accessory extends EventEmitter {
       controller.configureServices() // let the controller setup all its handlers
 
       // remove serialized data from our dictionary:
-      delete this.serializedControllers![id]
-      if (Object.entries(this.serializedControllers!).length === 0) {
+      delete serializedControllers[id]
+      if (Object.entries(serializedControllers).length === 0) {
         this.serializedControllers = undefined
       }
     } else {
@@ -1088,7 +1088,7 @@ export class Accessory extends EventEmitter {
       console.log(`HAP-NodeJS WARNING: The accessory '${this.displayName}' is getting published without a AccessoryInformation service. `
         + 'This might prevent the accessory from being added to the Home app or leading to the accessory being unresponsive!')
     } else {
-      const checkValue = (name: string, value?: any) => {
+      const checkValue = (name: string, value?: Nullable<CharacteristicValue>) => {
         if (!value) {
           console.log(`HAP-NodeJS WARNING: The accessory '${this.displayName}' is getting published with the characteristic '${name}'`
             + ' (of the AccessoryInformation service) not having a value set. '
@@ -1192,7 +1192,7 @@ export class Accessory extends EventEmitter {
     assert(this.services.length, `accessory '${this.displayName}' does not have any services!`)
 
     const accessory: AccessoryJsonObject = {
-      aid: this.aid!,
+      aid: this.aid,
       services: await Promise.all(this.services.map(service => service.toHAP(connection, contactGetHandlers))),
     }
 
@@ -1219,7 +1219,7 @@ export class Accessory extends EventEmitter {
     assert(this.services.length, `accessory '${this.displayName}' does not have any services!`)
 
     const accessory: AccessoryJsonObject = {
-      aid: this.aid!,
+      aid: this.aid,
       services: this.services.map(service => service.internalHAPRepresentation()),
     }
 
@@ -1496,9 +1496,9 @@ export class Accessory extends EventEmitter {
   private onListening(port: number, hostname: string): void {
     assert(this._advertiser, 'Advertiser wasn\'t created at onListening!')
     // the HAP server is listening, so we can now start advertising our presence.
-    this._advertiser!.initPort(port)
+    this._advertiser.initPort(port)
 
-    this._advertiser!.startAdvertising()
+    this._advertiser.startAdvertising()
       .then(() => this.emit(AccessoryEventTypes.ADVERTISED))
       .catch((reason) => {
         console.error(`Could not create mDNS advertisement. The HAP-Server won't be discoverable: ${reason}`)
@@ -1534,7 +1534,7 @@ export class Accessory extends EventEmitter {
       return
     }
 
-    if (!this._accessoryInfo.hasAdminPermissions(connection.username!)) {
+    if (!connection.username || !this._accessoryInfo.hasAdminPermissions(connection.username)) {
       callback(TLVErrorCode.AUTHENTICATION)
       return
     }
@@ -1562,7 +1562,7 @@ export class Accessory extends EventEmitter {
       return
     }
 
-    if (!this._accessoryInfo.hasAdminPermissions(connection.username!)) {
+    if (!connection.username || !this._accessoryInfo.hasAdminPermissions(connection.username)) {
       callback(TLVErrorCode.AUTHENTICATION)
       return
     }
@@ -1591,7 +1591,7 @@ export class Accessory extends EventEmitter {
       return
     }
 
-    if (!this._accessoryInfo.hasAdminPermissions(connection.username!)) {
+    if (!connection.username || !this._accessoryInfo.hasAdminPermissions(connection.username)) {
       callback(TLVErrorCode.AUTHENTICATION)
       return
     }
@@ -1754,20 +1754,22 @@ export class Accessory extends EventEmitter {
     }
 
     if (characteristic.props.adminOnlyAccess && characteristic.props.adminOnlyAccess.includes(Access.READ)) {
-      const verifiable = this._accessoryInfo && connection.username
-      if (!verifiable) {
+      const accessoryInfo = this._accessoryInfo
+      const username = connection.username
+      if (!accessoryInfo || !username) {
         debug('[%s] Could not verify admin permissions for Characteristic which requires admin permissions for reading (aid of %s and iid of %s)',
           this.displayName, id.aid, id.iid)
+        return { status: HAPStatus.INSUFFICIENT_PRIVILEGES }
       }
 
-      if (!verifiable || !this._accessoryInfo!.hasAdminPermissions(connection.username!)) {
+      if (!accessoryInfo.hasAdminPermissions(username)) {
         return { status: HAPStatus.INSUFFICIENT_PRIVILEGES }
       }
     }
 
     return characteristic.handleGetRequest(connection).then((value) => {
       value = formatOutgoingCharacteristicValue(value, characteristic.props)
-      debug('[%s] Got Characteristic "%s" value: "%s"', this.displayName, characteristic!.displayName, value)
+      debug('[%s] Got Characteristic "%s" value: "%s"', this.displayName, characteristic.displayName, value)
 
       const data: PartialCharacteristicReadData = {
         value: value ?? null,
@@ -1807,7 +1809,7 @@ export class Accessory extends EventEmitter {
     if (writeRequest.pid !== undefined) { // check for timed writes
       if (connection.timedWritePid === writeRequest.pid) {
         writeState = WriteRequestState.TIMED_WRITE_AUTHENTICATED
-        clearTimeout(connection.timedWriteTimeout!)
+        clearTimeout(connection.timedWriteTimeout)
         connection.timedWritePid = undefined
         connection.timedWriteTimeout = undefined
 
@@ -1854,13 +1856,15 @@ export class Accessory extends EventEmitter {
       }
 
       if (characteristic.props.adminOnlyAccess && characteristic.props.adminOnlyAccess.includes(Access.NOTIFY)) {
-        const verifiable = connection.username && this._accessoryInfo
-        if (!verifiable) {
+        const accessoryInfo = this._accessoryInfo
+        const username = connection.username
+        if (!accessoryInfo || !username) {
           debug('[%s] Could not verify admin permissions for Characteristic which requires admin permissions for notify (aid of %s and iid of %s)',
             this.displayName, data.aid, data.iid)
+          return { status: HAPStatus.INSUFFICIENT_PRIVILEGES }
         }
 
-        if (!verifiable || !this._accessoryInfo!.hasAdminPermissions(connection.username!)) {
+        if (!accessoryInfo.hasAdminPermissions(username)) {
           return { status: HAPStatus.INSUFFICIENT_PRIVILEGES }
         }
       }
@@ -1886,13 +1890,15 @@ export class Accessory extends EventEmitter {
       }
 
       if (characteristic.props.adminOnlyAccess && characteristic.props.adminOnlyAccess.includes(Access.WRITE)) {
-        const verifiable = connection.username && this._accessoryInfo
-        if (!verifiable) {
+        const accessoryInfo = this._accessoryInfo
+        const username = connection.username
+        if (!accessoryInfo || !username) {
           debug('[%s] Could not verify admin permissions for Characteristic which requires admin permissions for write (aid of %s and iid of %s)',
             this.displayName, data.aid, data.iid)
+          return { status: HAPStatus.INSUFFICIENT_PRIVILEGES }
         }
 
-        if (!verifiable || !this._accessoryInfo!.hasAdminPermissions(connection.username!)) {
+        if (!accessoryInfo.hasAdminPermissions(username)) {
           return { status: HAPStatus.INSUFFICIENT_PRIVILEGES }
         }
       }
@@ -1920,9 +1926,9 @@ export class Accessory extends EventEmitter {
         return { status: HAPStatus.INVALID_VALUE_IN_REQUEST }
       }
 
-      const accessory = this.getAccessoryByAID(data.aid)!
+      const accessory = this.getAccessoryByAID(data.aid)
       return characteristic.handleSetRequest(data.value, connection).then(async (value) => {
-        if (data.value && accessory.isIdentifyCharacteristic(characteristic)) {
+        if (data.value && accessory?.isIdentifyCharacteristic(characteristic)) {
           await accessory.handlePairedIdentify(characteristic)
         }
         return value
@@ -2218,10 +2224,11 @@ export class Accessory extends EventEmitter {
     }
 
     if (json.controllers) { // just save it for later if it exists {@see configureController}
-      accessory.serializedControllers = {}
+      const serializedControllers: Record<ControllerIdentifier, ControllerServiceMap> = {}
+      accessory.serializedControllers = serializedControllers
 
       json.controllers.forEach((serializedController) => {
-        accessory.serializedControllers![serializedController.type] = Accessory.deserializeServiceMap(serializedController.services, servicesMap)
+        serializedControllers[serializedController.type] = Accessory.deserializeServiceMap(serializedController.services, servicesMap)
       })
     }
 
@@ -2296,9 +2303,9 @@ export class Accessory extends EventEmitter {
       } else if (entries.size === 1) {
         advertiserAddress = Array.from(entries)
 
-        const entry = entries.values().next().value // grab the first one
+        const [entry] = entries // grab the first one
 
-        const version = net.isIP(entry!) // check if ip address was specified or an interface name
+        const version = net.isIP(entry) // check if ip address was specified or an interface name
         if (version) {
           serverAddress = version === 4
             ? '0.0.0.0'
