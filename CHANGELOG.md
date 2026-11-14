@@ -37,6 +37,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(server): accept a prepare write request with pid 0 and refuse a pid that is not a number
 - fix(accessory): refuse to bridge a second accessory with the same uuid
 - fix(accessory): build the setup uri again when the accessory is published again
+- fix(identifier-cache): keep the next accessory id when a bridge has no accessories for a while
 
 ### Homebridge Dependencies
 

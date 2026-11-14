@@ -30,6 +30,25 @@ describe('identifierCache', () => {
     })
   })
 
+  describe('accessory ids', () => {
+    it('should not hand out the id of a removed accessory again after a pass without accessories', () => {
+      const identifierCache = createIdentifierCache()
+
+      identifierCache.startTrackingUsage()
+      expect(identifierCache.getAID('first')).toBe(2)
+      expect(identifierCache.getAID('second')).toBe(3)
+      identifierCache.stopTrackingUsageAndExpireUnused()
+
+      // both accessories were removed from the bridge
+      identifierCache.startTrackingUsage()
+      identifierCache.stopTrackingUsageAndExpireUnused()
+
+      identifierCache.startTrackingUsage()
+      expect(identifierCache.getAID('third')).toBe(4)
+      identifierCache.stopTrackingUsageAndExpireUnused()
+    })
+  })
+
   describe('#getCache()', () => {
     it ('retrieves an item from the cache', () => {
       const identifierCache = createIdentifierCache()
