@@ -279,6 +279,79 @@ describe('remoteController', () => {
   })
 
   describe('siri audio session', () => {
+    const configuration = {
+      codecType: 3,
+      parameters: {
+        channels: 1,
+        bitrate: 0,
+        samplerate: 1,
+      },
+    }
+
+    // a session whose dataSend open request is answered by the test, and whose producer is fed by the test
+    function createSession() {
+      let frameHandler: (frame: { data: Buffer, rms: number }) => void = () => undefined
+      const stopAudioProduction = vi.fn()
+      class Producer {
+        constructor(handler: (frame: { data: Buffer, rms: number }) => void) {
+          frameHandler = handler
+        }
+
+        startAudioProduction = vi.fn()
+        stopAudioProduction = stopAudioProduction
+      }
+
+      let answerOpen: (error?: Error, status?: number, message?: Record<string, unknown>) => void = () => undefined
+      const connection = Object.assign(new EventEmitter(), {
+        sendRequest: vi.fn((_protocol, _topic, _message, callback) => answerOpen = callback),
+        sendEvent: vi.fn(),
+      })
+
+      // @ts-expect-error: the connection and the producer are minimal fakes
+      const session = new SiriAudioSession(connection, configuration, Producer)
+      session.start()
+
+      return {
+        session,
+        connection,
+        stopAudioProduction,
+        produce: (count: number) => {
+          for (let i = 0; i < count; i++) {
+            frameHandler({
+              data: Buffer.from([i]),
+              rms: 0.5,
+            })
+          }
+        },
+        open: () => answerOpen(undefined, 0, { streamId: 1 }),
+        dataEvents: () => connection.sendEvent.mock.calls
+          .filter(call => call[1] === 'data')
+          .map(call => ({ frames: call[2].packets.length as number, endOfStream: call[2].endOfStream as boolean })),
+      }
+    }
+
+    it('should send every queued frame when the stream ends, with endOfStream on the last packet only', () => {
+      const { session, produce, open, dataEvents } = createSession()
+
+      produce(12) // while the stream is still being opened
+      open()
+      expect(dataEvents()).toEqual([
+        { frames: 5, endOfStream: false },
+        { frames: 5, endOfStream: false },
+      ])
+
+      produce(9)
+      session.stop()
+
+      expect(dataEvents()).toEqual([
+        { frames: 5, endOfStream: false },
+        { frames: 5, endOfStream: false },
+        { frames: 5, endOfStream: false },
+        { frames: 5, endOfStream: false },
+        { frames: 1, endOfStream: true },
+      ])
+    })
+
     it('should stop the audio producer when the controller refuses the stream', async () => {
       const startAudioProduction = vi.fn()
       const stopAudioProduction = vi.fn()
