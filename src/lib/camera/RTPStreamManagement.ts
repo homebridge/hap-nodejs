@@ -683,7 +683,7 @@ export class RTPStreamManagement {
     this._updateStreamStatus(StreamingStatus.AVAILABLE) // reset streaming status to available
     this.service.setCharacteristic(Characteristic.SetupEndpoints, this.setupEndpointsResponse) // reset SetupEndpoints to default
 
-    this.service.getCharacteristic(Characteristic.SelectedRTPStreamConfiguration)!
+    this.service.getCharacteristic(Characteristic.SelectedRTPStreamConfiguration)
       .on(CharacteristicEventTypes.GET, (callback) => {
         if (this.streamingIsDisabled()) {
           callback(null, tlv.encode(
@@ -698,7 +698,7 @@ export class RTPStreamManagement {
       })
       .on(CharacteristicEventTypes.SET, this._handleSelectedStreamConfigurationWrite.bind(this))
 
-    this.service.getCharacteristic(Characteristic.SetupEndpoints)!
+    this.service.getCharacteristic(Characteristic.SetupEndpoints)
       .on(CharacteristicEventTypes.GET, (callback) => {
         if (this.streamingIsDisabled()) {
           callback(null, tlv.encode(
