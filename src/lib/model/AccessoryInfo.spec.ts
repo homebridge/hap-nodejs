@@ -1,16 +1,37 @@
 import { AssertionError } from 'node:assert'
+import { Buffer } from 'node:buffer'
 import { format } from 'node:util'
 
 import createDebug from 'debug'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { AccessoryJsonObject, CharacteristicJsonObject } from '../../types.js'
 import { Categories } from '../Accessory.js'
 import { Formats, Perms } from '../Characteristic.js'
-import { AccessoryInfo } from './AccessoryInfo.js'
+import { EventedHTTPServer, HAPConnection } from '../util/eventedhttp.js'
+import { AccessoryInfo, PermissionTypes } from './AccessoryInfo.js'
 import { HAPStorage } from './HAPStorage.js'
 
 describe('accessoryInfo', () => {
+  it('should count an admin once when it is added twice, so removing it removes everybody', () => {
+    const info = AccessoryInfo.create('AA:BB:CC:DD:EE:10')
+    const key = Buffer.alloc(32, 1)
+
+    info.addPairedClient('admin', key, PermissionTypes.ADMIN)
+    info.addPairedClient('admin', key, PermissionTypes.ADMIN)
+    info.addPairedClient('user', key, PermissionTypes.USER)
+    expect(info.pairedAdminClients).toBe(1)
+
+    const destroyConnections = vi.spyOn(EventedHTTPServer, 'destroyExistingConnectionsAfterUnpair').mockImplementation(() => undefined)
+    try {
+      info.removePairedClient({} as HAPConnection, 'admin')
+    } finally {
+      destroyConnections.mockRestore()
+    }
+
+    expect(info.listPairings()).toEqual([]) // the last admin left, which removes all users as well
+  })
+
   describe('#load()', () => {
     it('should default category to Categories.OTHER when missing', () => {
       const username = '0E:AE:FC:45:7B:91'
