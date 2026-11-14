@@ -2,7 +2,7 @@
 import assert from 'node:assert'
 import { Buffer } from 'node:buffer'
 import crypto from 'node:crypto'
-import { EventEmitter, EventEmitter as NodeEventEmitter } from 'node:events'
+import { EventEmitter } from 'node:events'
 import net, { Socket } from 'node:net'
 
 import createDebug from 'debug'
@@ -305,7 +305,7 @@ export class DataStreamServer extends EventEmitter {
   private readonly connections: DataStreamConnection[] = []
   private removeListenersOnceClosed = false
 
-  private readonly internalEventEmitter: NodeEventEmitter = new NodeEventEmitter() // used for message event and message request handlers
+  private readonly internalEventEmitter: EventEmitter = new EventEmitter() // used for message event and message request handlers
 
   public constructor() {
     super()
@@ -1224,18 +1224,6 @@ export class DataStreamConnection extends EventEmitter {
     )
 
     this.socket.write(Buffer.concat([frameHeader, encrypted.ciphertext, encrypted.authTag]))
-
-    /* Useful for debugging outgoing packages and detecting encoding errors
-        console.log("SENT DATA: " + payloadBuffer.toString("hex"));
-        const frame: HDSFrame = {
-            header: frameHeader,
-            plaintextPayload: payloadBuffer,
-            cipheredPayload: cipheredPayload,
-            authTag: authTag,
-        };
-        const sentMessage = this.decodePayloads([frame])[0];
-        console.log("Sent message: " + JSON.stringify(sentMessage, null, 4));
-        // */
   }
 
   close(): void { // closing socket by sending FIN packet; incoming data will be ignored from that point on
