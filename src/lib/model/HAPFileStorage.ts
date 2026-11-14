@@ -84,14 +84,14 @@ export class HAPFileStorage {
   // node-persist 0.0.12 default: the relative directory "persist", resolved against the current working directory
   private dir = 'persist'
 
-  private readonly data = new Map<string, any>()
+  private readonly data = new Map<string, unknown>()
 
   constructor() {
     for (const method of UNSUPPORTED_METHODS) {
       // runtime-only stubs, deliberately absent from the class type: TypeScript consumers get a compile error,
       // JavaScript consumers get this error instead of "storage.keys is not a function"
 
-      (this as any)[method] = () => {
+      (this as Record<string, unknown>)[method] = () => {
         throw new Error(`${method}() is not supported anymore: HAP-NodeJS replaced node-persist with a minimal file storage `
           + `which only implements ${SUPPORTED_METHODS} (see https://github.com/homebridge/HAP-NodeJS/issues/1107).`)
       }
@@ -236,7 +236,7 @@ export class HAPFileStorage {
     }
   }
 
-  private static parse(json: string): any {
+  private static parse(json: string): unknown {
     try {
       return JSON.parse(json)
     } catch {
