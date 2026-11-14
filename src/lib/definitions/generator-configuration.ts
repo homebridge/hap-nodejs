@@ -197,6 +197,19 @@ export const CharacteristicValidValuesOverride: Map<string, Record<string, strin
 
 export const CharacteristicClassAdditions: Map<string, string[]> = new Map([])
 
+/**
+ * Keeps the given values in the list of valid values, but without a constant on the generated class.
+ */
+function hideValidValues(generated: GeneratedCharacteristic, ...values: number[]): void {
+  if (!generated.validValues) {
+    throw new Error(`The characteristic '${generated.id}' has no valid values!`)
+  }
+
+  for (const value of values) {
+    generated.validValues[value] = null
+  }
+}
+
 export const CharacteristicOverriding: Map<string, (generated: GeneratedCharacteristic) => void> = new Map([
   [
     'rotation.speed',
@@ -314,8 +327,7 @@ export const CharacteristicOverriding: Map<string, (generated: GeneratedCharacte
   [
     'input-device-type',
     (generated) => {
-    // @ts-expect-error: undefined access
-      generated.validValues[6] = null
+      hideValidValues(generated, 6)
     },
   ],
   [
@@ -327,31 +339,13 @@ export const CharacteristicOverriding: Map<string, (generated: GeneratedCharacte
   [
     'picture-mode',
     (generated) => {
-    // @ts-expect-error: undefined access
-      generated.validValues[8] = null
-      // @ts-expect-error: undefined access
-      generated.validValues[9] = null
-      // @ts-expect-error: undefined access
-      generated.validValues[10] = null
-      // @ts-expect-error: undefined access
-      generated.validValues[11] = null
-      // @ts-expect-error: undefined access
-      generated.validValues[12] = null
-      // @ts-expect-error: undefined access
-      generated.validValues[13] = null
+      hideValidValues(generated, 8, 9, 10, 11, 12, 13)
     },
   ],
   [
     'remote-key',
     (generated) => {
-    // @ts-expect-error: undefined access
-      generated.validValues[12] = null
-      // @ts-expect-error: undefined access
-      generated.validValues[13] = null
-      // @ts-expect-error: undefined access
-      generated.validValues[14] = null
-      // @ts-expect-error: undefined access
-      generated.validValues[16] = null
+      hideValidValues(generated, 12, 13, 14, 16)
     },
   ],
   [

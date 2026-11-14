@@ -114,6 +114,29 @@ interface CategoryDefinition {
   UUID: string
 }
 
+/** The parts of the HomeKit metadata plist this script reads. */
+interface PlistMetadata {
+  SchemaVersion: number
+  Version: number
+  PlistDictionary: {
+    SchemaVersion: number
+    HAP: {
+      Characteristics: Record<string, CharacteristicDefinition>
+      Services: Record<string, ServiceDefinition>
+      Units: Record<string, UnitDefinition>
+      Properties: Record<string, PropertyDefinition>
+    }
+    HomeKit: {
+      Categories: Record<string, CategoryDefinition>
+    }
+  }
+}
+
+/** The parts of the metadata plist of the HomeKit Accessory Simulator this script reads. */
+interface SimulatorMetadata {
+  Characteristics: SimulatorCharacteristicDefinition[]
+}
+
 export interface GeneratedCharacteristic {
   id: string
   UUID: string
@@ -131,7 +154,7 @@ export interface GeneratedCharacteristic {
   stepValue?: number
   maxLength?: number
 
-  validValues?: Record<string, string> // <value, key>
+  validValues?: Record<string, string | null> // <value, key>, where a key of null leaves the value without a constant
   validBitMasks?: Record<string, string>
 
   adminOnlyAccess?: Access[]
@@ -152,10 +175,10 @@ export interface GeneratedService {
   optionalCharacteristics?: string[]
 }
 
-const plistData: any = plist.readFileSync(metadataFile)
-const simulatorPlistData: any = plist.readFileSync(defaultPlist)
-const simulatorMfiPlistData: any = fs.existsSync(defaultMfiPlist)
-  ? plist.readFileSync(defaultMfiPlist)
+const plistData = plist.readFileSync(metadataFile) as PlistMetadata
+const simulatorPlistData = plist.readFileSync(defaultPlist) as SimulatorMetadata
+const simulatorMfiPlistData = fs.existsSync(defaultMfiPlist)
+  ? plist.readFileSync(defaultMfiPlist) as SimulatorMetadata
   : undefined
 
 if (plistData.SchemaVersion !== 1) {
@@ -202,11 +225,11 @@ try {
     }
   }
 
-  for (const characteristic of (simulatorPlistData.Characteristics as SimulatorCharacteristicDefinition[])) {
+  for (const characteristic of simulatorPlistData.Characteristics) {
     simulatorCharacteristics.set(characteristic.UUID, characteristic)
   }
   if (simulatorMfiPlistData) {
-    for (const characteristic of (simulatorMfiPlistData.Characteristics as SimulatorCharacteristicDefinition[])) {
+    for (const characteristic of simulatorMfiPlistData.Characteristics) {
       simulatorCharacteristics.set(characteristic.UUID, characteristic)
     }
   }
@@ -385,7 +408,7 @@ for (const generated of Object.values(generatedCharacteristics)
       characteristicOutput.write(`      maxLen: ${generated.maxLength},\n`)
     }
     if (validValuesEntries.length) {
-      characteristicOutput.write(`      validValues: [${Object.keys(generated.validValues!).join(', ')}],\n`)
+      characteristicOutput.write(`      validValues: [${validValuesEntries.map(([value]) => value).join(', ')}],\n`)
     }
     if (generated.adminOnlyAccess) {
       characteristicOutput.write(`      adminOnlyAccess: [${
