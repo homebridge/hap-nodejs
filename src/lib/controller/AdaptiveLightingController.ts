@@ -43,34 +43,34 @@ const debug = createDebug('HAP-NodeJS:Controller:TransitionControl')
 // lower bound for the update timer, an update interval of zero sent by the controller would otherwise result in a busy loop
 const MINIMUM_UPDATE_INTERVAL = 1000
 
-const enum SupportedCharacteristicValueTransitionConfigurationsTypes {
+enum SupportedCharacteristicValueTransitionConfigurationsTypes {
   SUPPORTED_TRANSITION_CONFIGURATION = 0x01,
 }
 
-const enum SupportedValueTransitionConfigurationTypes {
+enum SupportedValueTransitionConfigurationTypes {
   CHARACTERISTIC_IID = 0x01,
   TRANSITION_TYPE = 0x02, // assumption
 }
 
-const enum TransitionType {
+enum TransitionType {
   BRIGHTNESS = 0x01, // uncertain
   COLOR_TEMPERATURE = 0x02,
 }
 
-const enum TransitionControlTypes {
+enum TransitionControlTypes {
   READ_CURRENT_VALUE_TRANSITION_CONFIGURATION = 0x01, // could probably a list of ValueTransitionConfigurationTypes
   UPDATE_VALUE_TRANSITION_CONFIGURATION = 0x02,
 }
 
-const enum ReadValueTransitionConfiguration {
+enum ReadValueTransitionConfiguration {
   CHARACTERISTIC_IID = 0x01,
 }
 
-const enum UpdateValueTransitionConfigurationsTypes {
+enum UpdateValueTransitionConfigurationsTypes {
   VALUE_TRANSITION_CONFIGURATION = 0x01, // this type could be a tlv8 list
 }
 
-const enum ValueTransitionConfigurationTypes {
+enum ValueTransitionConfigurationTypes {
   // noinspection JSUnusedGlobalSymbols
   CHARACTERISTIC_IID = 0x01, // 1 byte
   TRANSITION_PARAMETERS = 0x02,
@@ -82,35 +82,35 @@ const enum ValueTransitionConfigurationTypes {
   NOTIFY_INTERVAL_THRESHOLD = 0x08, // 32 bit uint
 }
 
-const enum ValueTransitionParametersTypes {
+enum ValueTransitionParametersTypes {
   TRANSITION_ID = 0x01, // 16 bytes
   START_TIME = 0x02, // 8 bytes the start time for the provided schedule, millis since 2001/01/01 00:00:000
   UNKNOWN_3 = 0x03, // 8 bytes, id or something (same for multiple writes)
 }
 
-const enum TransitionCurveConfigurationTypes {
+enum TransitionCurveConfigurationTypes {
   TRANSITION_ENTRY = 0x01,
   ADJUSTMENT_CHARACTERISTIC_IID = 0x02,
   ADJUSTMENT_MULTIPLIER_RANGE = 0x03,
 }
 
-const enum TransitionEntryTypes {
+enum TransitionEntryTypes {
   ADJUSTMENT_FACTOR = 0x01,
   VALUE = 0x02,
   TRANSITION_OFFSET = 0x03, // the time in milliseconds from the previous transition, interpolation happens here
   DURATION = 0x04, // optional, default 0, sets how long the previous value will stay the same (non interpolation time section)
 }
 
-const enum TransitionAdjustmentMultiplierRange {
+enum TransitionAdjustmentMultiplierRange {
   MINIMUM_ADJUSTMENT_MULTIPLIER = 0x01, // brightness 10
   MAXIMUM_ADJUSTMENT_MULTIPLIER = 0x02, // brightness 100
 }
 
-const enum ValueTransitionConfigurationResponseTypes { // read format for control point
+enum ValueTransitionConfigurationResponseTypes { // read format for control point
   VALUE_CONFIGURATION_STATUS = 0x01,
 }
 
-const enum ValueTransitionConfigurationStatusTypes {
+enum ValueTransitionConfigurationStatusTypes {
   CHARACTERISTIC_IID = 0x01,
   TRANSITION_PARAMETERS = 0x02,
   TIME_SINCE_START = 0x03, // milliseconds since start of transition
@@ -290,7 +290,7 @@ export interface AdaptiveLightingOptions {
  * Defines in which mode the {@link AdaptiveLightingController} will operate in.
  * @group Adaptive Lighting
  */
-export const enum AdaptiveLightingControllerMode {
+export enum AdaptiveLightingControllerMode {
   /**
    * In automatic mode pretty much everything from setup to transition scheduling is done by the controller.
    */
@@ -305,7 +305,7 @@ export const enum AdaptiveLightingControllerMode {
 /**
  * @group Adaptive Lighting
  */
-export const enum AdaptiveLightingControllerEvents {
+export enum AdaptiveLightingControllerEvents {
   /**
    * This event is called once a HomeKit controller enables Adaptive Lighting
    * or a HomeHub sends an updated transition schedule for the next 24 hours.

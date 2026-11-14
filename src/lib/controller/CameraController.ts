@@ -136,7 +136,7 @@ export type StreamRequestCallback = (error?: Error) => void
 /**
  * @group Camera
  */
-export const enum ResourceRequestReason {
+export enum ResourceRequestReason {
   /**
    * The reason describes periodic resource requests.
    * In the example of camera image snapshots those are the typical preview images every 10 seconds.
@@ -345,7 +345,7 @@ export interface CameraControllerState {
 /**
  * @group Camera
  */
-export const enum CameraControllerEvents {
+export enum CameraControllerEvents {
   /**
    *  Emitted when the mute state or the volume changed. The Apple Home App typically does not set those values
    *  except the mute state. When you adjust the volume in the Camera view it will reset the muted state if it was set previously.

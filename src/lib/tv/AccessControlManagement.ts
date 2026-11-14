@@ -7,7 +7,7 @@ import { Characteristic } from '../Characteristic.js'
 import { Service } from '../Service.js'
 import * as tlv from '../util/tlv.js'
 
-const enum AccessControlTypes {
+enum AccessControlTypes {
   PASSWORD = 0x01,
   PASSWORD_REQUIRED = 0x02,
 }
@@ -18,7 +18,7 @@ const enum AccessControlTypes {
  *
  * @group Television
  */
-export const enum AccessLevel {
+export enum AccessLevel {
   // noinspection JSUnusedGlobalSymbols
   /**
    * This access level is set when the users selects "Anyone" or "Anyone On The Same Network"
@@ -41,7 +41,7 @@ export const enum AccessLevel {
 /**
  * @group Television
  */
-export const enum AccessControlEvent {
+export enum AccessControlEvent {
   ACCESS_LEVEL_UPDATED = 'update-control-level',
   PASSWORD_SETTING_UPDATED = 'update-password',
 }

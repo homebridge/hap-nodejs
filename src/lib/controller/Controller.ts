@@ -23,7 +23,7 @@ export type ControllerType = string | DefaultControllerType
 /**
  * @group Controller API
  */
-export const enum DefaultControllerType {
+export enum DefaultControllerType {
   CAMERA = 'camera', // or doorbell
   REMOTE = 'remote',
   TV = 'tv',
