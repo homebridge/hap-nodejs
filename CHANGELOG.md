@@ -100,6 +100,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(server): type the list of pairings sent to a controller instead of using any
 - refactor(utils): type the event arguments in awaitEventOnce as unknown instead of any
 - refactor(utils): build the cloned object without any
+- refactor(utils): drop the Node 18 numeric address family checks and their ts-expect-error
 
 ### Homebridge Dependencies
 
