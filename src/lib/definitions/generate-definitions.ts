@@ -6,7 +6,7 @@ import process from 'node:process'
 import { Command } from 'commander'
 import * as plist from 'simple-plist'
 
-import { Access, Characteristic, Formats, Units } from '../Characteristic.js'
+import { Access, Formats, Units } from '../Characteristic.js'
 import { errorMessage } from '../util/errors.js'
 import { toLongForm } from '../util/uuid.js'
 import {
@@ -26,11 +26,6 @@ import {
 } from './generator-configuration.js'
 
 import './CharacteristicDefinitions.js'
-
-// noinspection JSUnusedLocalSymbols
-
-// eslint-disable-next-line unused-imports/no-unused-vars
-const temp = Characteristic // this to have "../Characteristic" not being only type import, otherwise this would not result in a require statement
 
 const command = new Command('generate-definitions')
   .version('1.0.0')
@@ -391,7 +386,7 @@ for (const generated of Object.values(generatedCharacteristics)
     characteristicOutput.write('  constructor() {\n')
     characteristicOutput.write(`    super("${generated.name}", ${generated.className}.UUID, {\n`)
     characteristicOutput.write(`      format: Formats.${characteristicFormat(generated.format)},\n`)
-    characteristicOutput.write(`      perms: [${generatePermsString(generated.id, generated.properties)}],\n`)
+    characteristicOutput.write(`      perms: [${generatePermsString(generated.properties)}],\n`)
     if (generated.units && !undefinedUnits.includes(generated.units)) {
       characteristicOutput.write(`      unit: Units.${characteristicUnit(generated.units)},\n`)
     }
@@ -664,7 +659,7 @@ function characteristicPerm(id: string): string | undefined {
   }
 }
 
-function generatePermsString(id: string, propertiesBitMap: number): string {
+function generatePermsString(propertiesBitMap: number): string {
   const perms: string [] = []
 
   for (const [bitMap, name] of properties) {
