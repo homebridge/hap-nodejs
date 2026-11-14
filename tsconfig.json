@@ -7,7 +7,6 @@
     "moduleResolution": "NodeNext",
     "strict": true,
     "declaration": true,
-    "declarationMap": true,
     "outDir": "./dist",
     "sourceMap": true
   },

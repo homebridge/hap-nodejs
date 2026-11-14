@@ -177,6 +177,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(core): log the start of the library under the debug name HAP-NodeJS:Init, not Advertiser
 - build: set moduleResolution to NodeNext like module and drop three options which are defaults now
 - build: drop the importHelpers option which does nothing at target ES2022
+- build: stop shipping declaration maps which point at source files the package does not hold
 
 ### Homebridge Dependencies
 
