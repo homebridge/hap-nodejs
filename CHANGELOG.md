@@ -123,6 +123,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(server): type the pairing state of a connection as PairingStates instead of number
 - docs(uuid): describe the errors of unparse in a way typedoc accepts
 - refactor(characteristic): type the context of a characteristic change as unknown instead of any
+- refactor(accessory): check the context of a characteristic change with a type guard
 
 ### Homebridge Dependencies
 

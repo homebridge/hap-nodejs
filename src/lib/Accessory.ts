@@ -78,6 +78,11 @@ import * as uuid from './util/uuid.js'
 import { toShortForm } from './util/uuid.js'
 
 const debug = createDebug('HAP-NodeJS:Accessory')
+
+/** A plugin may pass anything as the context of a characteristic change, so its shape is checked before it is read. */
+function isCharacteristicOperationContext(context: unknown): context is CharacteristicOperationContext {
+  return typeof context === 'object' && context !== null
+}
 const hksvDebug = createDebug('HAP-NodeJS:HKSV')
 const MAX_ACCESSORIES = 149 // Maximum number of bridged accessories per bridge.
 const MAX_SERVICES = 100
@@ -2039,7 +2044,7 @@ export class Accessory extends EventEmitter {
         return
       }
 
-      if (change.context != null && typeof change.context === 'object' && (change.context as CharacteristicOperationContext).omitEventUpdate) {
+      if (isCharacteristicOperationContext(change.context) && change.context.omitEventUpdate) {
         debug('[%s] Omitting event updates for %s as specified in the context object!', accessory.displayName, change.characteristic.displayName)
         return
       }
