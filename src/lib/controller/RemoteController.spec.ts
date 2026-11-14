@@ -4,6 +4,7 @@ import { EventEmitter } from 'node:events'
 import { describe, expect, it, vi } from 'vitest'
 
 import { Characteristic } from '../Characteristic.js'
+import { HAPStatus } from '../HAPServer.js'
 import { HAPConnectionEvent } from '../util/eventedhttp.js'
 import * as tlv from '../util/tlv.js'
 import { ButtonType, RemoteController, RemoteControllerEvents, SiriAudioSession, TargetUpdates } from './RemoteController.js'
@@ -77,6 +78,29 @@ describe('remoteController', () => {
 
       expect(decodeTargetIdentifiers(response)).toEqual([1, 2])
       expect(decodeTargetIdentifiers(await writeTargetControl(controller, Operation.LIST))).toEqual([1, 2])
+    })
+
+    it('should refuse a new target without a name and keep working afterwards', async () => {
+      const controller = createController()
+      const stateChange = vi.fn()
+      controller.setupStateChangeDelegate(stateChange)
+
+      await writeTargetControl(controller, Operation.ADD, targetTLV(1, 'Living Room', [
+        buttonTLV(101, 1),
+      ]))
+      await expect(writeTargetControl(controller, Operation.ADD, targetTLV(2, undefined, [
+        buttonTLV(101, 1),
+      ])))
+        .rejects
+        .toBe(HAPStatus.INVALID_VALUE_IN_REQUEST)
+      expect(controller.isConfigured(2)).toBe(false)
+
+      const response = await writeTargetControl(controller, Operation.ADD, targetTLV(3, 'Bedroom', [
+        buttonTLV(101, 1),
+      ]))
+
+      expect(decodeTargetIdentifiers(response)).toEqual([1, 3])
+      expect(stateChange).toHaveBeenCalledTimes(2)
     })
 
     it('should find a target by its name', async () => {
