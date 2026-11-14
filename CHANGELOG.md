@@ -40,6 +40,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(identifier-cache): keep the next accessory id when a bridge has no accessories for a while
 - fix(characteristic): ignore a minStep of zero or less and list valid values without drift
 - fix(adaptive-lighting): accept a context that is not an object on a manual color write
+- fix(adaptive-lighting): stay active when the clock is set back before the start of the curve
 
 ### Homebridge Dependencies
 
