@@ -155,8 +155,7 @@ jobs:
     needs: [determine-release-type, publish]
     if: |
       always() &&
-      needs.publish.result == 'success' &&
-      needs.attach-artifact.result == 'success'
+      needs.publish.result == 'success'
     uses: homebridge/.github/.github/workflows/discord-webhooks.yml@latest
     with:
       title: HAP-NodeJS Release
