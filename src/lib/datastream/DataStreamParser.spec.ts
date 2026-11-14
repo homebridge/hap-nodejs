@@ -146,6 +146,72 @@ describe('dataStreamParser', () => {
     })
   })
 
+  describe('dictionary keys', () => {
+    function string(value: string): Buffer {
+      return Buffer.concat([
+        Buffer.from([0x40 + value.length]),
+        Buffer.from(value),
+      ])
+    }
+
+    const entries = Buffer.concat([
+      string('__proto__'),
+      Buffer.from([0xE1]),
+      string('request'),
+      string('hello'), // { request: 'hello' }
+      string('x'),
+      Buffer.from([0x09]), // 1
+    ])
+
+    it.each([
+      [
+        'with its length in the tag',
+        Buffer.concat([
+          Buffer.from([0xE2]),
+          entries,
+        ]),
+      ],
+      [
+        'which ends with a terminator',
+        Buffer.concat([
+          Buffer.from([0xEF]),
+          entries,
+          Buffer.from([0x03]),
+        ]),
+      ],
+    ])('should store the key __proto__ of a dictionary %s instead of replacing the prototype', (_name, data) => {
+      const decoded = DataStreamParser.decode(new DataStreamReader(data)) as Record<string, unknown>
+
+      expect(Object.getPrototypeOf(decoded)).toBe(Object.prototype)
+      expect(decoded.request).toBeUndefined()
+      expect(Object.keys(decoded)).toEqual(['__proto__', 'x'])
+      expect(Object.getOwnPropertyDescriptor(decoded, '__proto__')?.value).toEqual({ request: 'hello' })
+      expect(decoded.x).toBe(1)
+    })
+
+    it('should write the key __proto__ back the way it was read', () => {
+      const data = Buffer.concat([
+        Buffer.from([0xE2]),
+        entries,
+      ])
+      const writer = new DataStreamWriter()
+      DataStreamParser.encode(DataStreamParser.decode(new DataStreamReader(data)), writer)
+
+      expect(writer.getData()).toEqual(data)
+    })
+
+    it('should name a key which is not a string by its string form', () => {
+      const data = Buffer.concat([
+        Buffer.from([0xE2, 0x0D]),
+        string('five'),
+        Buffer.from([0x01]),
+        string('yes'),
+      ])
+
+      expect(DataStreamParser.decode(new DataStreamReader(data))).toEqual({ 5: 'five', true: 'yes' })
+    })
+  })
+
   describe('back-references', () => {
     function roundTrip(value: any): any {
       const writer = new DataStreamWriter()
