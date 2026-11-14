@@ -4,6 +4,20 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 
 ## v2.3.1 (Pending Release)
 
+### ⚠️ Upgrade notes
+
+- **For developers using TypeScript**: some types are stricter now, so a plugin may need small changes before it builds again. Plugins written in JavaScript are not affected.
+  - The `context` of a characteristic change is `unknown`. Check it before reading from it, for example `if (typeof context === 'object' && context !== null && 'source' in context)`.
+  - The fields of a HomeKit Data Stream message are `unknown`, and `DataStreamParser.decode()` returns `unknown`. Check a field before using it, for example `if (typeof message.streamId === 'number')`.
+  - A data stream payload typed as an `interface` no longer fits `sendEvent`, `sendRequest` or `sendResponse`. Use a `type`, or pass a copy like `{ ...payload }`.
+  - `SerializableController` without type arguments has saved data of type `unknown`. Name the type: `SerializableController<ControllerServiceMap, MyState>`.
+  - `SiriAudioStreamProducerConstructor` without a type argument has options of type `unknown`. Name the type: `SiriAudioStreamProducerConstructor<MyOptions>`.
+  - `tlv.encode()` only takes numbers, strings and Buffers (or lists of them). Wrap a `Uint8Array` in `Buffer.from()`.
+  - `uuid.unparse()` only takes a Buffer with at least 16 bytes from the offset, and throws otherwise.
+- **For developers**: every `const enum` is a normal `enum` now. Names and values are the same, and they can be used with `isolatedModules`.
+- **For developers**: `addBridgedAccessory()` throws when an accessory with the same UUID is already bridged.
+- **For developers** importing files from `dist`: the example accessories (`dist/accessories/*_accessory.js`), the definitions generator and the `.d.ts.map` files are no longer part of the package.
+
 ### Changes
 
 - docs: fix the api documentation link in the readme
