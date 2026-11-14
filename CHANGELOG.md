@@ -95,6 +95,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(datastream): reject a data stream setup write which is not a string as an invalid value
 - refactor(datastream): drop a ts-expect-error and a non-null assertion in the data stream management
 - refactor(accessory): replace any, ts-expect-error and needless non-null assertions with real types
+- refactor(service): drop three ts-expect-error and four needless non-null assertions
 
 ### Homebridge Dependencies
 
