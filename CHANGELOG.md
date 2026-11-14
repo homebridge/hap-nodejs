@@ -39,6 +39,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(accessory): build the setup uri again when the accessory is published again
 - fix(identifier-cache): keep the next accessory id when a bridge has no accessories for a while
 - fix(characteristic): ignore a minStep of zero or less and list valid values without drift
+- fix(adaptive-lighting): accept a context that is not an object on a manual color write
 
 ### Homebridge Dependencies
 

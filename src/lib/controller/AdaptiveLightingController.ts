@@ -132,8 +132,9 @@ interface AdaptiveLightingCharacteristicContext extends CharacteristicOperationC
   controller: AdaptiveLightingController
 }
 
-function isAdaptiveLightingContext(context: any): context is AdaptiveLightingCharacteristicContext {
-  return context && 'controller' in context
+function isAdaptiveLightingContext(context: unknown): context is AdaptiveLightingCharacteristicContext {
+  // a plugin may pass anything as context, and `in` throws for a string or a number
+  return typeof context === 'object' && context !== null && 'controller' in context
 }
 
 interface SavedLastTransitionPointInfo {
