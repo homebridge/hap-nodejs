@@ -256,6 +256,15 @@ describe('cameraController', () => {
         .setCharacteristic(Characteristic.PeriodicSnapshotsActive, true)
     })
 
+    it('should not throw when the streams are gone after the controller was removed', async () => {
+      controller.handleControllerRemoved()
+      expect(controller.streamManagements).toHaveLength(0)
+
+      let result: Promise<Buffer> | undefined
+      expect(() => result = controller.handleSnapshotRequest(100, 100, 'Camera')).not.toThrow()
+      await expect(result).resolves.toEqual(MOCK_IMAGE)
+    })
+
     it('simple handleSnapshotRequest', async () => {
       const result = controller.handleSnapshotRequest(100, 100, 'SomeAccessory', undefined)
       await expect(result).resolves.toEqual(MOCK_IMAGE)
