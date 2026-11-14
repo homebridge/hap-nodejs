@@ -458,7 +458,7 @@ export class CameraController extends EventEmitter implements SerializableContro
   }
 
   public static generateSynchronisationSource(): number {
-    const ssrc = crypto.randomBytes(4) // range [-2.14748e+09 - 2.14748e+09]
+    const ssrc = crypto.randomBytes(4) // the first byte is set to zero below, so the range is 0 to 16777215
     ssrc[0] = 0
     return ssrc.readInt32BE(0)
   }
