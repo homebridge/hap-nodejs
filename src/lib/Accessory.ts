@@ -1418,6 +1418,11 @@ export class Accessory extends EventEmitter {
   }
 
   public async unpublish(): Promise<void> {
+    if (this.configurationChangeDebounceTimeout) {
+      // nothing is left to tell about a changed configuration, and destroy() takes away what the update needs
+      clearTimeout(this.configurationChangeDebounceTimeout)
+      this.configurationChangeDebounceTimeout = undefined
+    }
     if (this._server) {
       this._server.destroy()
       this._server = undefined
@@ -1437,7 +1442,8 @@ export class Accessory extends EventEmitter {
     this.configurationChangeDebounceTimeout = setTimeout(() => {
       this.configurationChangeDebounceTimeout = undefined
 
-      if (this._advertiser) {
+      // the advertiser is still set while unpublish() waits for its goodbye, but destroy() has taken the rest away
+      if (this._advertiser && this._identifierCache) {
         // get our accessory information in HAP format and determine if our configuration (that is, our
         // Accessories/Services/Characteristics) has changed since the last time we were published. make
         // sure to omit actual values since these are not part of the "configuration".
