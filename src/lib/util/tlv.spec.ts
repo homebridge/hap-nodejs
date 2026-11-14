@@ -211,6 +211,14 @@ describe('tlv', () => {
   })
 
   describe('decodeList', () => {
+    it('should throw on a value which is shorter than its declared length', () => {
+      expect(() => decodeList(Buffer.from('0105aa', 'hex'), 0x01)).toThrow('declared length 5 exceeds remaining buffer 1')
+    })
+
+    it('should throw on a type byte without a length byte', () => {
+      expect(() => decodeList(Buffer.from('0101aa02', 'hex'), 0x01)).toThrow('incomplete type/length header')
+    })
+
     it('simple concatenated list buffer', () => {
       const decoded = decodeList(Buffer.from('010101010102010103010104', 'hex'), 0x01)
 

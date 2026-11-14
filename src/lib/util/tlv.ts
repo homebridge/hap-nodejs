@@ -224,8 +224,14 @@ export function decodeList(data: Buffer, entryStartId: number): Record<number, B
   let objects: Record<number, Buffer> | undefined
 
   for (; leftLength > 0;) {
+    if (leftLength < 2) {
+      throw new Error('TLV decode failure: incomplete type/length header')
+    }
     const type = data[currentIndex] // T
     const length = data[currentIndex + 1] // L
+    if (length > leftLength - 2) {
+      throw new Error(`TLV decode failure: declared length ${length} exceeds remaining buffer ${leftLength - 2}`)
+    }
     const value = data.subarray(currentIndex + 2, currentIndex + 2 + length) // V
 
     if (type === entryStartId) { // we got the start of a new entry
