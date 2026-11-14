@@ -185,7 +185,7 @@ function buildMockConnection(): HAPConnection {
   } as unknown as HAPConnection
 }
 
-describe('rTPStreamManagement', () => {
+describe('RTPStreamManagement', () => {
   describe('streaming options shared by all streams', () => {
     it('should leave the lists of the plugin alone', () => {
       const options: CameraStreamingOptions = {
@@ -227,7 +227,7 @@ describe('rTPStreamManagement', () => {
     })
   })
 
-  describe('_handleStartStream malformed TLV (fix 34056583)', () => {
+  describe('_handleStartStream malformed TLV', () => {
     let controller: CameraController
 
     beforeEach(() => {
@@ -349,7 +349,7 @@ describe('rTPStreamManagement', () => {
     })
   })
 
-  describe('handleSetupEndpoints proxy rejection (fix 0ce74c4e)', () => {
+  describe('handleSetupEndpoints proxy rejection', () => {
     let controller: CameraController
     let setupSpy: MockInstance
 

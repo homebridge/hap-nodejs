@@ -83,7 +83,7 @@ function messagePayload(header: Record<string, unknown>, message: unknown = {}):
   ])
 }
 
-describe('dataStreamServer', () => {
+describe('DataStreamServer', () => {
   function hapConnection(): HAPConnection {
     return {
       sessionID: 'test-session',

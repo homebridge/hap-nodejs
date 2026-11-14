@@ -149,7 +149,7 @@ export function createCameraControllerOptions(
   }
 }
 
-describe('cameraController', () => {
+describe('CameraController', () => {
   let controller: CameraController
 
   beforeEach(() => {

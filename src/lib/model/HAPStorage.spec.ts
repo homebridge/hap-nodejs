@@ -9,7 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { HAPFileStorage } from './HAPFileStorage.js'
 import { HAPStorage } from './HAPStorage.js'
 
-describe('hAPStorage', () => {
+describe('HAPStorage', () => {
   let storagePath: string
 
   beforeEach(() => {

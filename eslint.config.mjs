@@ -118,6 +118,21 @@ export default antfu(
       'test/padding-around-describe-blocks': 'error',
       'test/padding-around-test-blocks': 'error',
       'test/prefer-called-exactly-once-with': 'error',
+      // a describe block is often named after a class (HAPServer), and a test after a request or a constant (GET, ADD_PAIRING).
+      // The autofix of this rule turned those into "hAPServer" and "gET", so such names are left alone
+      'test/prefer-lowercase-title': [
+        'error',
+        {
+          allowedPrefixes: [
+            'ADD_PAIRING',
+            'GET',
+            'POST',
+            'PUT',
+            'REMOVE_PAIRING',
+          ],
+          ignore: ['describe'],
+        },
+      ],
       'test/require-local-test-context-for-concurrent-snapshots': 'error',
       'test/valid-describe-callback': 'error',
       'test/valid-expect': 'error',

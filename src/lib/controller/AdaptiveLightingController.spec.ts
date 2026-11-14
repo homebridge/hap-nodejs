@@ -91,7 +91,7 @@ async function writeTransitionControl(lightbulb: Service, value: string): Promis
   return lightbulb.getCharacteristic(Characteristic.CharacteristicValueTransitionControl).handleSetRequest(value)
 }
 
-describe('adaptiveLightingController', () => {
+describe('AdaptiveLightingController', () => {
   beforeEach(() => {
     vi.useFakeTimers()
   })

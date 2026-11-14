@@ -6,8 +6,8 @@ import { Service } from '../Service.js'
 
 import './index.js'
 
-describe('serviceDefinitions', () => {
-  describe('accessCode', () => {
+describe('ServiceDefinitions', () => {
+  describe('AccessCode', () => {
     it('should be able to construct', () => {
       const service0 = new Service.AccessCode()
       const service1 = new Service.AccessCode('test name')
@@ -29,7 +29,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('accessControl', () => {
+  describe('AccessControl', () => {
     it('should be able to construct', () => {
       const service0 = new Service.AccessControl()
       const service1 = new Service.AccessControl('test name')
@@ -51,7 +51,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('accessoryInformation', () => {
+  describe('AccessoryInformation', () => {
     it('should be able to construct', () => {
       const service0 = new Service.AccessoryInformation()
       const service1 = new Service.AccessoryInformation('test name')
@@ -73,7 +73,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('accessoryMetrics', () => {
+  describe('AccessoryMetrics', () => {
     it('should be able to construct', () => {
       const service0 = new Service.AccessoryMetrics()
       const service1 = new Service.AccessoryMetrics('test name')
@@ -95,7 +95,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('accessoryRuntimeInformation', () => {
+  describe('AccessoryRuntimeInformation', () => {
     it('should be able to construct', () => {
       const service0 = new Service.AccessoryRuntimeInformation()
       const service1 = new Service.AccessoryRuntimeInformation('test name')
@@ -117,7 +117,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('airPurifier', () => {
+  describe('AirPurifier', () => {
     it('should be able to construct', () => {
       const service0 = new Service.AirPurifier()
       const service1 = new Service.AirPurifier('test name')
@@ -139,7 +139,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('airQualitySensor', () => {
+  describe('AirQualitySensor', () => {
     it('should be able to construct', () => {
       const service0 = new Service.AirQualitySensor()
       const service1 = new Service.AirQualitySensor('test name')
@@ -161,7 +161,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('assetUpdate', () => {
+  describe('AssetUpdate', () => {
     it('should be able to construct', () => {
       const service0 = new Service.AssetUpdate()
       const service1 = new Service.AssetUpdate('test name')
@@ -183,7 +183,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('assistant', () => {
+  describe('Assistant', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Assistant()
       const service1 = new Service.Assistant('test name')
@@ -205,7 +205,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('audioStreamManagement', () => {
+  describe('AudioStreamManagement', () => {
     it('should be able to construct', () => {
       const service0 = new Service.AudioStreamManagement()
       const service1 = new Service.AudioStreamManagement('test name')
@@ -227,7 +227,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('battery', () => {
+  describe('Battery', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Battery()
       const service1 = new Service.Battery('test name')
@@ -249,7 +249,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('cameraOperatingMode', () => {
+  describe('CameraOperatingMode', () => {
     it('should be able to construct', () => {
       const service0 = new Service.CameraOperatingMode()
       const service1 = new Service.CameraOperatingMode('test name')
@@ -271,7 +271,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('cameraRecordingManagement', () => {
+  describe('CameraRecordingManagement', () => {
     it('should be able to construct', () => {
       const service0 = new Service.CameraRecordingManagement()
       const service1 = new Service.CameraRecordingManagement('test name')
@@ -293,7 +293,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('cameraRTPStreamManagement', () => {
+  describe('CameraRTPStreamManagement', () => {
     it('should be able to construct', () => {
       const service0 = new Service.CameraRTPStreamManagement()
       const service1 = new Service.CameraRTPStreamManagement('test name')
@@ -315,7 +315,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('carbonDioxideSensor', () => {
+  describe('CarbonDioxideSensor', () => {
     it('should be able to construct', () => {
       const service0 = new Service.CarbonDioxideSensor()
       const service1 = new Service.CarbonDioxideSensor('test name')
@@ -337,7 +337,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('carbonMonoxideSensor', () => {
+  describe('CarbonMonoxideSensor', () => {
     it('should be able to construct', () => {
       const service0 = new Service.CarbonMonoxideSensor()
       const service1 = new Service.CarbonMonoxideSensor('test name')
@@ -359,7 +359,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('cloudRelay', () => {
+  describe('CloudRelay', () => {
     it('should be able to construct', () => {
       const service0 = new Service.CloudRelay()
       const service1 = new Service.CloudRelay('test name')
@@ -381,7 +381,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('contactSensor', () => {
+  describe('ContactSensor', () => {
     it('should be able to construct', () => {
       const service0 = new Service.ContactSensor()
       const service1 = new Service.ContactSensor('test name')
@@ -403,7 +403,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('dataStreamTransportManagement', () => {
+  describe('DataStreamTransportManagement', () => {
     it('should be able to construct', () => {
       const service0 = new Service.DataStreamTransportManagement()
       const service1 = new Service.DataStreamTransportManagement('test name')
@@ -425,7 +425,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('diagnostics', () => {
+  describe('Diagnostics', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Diagnostics()
       const service1 = new Service.Diagnostics('test name')
@@ -447,7 +447,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('door', () => {
+  describe('Door', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Door()
       const service1 = new Service.Door('test name')
@@ -469,7 +469,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('doorbell', () => {
+  describe('Doorbell', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Doorbell()
       const service1 = new Service.Doorbell('test name')
@@ -491,7 +491,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('fan', () => {
+  describe('Fan', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Fan()
       const service1 = new Service.Fan('test name')
@@ -513,7 +513,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('fanv2', () => {
+  describe('Fanv2', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Fanv2()
       const service1 = new Service.Fanv2('test name')
@@ -535,7 +535,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('faucet', () => {
+  describe('Faucet', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Faucet()
       const service1 = new Service.Faucet('test name')
@@ -557,7 +557,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('filterMaintenance', () => {
+  describe('FilterMaintenance', () => {
     it('should be able to construct', () => {
       const service0 = new Service.FilterMaintenance()
       const service1 = new Service.FilterMaintenance('test name')
@@ -579,7 +579,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('firmwareUpdate', () => {
+  describe('FirmwareUpdate', () => {
     it('should be able to construct', () => {
       const service0 = new Service.FirmwareUpdate()
       const service1 = new Service.FirmwareUpdate('test name')
@@ -601,7 +601,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('garageDoorOpener', () => {
+  describe('GarageDoorOpener', () => {
     it('should be able to construct', () => {
       const service0 = new Service.GarageDoorOpener()
       const service1 = new Service.GarageDoorOpener('test name')
@@ -623,7 +623,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('heaterCooler', () => {
+  describe('HeaterCooler', () => {
     it('should be able to construct', () => {
       const service0 = new Service.HeaterCooler()
       const service1 = new Service.HeaterCooler('test name')
@@ -645,7 +645,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('humidifierDehumidifier', () => {
+  describe('HumidifierDehumidifier', () => {
     it('should be able to construct', () => {
       const service0 = new Service.HumidifierDehumidifier()
       const service1 = new Service.HumidifierDehumidifier('test name')
@@ -667,7 +667,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('humiditySensor', () => {
+  describe('HumiditySensor', () => {
     it('should be able to construct', () => {
       const service0 = new Service.HumiditySensor()
       const service1 = new Service.HumiditySensor('test name')
@@ -689,7 +689,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('inputSource', () => {
+  describe('InputSource', () => {
     it('should be able to construct', () => {
       const service0 = new Service.InputSource()
       const service1 = new Service.InputSource('test name')
@@ -711,7 +711,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('irrigationSystem', () => {
+  describe('IrrigationSystem', () => {
     it('should be able to construct', () => {
       const service0 = new Service.IrrigationSystem()
       const service1 = new Service.IrrigationSystem('test name')
@@ -733,7 +733,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('leakSensor', () => {
+  describe('LeakSensor', () => {
     it('should be able to construct', () => {
       const service0 = new Service.LeakSensor()
       const service1 = new Service.LeakSensor('test name')
@@ -755,7 +755,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('lightbulb', () => {
+  describe('Lightbulb', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Lightbulb()
       const service1 = new Service.Lightbulb('test name')
@@ -777,7 +777,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('lightSensor', () => {
+  describe('LightSensor', () => {
     it('should be able to construct', () => {
       const service0 = new Service.LightSensor()
       const service1 = new Service.LightSensor('test name')
@@ -799,7 +799,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('lockManagement', () => {
+  describe('LockManagement', () => {
     it('should be able to construct', () => {
       const service0 = new Service.LockManagement()
       const service1 = new Service.LockManagement('test name')
@@ -821,7 +821,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('lockMechanism', () => {
+  describe('LockMechanism', () => {
     it('should be able to construct', () => {
       const service0 = new Service.LockMechanism()
       const service1 = new Service.LockMechanism('test name')
@@ -843,7 +843,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('manufacturerFirmwareUpdate', () => {
+  describe('ManufacturerFirmwareUpdate', () => {
     it('should be able to construct', () => {
       const service0 = new Service.ManufacturerFirmwareUpdate()
       const service1 = new Service.ManufacturerFirmwareUpdate('test name')
@@ -865,7 +865,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('microphone', () => {
+  describe('Microphone', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Microphone()
       const service1 = new Service.Microphone('test name')
@@ -887,7 +887,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('motionSensor', () => {
+  describe('MotionSensor', () => {
     it('should be able to construct', () => {
       const service0 = new Service.MotionSensor()
       const service1 = new Service.MotionSensor('test name')
@@ -909,7 +909,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('nFCAccess', () => {
+  describe('NFCAccess', () => {
     it('should be able to construct', () => {
       const service0 = new Service.NFCAccess()
       const service1 = new Service.NFCAccess('test name')
@@ -931,7 +931,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('occupancySensor', () => {
+  describe('OccupancySensor', () => {
     it('should be able to construct', () => {
       const service0 = new Service.OccupancySensor()
       const service1 = new Service.OccupancySensor('test name')
@@ -953,7 +953,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('outlet', () => {
+  describe('Outlet', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Outlet()
       const service1 = new Service.Outlet('test name')
@@ -975,7 +975,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('pairing', () => {
+  describe('Pairing', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Pairing()
       const service1 = new Service.Pairing('test name')
@@ -997,7 +997,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('powerManagement', () => {
+  describe('PowerManagement', () => {
     it('should be able to construct', () => {
       const service0 = new Service.PowerManagement()
       const service1 = new Service.PowerManagement('test name')
@@ -1019,7 +1019,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('protocolInformation', () => {
+  describe('ProtocolInformation', () => {
     it('should be able to construct', () => {
       const service0 = new Service.ProtocolInformation()
       const service1 = new Service.ProtocolInformation('test name')
@@ -1041,7 +1041,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('proximityControl', () => {
+  describe('ProximityControl', () => {
     it('should be able to construct', () => {
       const service0 = new Service.ProximityControl()
       const service1 = new Service.ProximityControl('test name')
@@ -1063,7 +1063,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('securitySystem', () => {
+  describe('SecuritySystem', () => {
     it('should be able to construct', () => {
       const service0 = new Service.SecuritySystem()
       const service1 = new Service.SecuritySystem('test name')
@@ -1085,7 +1085,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('serviceLabel', () => {
+  describe('ServiceLabel', () => {
     it('should be able to construct', () => {
       const service0 = new Service.ServiceLabel()
       const service1 = new Service.ServiceLabel('test name')
@@ -1107,7 +1107,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('siri', () => {
+  describe('Siri', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Siri()
       const service1 = new Service.Siri('test name')
@@ -1129,7 +1129,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('siriEndpoint', () => {
+  describe('SiriEndpoint', () => {
     it('should be able to construct', () => {
       const service0 = new Service.SiriEndpoint()
       const service1 = new Service.SiriEndpoint('test name')
@@ -1151,7 +1151,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('slats', () => {
+  describe('Slats', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Slats()
       const service1 = new Service.Slats('test name')
@@ -1173,7 +1173,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('smartSpeaker', () => {
+  describe('SmartSpeaker', () => {
     it('should be able to construct', () => {
       const service0 = new Service.SmartSpeaker()
       const service1 = new Service.SmartSpeaker('test name')
@@ -1195,7 +1195,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('smokeSensor', () => {
+  describe('SmokeSensor', () => {
     it('should be able to construct', () => {
       const service0 = new Service.SmokeSensor()
       const service1 = new Service.SmokeSensor('test name')
@@ -1217,7 +1217,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('speaker', () => {
+  describe('Speaker', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Speaker()
       const service1 = new Service.Speaker('test name')
@@ -1239,7 +1239,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('statefulProgrammableSwitch', () => {
+  describe('StatefulProgrammableSwitch', () => {
     it('should be able to construct', () => {
       const service0 = new Service.StatefulProgrammableSwitch()
       const service1 = new Service.StatefulProgrammableSwitch('test name')
@@ -1261,7 +1261,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('statelessProgrammableSwitch', () => {
+  describe('StatelessProgrammableSwitch', () => {
     it('should be able to construct', () => {
       const service0 = new Service.StatelessProgrammableSwitch()
       const service1 = new Service.StatelessProgrammableSwitch('test name')
@@ -1283,7 +1283,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('switch', () => {
+  describe('Switch', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Switch()
       const service1 = new Service.Switch('test name')
@@ -1305,7 +1305,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('tapManagement', () => {
+  describe('TapManagement', () => {
     it('should be able to construct', () => {
       const service0 = new Service.TapManagement()
       const service1 = new Service.TapManagement('test name')
@@ -1327,7 +1327,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('targetControl', () => {
+  describe('TargetControl', () => {
     it('should be able to construct', () => {
       const service0 = new Service.TargetControl()
       const service1 = new Service.TargetControl('test name')
@@ -1349,7 +1349,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('targetControlManagement', () => {
+  describe('TargetControlManagement', () => {
     it('should be able to construct', () => {
       const service0 = new Service.TargetControlManagement()
       const service1 = new Service.TargetControlManagement('test name')
@@ -1371,7 +1371,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('television', () => {
+  describe('Television', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Television()
       const service1 = new Service.Television('test name')
@@ -1393,7 +1393,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('televisionSpeaker', () => {
+  describe('TelevisionSpeaker', () => {
     it('should be able to construct', () => {
       const service0 = new Service.TelevisionSpeaker()
       const service1 = new Service.TelevisionSpeaker('test name')
@@ -1415,7 +1415,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('temperatureSensor', () => {
+  describe('TemperatureSensor', () => {
     it('should be able to construct', () => {
       const service0 = new Service.TemperatureSensor()
       const service1 = new Service.TemperatureSensor('test name')
@@ -1437,7 +1437,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('thermostat', () => {
+  describe('Thermostat', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Thermostat()
       const service1 = new Service.Thermostat('test name')
@@ -1459,7 +1459,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('threadTransport', () => {
+  describe('ThreadTransport', () => {
     it('should be able to construct', () => {
       const service0 = new Service.ThreadTransport()
       const service1 = new Service.ThreadTransport('test name')
@@ -1481,7 +1481,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('transferTransportManagement', () => {
+  describe('TransferTransportManagement', () => {
     it('should be able to construct', () => {
       const service0 = new Service.TransferTransportManagement()
       const service1 = new Service.TransferTransportManagement('test name')
@@ -1503,7 +1503,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('tunnel', () => {
+  describe('Tunnel', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Tunnel()
       const service1 = new Service.Tunnel('test name')
@@ -1525,7 +1525,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('valve', () => {
+  describe('Valve', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Valve()
       const service1 = new Service.Valve('test name')
@@ -1547,7 +1547,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('wiFiRouter', () => {
+  describe('WiFiRouter', () => {
     it('should be able to construct', () => {
       const service0 = new Service.WiFiRouter()
       const service1 = new Service.WiFiRouter('test name')
@@ -1569,7 +1569,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('wiFiSatellite', () => {
+  describe('WiFiSatellite', () => {
     it('should be able to construct', () => {
       const service0 = new Service.WiFiSatellite()
       const service1 = new Service.WiFiSatellite('test name')
@@ -1591,7 +1591,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('wiFiTransport', () => {
+  describe('WiFiTransport', () => {
     it('should be able to construct', () => {
       const service0 = new Service.WiFiTransport()
       const service1 = new Service.WiFiTransport('test name')
@@ -1613,7 +1613,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('window', () => {
+  describe('Window', () => {
     it('should be able to construct', () => {
       const service0 = new Service.Window()
       const service1 = new Service.Window('test name')
@@ -1635,7 +1635,7 @@ describe('serviceDefinitions', () => {
     })
   })
 
-  describe('windowCovering', () => {
+  describe('WindowCovering', () => {
     it('should be able to construct', () => {
       const service0 = new Service.WindowCovering()
       const service1 = new Service.WindowCovering('test name')

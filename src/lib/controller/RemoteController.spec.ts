@@ -66,7 +66,7 @@ function decodeTargetIdentifiers(response: string): number[] {
   return [targets].flat().map(target => tlv.readUInt32(tlv.decode(target)[0x01]))
 }
 
-describe('remoteController', () => {
+describe('RemoteController', () => {
   describe('target configurations', () => {
     it('should return the configured targets in the write response', async () => {
       const controller = createController()

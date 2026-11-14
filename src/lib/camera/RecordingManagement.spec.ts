@@ -19,7 +19,7 @@ import {
 } from './RecordingManagement.js'
 import { AudioBitrate, H264Level, H264Profile, VideoCodecType } from './RTPStreamManagement.js'
 
-describe('recordingManagement', () => {
+describe('RecordingManagement', () => {
   it('handleSelectedCameraRecordingConfiguration', () => {
     const base64Input = 'AR0BBKAPAAACCAEAAAAAAAAAAwsBAQACBgEEoA8AAAIkAQEAAhIBAQECAQIDBNAHAAAEBKAPAAADCwECsAQCAkAGAwEYAxQBAQACDwEBAQIBAAMBAwQEQAAAAA=='
 

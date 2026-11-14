@@ -36,7 +36,7 @@ function dbusError(dbusName: string, message: string): DBusError {
   return error
 }
 
-describe('ciaoAdvertiser', () => {
+describe('CiaoAdvertiser', () => {
   describe('ff and sf', () => {
     it('should correctly format pairing feature flags', () => {
       expect(CiaoAdvertiser.ff()).toEqual(0)
@@ -64,7 +64,7 @@ describe('ciaoAdvertiser', () => {
   })
 })
 
-describe('ciaoAdvertiser destroy', () => {
+describe('CiaoAdvertiser destroy', () => {
   function accessoryInfo(username: string, displayName: string): AccessoryInfo {
     const info = AccessoryInfo.create(username)
     info.displayName = displayName
@@ -110,7 +110,7 @@ describe('ciaoAdvertiser destroy', () => {
   })
 })
 
-describe('bonjourHAPAdvertiser', () => {
+describe('BonjourHAPAdvertiser', () => {
   function advertiser(): BonjourHAPAdvertiser {
     const info = AccessoryInfo.create('AA:BB:CC:DD:EE:04')
     info.displayName = 'Bonjour Test'
@@ -192,7 +192,7 @@ describe('bonjourHAPAdvertiser', () => {
   })
 })
 
-describe('dBusInvokeError', () => {
+describe('DBusInvokeError', () => {
   it('should take the D-Bus error name from a dbus-native DBusError', () => {
     const error = new DBusInvokeError(dbusError('org.freedesktop.DBus.Error.AccessDenied', 'Access denied'))
 
@@ -201,7 +201,7 @@ describe('dBusInvokeError', () => {
   })
 })
 
-describe('d-Bus advertisers', () => {
+describe('D-Bus advertisers', () => {
   beforeEach(() => {
     buses.length = 0
     invokeHandler = () => undefined

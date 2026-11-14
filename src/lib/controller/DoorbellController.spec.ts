@@ -4,7 +4,7 @@ import { EventTriggerOption } from '../camera/index.js'
 import { createCameraControllerOptions } from './CameraController.spec.js'
 import { DoorbellController } from './DoorbellController.js'
 
-describe('doorbellController', () => {
+describe('DoorbellController', () => {
   it('event trigger options', () => {
     const controller = new DoorbellController(createCameraControllerOptions())
 

@@ -28,7 +28,7 @@ const itWithSymlinks = symlinksPermitted()
   ? it
   : it.skip
 
-describe('hAPFileStorage', () => {
+describe('HAPFileStorage', () => {
   let dir: string
   let storage: HAPFileStorage
 

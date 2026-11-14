@@ -9,7 +9,7 @@ function createIdentifierCache(username = 'username') {
   return new IdentifierCache(username)
 }
 
-describe('identifierCache', () => {
+describe('IdentifierCache', () => {
   describe('#startTrackingUsage()', () => {
     it ('creates a cache to track usage and expiring keys', () => {
       const identifierCache = createIdentifierCache()

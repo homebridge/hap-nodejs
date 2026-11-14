@@ -37,7 +37,7 @@ import * as hapCrypto from './util/hapCrypto.js'
 import { awaitEventOnce, PromiseTimeout } from './util/promise-utils.js'
 import * as tlv from './util/tlv.js'
 
-describe('hAPServer', () => {
+describe('HAPServer', () => {
   const serverUsername = 'AA:AA:AA:AA:AA:AA'
   const clientUsername = 'BB:BB:BB:BB:BB:BB'
   const thirdUsername = 'CC:CC:CC:CC:CC:CC'
@@ -240,7 +240,7 @@ describe('hAPServer', () => {
     expect(objectsM4[TLVValues.ERROR_CODE].readUInt8(0)).toEqual(TLVErrorCode.AUTHENTICATION)
   })
 
-  describe('encrypted data length validation (fix 0719059b)', () => {
+  describe('encrypted data length validation', () => {
     it('/pair-setup M5 should reject when ENCRYPTED_DATA is missing', async () => {
       server = new HAPServer(accessoryInfoUnpaired)
       const [port] = await bindServer(server)
@@ -347,8 +347,8 @@ describe('hAPServer', () => {
     })
   })
 
-  describe('constant-time pincode comparison (fix 12aea013)', () => {
-    it('pUT /characteristics with no authorization header should be rejected', async () => {
+  describe('constant-time pincode comparison', () => {
+    it('PUT /characteristics with no authorization header should be rejected', async () => {
       server = new HAPServer(accessoryInfoUnpaired)
       server.allowInsecureRequest = true
       const [port] = await bindServer(server)
@@ -368,7 +368,7 @@ describe('hAPServer', () => {
       expect(JSON.parse(response.body.toString())).toEqual({ status: HAPStatus.INSUFFICIENT_PRIVILEGES })
     })
 
-    it('pUT /characteristics with wrong-length authorization should not crash timingSafeEqual', async () => {
+    it('PUT /characteristics with wrong-length authorization should not crash timingSafeEqual', async () => {
       server = new HAPServer(accessoryInfoUnpaired)
       server.allowInsecureRequest = true
       const [port] = await bindServer(server)
@@ -393,7 +393,7 @@ describe('hAPServer', () => {
       expect(response.statusCode).toBe(HAPPairingHTTPCode.CONNECTION_AUTHORIZATION_REQUIRED)
     })
 
-    it('pUT /characteristics with same-length wrong pincode should be rejected', async () => {
+    it('PUT /characteristics with same-length wrong pincode should be rejected', async () => {
       // use a pincode without leading whitespace — node's HTTP parser trims
       // header values, so the fixture's " 031-45-154" can't round-trip and
       // any wrong value with the same leading space hits the wrong-length
@@ -427,7 +427,7 @@ describe('hAPServer', () => {
       expect(response.statusCode).toBe(HAPPairingHTTPCode.CONNECTION_AUTHORIZATION_REQUIRED)
     })
 
-    it('pUT /characteristics with correct pincode should be authorized', async () => {
+    it('PUT /characteristics with correct pincode should be authorized', async () => {
       // use a pincode without leading whitespace — HTTP header values get trimmed
       // by node's parser so the global test fixture's " 031-45-154" can't round-trip.
       const info = AccessoryInfo.create(serverUsername)
@@ -466,7 +466,7 @@ describe('hAPServer', () => {
       expect(response.statusCode).toBeLessThan(300)
     })
 
-    it('pOST /resource with wrong-length authorization should not crash timingSafeEqual', async () => {
+    it('POST /resource with wrong-length authorization should not crash timingSafeEqual', async () => {
       server = new HAPServer(accessoryInfoUnpaired)
       server.allowInsecureRequest = true
       const [port] = await bindServer(server)
@@ -597,7 +597,7 @@ describe('hAPServer', () => {
     })
   })
 
-  describe('error argument in pairing debug logs (fix f12ed233)', () => {
+  describe('error argument in pairing debug logs', () => {
     let originalEnable: string
     let originalLog: (...args: unknown[]) => void
     let captured: unknown[][]
@@ -702,7 +702,7 @@ describe('hAPServer', () => {
     })
   })
 
-  describe('m1 reset prevention (fix d4c81be0)', () => {
+  describe('M1 reset prevention', () => {
     it('/pair-setup should reject a second M1 on a connection with in-progress state', async () => {
       server = new HAPServer(accessoryInfoUnpaired)
       const [port] = await bindServer(server)
@@ -744,7 +744,7 @@ describe('hAPServer', () => {
     })
   })
 
-  describe('sEQUENCE_NUM check in pair handlers (fix ebe2ec67)', () => {
+  describe('SEQUENCE_NUM check in pair handlers', () => {
     it('/pair-setup should reject when SEQUENCE_NUM TLV is missing', async () => {
       server = new HAPServer(accessoryInfoUnpaired)
       const [port] = await bindServer(server)
@@ -784,7 +784,7 @@ describe('hAPServer', () => {
     })
   })
 
-  describe('required TLV fields validation in pairing handlers (fix 58c24b92)', () => {
+  describe('required TLV fields validation in pairing handlers', () => {
     it('/pair-setup M5 should reject when decrypted payload is missing IDENTIFIER', async () => {
       server = new HAPServer(accessoryInfoUnpaired)
       const [port] = await bindServer(server)
@@ -952,7 +952,7 @@ describe('hAPServer', () => {
       expect(response).toEqual(list)
     })
 
-    describe('/pairings required TLV fields (fix 58c24b92)', () => {
+    describe('/pairings required TLV fields', () => {
       it('should reject when METHOD is missing', async () => {
         const malformed = tlv.encode(TLVValues.STATE, PairingStates.M1)
         const httpResponse = await client.writeHTTPRequest('POST', '/pairings', malformed, { contentType: HAPMimeTypes.PAIRING_TLV8 })
@@ -983,7 +983,7 @@ describe('hAPServer', () => {
         expect(objects[TLVValues.ERROR_CODE].readUInt8(0)).toEqual(TLVErrorCode.UNKNOWN)
       })
 
-      it('aDD_PAIRING should reject when IDENTIFIER is missing', async () => {
+      it('ADD_PAIRING should reject when IDENTIFIER is missing', async () => {
         const malformed = tlv.encode(
           TLVValues.METHOD, PairMethods.ADD_PAIRING,
           TLVValues.STATE, PairingStates.M1,
@@ -996,7 +996,7 @@ describe('hAPServer', () => {
         expect(objects[TLVValues.ERROR_CODE].readUInt8(0)).toEqual(TLVErrorCode.UNKNOWN)
       })
 
-      it('aDD_PAIRING should reject when PUBLIC_KEY is missing', async () => {
+      it('ADD_PAIRING should reject when PUBLIC_KEY is missing', async () => {
         const malformed = tlv.encode(
           TLVValues.METHOD, PairMethods.ADD_PAIRING,
           TLVValues.STATE, PairingStates.M1,
@@ -1009,7 +1009,7 @@ describe('hAPServer', () => {
         expect(objects[TLVValues.ERROR_CODE].readUInt8(0)).toEqual(TLVErrorCode.UNKNOWN)
       })
 
-      it('rEMOVE_PAIRING should reject when IDENTIFIER is missing', async () => {
+      it('REMOVE_PAIRING should reject when IDENTIFIER is missing', async () => {
         const malformed = tlv.encode(
           TLVValues.METHOD, PairMethods.REMOVE_PAIRING,
           TLVValues.STATE, PairingStates.M1,
@@ -1021,7 +1021,7 @@ describe('hAPServer', () => {
       })
     })
 
-    describe('gET /characteristics aid.iid format validation (fix ec93c504)', () => {
+    describe('GET /characteristics aid.iid format validation', () => {
       it.each([
         ['non-numeric aid', 'abc.5'],
         ['non-numeric iid', '1.xyz'],
@@ -1114,7 +1114,7 @@ describe('hAPServer', () => {
       expect(httpResponse.body).toEqual({ characteristics: readData })
     })
 
-    it('gET /characteristics with errors', async () => {
+    it('GET /characteristics with errors', async () => {
       const ids: CharacteristicId[] = [
         { aid: 1, iid: 9 },
         { aid: 2, iid: 14 },
@@ -1218,7 +1218,7 @@ describe('hAPServer', () => {
       expect(httpResponse.statusCode).toEqual(HAPHTTPCode.NO_CONTENT)
     })
 
-    it('pUT /characteristics value with MULTI_STATUS', async () => {
+    it('PUT /characteristics value with MULTI_STATUS', async () => {
       const ids: CharacteristicId[] = [
         { aid: 1, iid: 9 },
         { aid: 2, iid: 14 },
@@ -1261,7 +1261,7 @@ describe('hAPServer', () => {
       expect(httpResponse.statusCode).toEqual(HAPHTTPCode.MULTI_STATUS)
     })
 
-    it('pUT /characteristics value with write response', async () => {
+    it('PUT /characteristics value with write response', async () => {
       const ids: CharacteristicId[] = [
         { aid: 1, iid: 9 },
       ]

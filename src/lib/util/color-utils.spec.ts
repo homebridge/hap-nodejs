@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { ColorUtils } from './color-utils.js'
 
-describe('colorUtils', () => {
+describe('ColorUtils', () => {
   describe('#colorTemperatureToHueAndSaturation()', () => {
     it('should return unrounded values after a rounded lookup of the same temperature', () => {
       expect(ColorUtils.colorTemperatureToHueAndSaturation(153)).toEqual({ saturation: 3, hue: 276 })

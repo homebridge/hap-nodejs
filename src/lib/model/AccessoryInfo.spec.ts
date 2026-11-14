@@ -14,7 +14,7 @@ import { EventedHTTPServer, HAPConnection } from '../util/eventedhttp.js'
 import { AccessoryInfo, PermissionTypes } from './AccessoryInfo.js'
 import { HAPStorage } from './HAPStorage.js'
 
-describe('accessoryInfo', () => {
+describe('AccessoryInfo', () => {
   it('should not read package.json again for every firmware version check', () => {
     const readFileSync = vi.spyOn(fs, 'readFileSync')
     syncBuiltinESMExports() // makes the spy visible to the named import in AccessoryInfo.ts
