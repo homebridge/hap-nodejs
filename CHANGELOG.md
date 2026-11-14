@@ -122,6 +122,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(uuid): refuse to read a uuid from a buffer which is too short or from a string
 - refactor(server): type the pairing state of a connection as PairingStates instead of number
 - docs(uuid): describe the errors of unparse in a way typedoc accepts
+- refactor(characteristic): type the context of a characteristic change as unknown instead of any
 
 ### Homebridge Dependencies
 
