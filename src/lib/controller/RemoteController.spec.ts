@@ -157,6 +157,29 @@ describe('remoteController', () => {
     })
   })
 
+  describe('whoami message', () => {
+    it('should ignore a message without a numeric target identifier', () => {
+      const controller = createController()
+      const connection = {
+        addProtocolHandler: vi.fn(),
+      }
+
+      // @ts-expect-error: private access, and the connection is a minimal fake
+      controller.handleTargetControlWhoAmI(connection, { identifier: 'one' })
+
+      // @ts-expect-error: private access
+      expect(controller.dataStreamConnections.size).toBe(0)
+      expect(connection.addProtocolHandler).not.toHaveBeenCalled()
+
+      // @ts-expect-error: private access, and the connection is a minimal fake
+      controller.handleTargetControlWhoAmI(connection, { identifier: 1 })
+
+      // @ts-expect-error: private access
+      expect(controller.dataStreamConnections.get(1)).toBe(connection)
+      expect(connection.addProtocolHandler).toHaveBeenCalledOnce()
+    })
+  })
+
   describe('target removal and updates', () => {
     async function createControllerWithTargets(): Promise<RemoteController> {
       const controller = createController()
@@ -375,7 +398,7 @@ describe('remoteController', () => {
             })
           }
         },
-        open: () => answerOpen(undefined, 0, { streamId: 1 }),
+        open: (message: Record<string, unknown> = { streamId: 1 }) => answerOpen(undefined, 0, message),
         dataEvents: () => connection.sendEvent.mock.calls
           .filter(call => call[1] === 'data')
           .map(call => ({ frames: call[2].packets.length as number, endOfStream: call[2].endOfStream as boolean })),
@@ -407,6 +430,20 @@ describe('remoteController', () => {
 
       expect(received).toHaveLength(1)
       expect(received[0]).toBe(options)
+    })
+
+    it('should close the session when the stream is opened without a numeric stream id', () => {
+      const { session, produce, open, stopAudioProduction, dataEvents } = createSession()
+      const closed = vi.fn()
+      session.on('close', closed)
+
+      produce(3)
+      open({ streamId: 'one' })
+
+      expect(stopAudioProduction).toHaveBeenCalledOnce()
+      expect(closed).toHaveBeenCalledOnce()
+      expect(session.streamId).toBeUndefined()
+      expect(dataEvents()).toEqual([]) // nothing is sent for a stream without an id
     })
 
     it('should send every queued frame when the stream ends, with endOfStream on the last packet only', () => {
