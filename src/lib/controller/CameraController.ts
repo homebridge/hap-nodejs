@@ -47,7 +47,7 @@ const debug = createDebug('HAP-NodeJS:Camera:Controller')
 export interface CameraControllerOptions {
   /**
    * Amount of parallel camera streams the accessory is capable of running.
-   * As of the official HAP specification non SecureVideo cameras have a minimum required amount of 2 (but 1 is also fine).
+   * According to the official HAP specification, non SecureVideo cameras have a minimum required amount of 2 (but 1 is also fine).
    * Secure Video cameras just expose 1 stream.
    *
    * Default value: 1
@@ -90,7 +90,7 @@ export interface CameraControllerOptions {
    *
    * You may either specify and provide the desired {@link Service}s or specify their creation and maintenance using a `boolean` flag.
    * In this case the controller will create and maintain the service for you.
-   * Otherwise, when you supply an already created instance of the {@link Service}, you are responsible yourself to manage the service
+   * Otherwise, when you supply an already created instance of the {@link Service}, you are responsible for managing the service yourself
    * (e.g. creating, restoring, adding to the accessory, ...).
    *
    * The services can be accessed through the documented property after the call to {@link Accessory.configureController} has returned.
@@ -174,7 +174,7 @@ export interface CameraStreamingDelegate {
 /**
  * A `CameraRecordingDelegate` is responsible for handling recordings of a HomeKit Secure Video camera.
  *
- * It is responsible for maintaining the prebuffer (see {@link CameraRecordingOptions.prebufferLength},
+ * It is responsible for maintaining the prebuffer (see {@link CameraRecordingOptions.prebufferLength}),
  * once recording was activated (see {@link updateRecordingActive}).
  *
  * Before recording is considered enabled two things must happen:
@@ -195,7 +195,7 @@ export interface CameraStreamingDelegate {
  *   (e.g. in the {@link Service.MotionSensor} or {@link Service.Doorbell} service).
  *   It will continue to send the remaining fragments of the currently ongoing recording stream request.
  * - The camera will either reach the end of the recording (and signal this via {@link RecordingPacket.isLast}. Also see {@link acknowledgeStream})
- *   or it will continue to stream til the HomeKit Controller closes
+ *   or it will continue to stream until the HomeKit Controller closes
  *   the stream {@link closeRecordingStream} with reason {@link HDSProtocolSpecificErrorReason.NORMAL}.
  * - The camera goes back into idle mode.
  *
@@ -217,7 +217,7 @@ export interface CameraRecordingDelegate {
    * NOTE: HAP-NodeJS cannot guarantee that a {@link CameraRecordingConfiguration} is present
    * when recording is activated (e.g. the selected configuration might be erased due to changes
    * in the supplied {@link CameraRecordingOptions}, but the camera is still `active`; or we can't otherwise
-   * influence the order which a HomeKit Controller might call those characteristics).
+   * influence the order in which a HomeKit Controller might call those characteristics).
    * However, HAP-NodeJS guarantees that if there is a valid {@link CameraRecordingConfiguration},
    * {@link updateRecordingConfiguration} is called before {@link updateRecordingActive} (when enabling)
    * to avoid any unnecessary and potentially expensive reconfigurations.
@@ -239,7 +239,7 @@ export interface CameraRecordingDelegate {
    * currently running stream and only apply the updated configuration to the next stream.
    *
    * @param configuration - The {@link CameraRecordingConfiguration}. Reconfigure your recording pipeline accordingly.
-   * The parameter might be `undefined` when the selected configuration became invalid. This typically ony happens
+   * The parameter might be `undefined` when the selected configuration became invalid. This typically only happens
    * e.g. due to a factory reset (when all pairings are removed). Disable the recording pipeline in such a case
    * even if recording is still enabled for the camera.
    */
@@ -250,7 +250,7 @@ export interface CameraRecordingDelegate {
    * It is guaranteed that there is only ever one ongoing recording stream request at a time.
    *
    * When this method is called return the currently ongoing (or next in case of a potentially queued)
-   * recording via a `AsyncGenerator`. Every `yield` of the generator represents a complete recording `packet`.
+   * recording via an `AsyncGenerator`. Every `yield` of the generator represents a complete recording `packet`.
    * The first packet MUST always be the {@link PacketDataType.MEDIA_INITIALIZATION} packet.
    * Any following packet will transport the actual mp4 fragments in {@link PacketDataType.MEDIA_FRAGMENT} packets,
    * starting with the content of the prebuffer. Every {@link PacketDataType.MEDIA_FRAGMENT} starts with a key frame
@@ -291,7 +291,7 @@ export interface CameraRecordingDelegate {
 
   /**
    * This method is called once the HomeKit Controller acknowledges the `endOfStream`.
-   * A `endOfStream` is sent by the accessory by setting {@link RecordingPacket.isLast} to `true` in the last packet yielded
+   * An `endOfStream` is sent by the accessory by setting {@link RecordingPacket.isLast} to `true` in the last packet yielded
    * by the {@link handleRecordingStreamRequest} `AsyncGenerator`.
    *
    * @param streamId - The streamId of the acknowledged stream.
@@ -330,7 +330,7 @@ export interface CameraControllerServiceMap extends ControllerServiceMap {
   occupancyService?: OccupancySensor
 
   // this ServiceMap is also used by the DoorbellController; there is no necessity to declare it,
-  // but I think its good practice to reserve the namespace
+  // but I think it's good practice to reserve the namespace
   doorbell?: Doorbell
 }
 
@@ -431,7 +431,7 @@ export class CameraController extends EventEmitter implements SerializableContro
     this.recording = options.recording
     this.sensorOptions = options.sensors
 
-    this.legacyMode = legacyMode // legacy mode will prevent from Microphone and Speaker services to get created to avoid collisions
+    this.legacyMode = legacyMode // legacy mode will prevent Microphone and Speaker services from being created to avoid collisions
   }
 
   /**

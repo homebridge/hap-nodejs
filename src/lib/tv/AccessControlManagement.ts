@@ -21,15 +21,15 @@ enum AccessControlTypes {
 export enum AccessLevel {
   // noinspection JSUnusedGlobalSymbols
   /**
-   * This access level is set when the users selects "Anyone" or "Anyone On The Same Network"
+   * This access level is set when the user selects "Anyone" or "Anyone On The Same Network"
    * in the Access Control settings.
    */
   ANYONE = 0,
   /**
-   * This access level is set when the users selects "Only People Sharing this Home" in the
+   * This access level is set when the user selects "Only People Sharing this Home" in the
    * Access Control settings.
    * On this level password setting is ignored.
-   * Requests to the HAPServer can only come from Home members anyways, so there is no real use to it.
+   * Requests to the HAPServer can only come from Home members anyway, so there is no real use to it.
    * This is pretty much only used for the AirPlay 2 protocol.
    */
   HOME_MEMBERS_ONLY = 1,
@@ -111,7 +111,7 @@ export class AccessControlManagement extends EventEmitter {
 
   /**
    * This destroys the AccessControlManagement.
-   * It unregisters all GET or SET handler it has associated with the given AccessControl service.
+   * It unregisters all GET or SET handlers it has associated with the given AccessControl service.
    * It removes all event handlers which were registered to this object.
    */
   public destroy(): void {
