@@ -98,6 +98,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(service): drop three ts-expect-error and four needless non-null assertions
 - refactor(characteristic): drop a needless non-null assertion on the instance id
 - refactor(server): type the list of pairings sent to a controller instead of using any
+- refactor(utils): type the event arguments in awaitEventOnce as unknown instead of any
 
 ### Homebridge Dependencies
 
