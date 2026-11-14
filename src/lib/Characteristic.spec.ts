@@ -1356,6 +1356,34 @@ describe('characteristic', () => {
     })
   })
 
+  describe('client writes of a number which is not whole', () => {
+    it.each([
+      Formats.UINT8,
+      Formats.UINT16,
+      Formats.UINT32,
+      Formats.UINT64,
+      Formats.INT,
+    ])('should be refused for the format %s', async (format) => {
+      const characteristic = createCharacteristic(format)
+      const handler = vi.fn()
+      characteristic.onSet(handler)
+
+      await expect(characteristic.handleSetRequest(1.5, {} as HAPConnection)).rejects.toBe(HAPStatus.INVALID_VALUE_IN_REQUEST)
+      expect(handler).not.toHaveBeenCalled()
+
+      await characteristic.handleSetRequest(2, {} as HAPConnection)
+      expect(handler).toHaveBeenCalledTimes(1)
+    })
+
+    it('should be accepted for the format float', async () => {
+      const characteristic = createCharacteristic(Formats.FLOAT)
+
+      await characteristic.handleSetRequest(1.5, {} as HAPConnection)
+
+      expect(characteristic.value).toBe(1.5)
+    })
+  })
+
   describe('#validateUserInput()', () => {
     it.each([
       [0, 0.3, 0.1],
