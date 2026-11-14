@@ -9,8 +9,8 @@ import hkdf from 'futoin-hkdf'
 import { HAPEncryption } from './eventedhttp.js'
 
 if (!crypto.getCiphers().includes('chacha20-poly1305')) {
-  assert.fail(`The cipher 'chacha20-poly1305' is not supported with your current running nodejs version v${process.version}. `
-    + 'At least a nodejs version of v10.17.0 (excluding v11.0 and v11.1) is required!')
+  // every supported Node.js version has this cipher, unless its OpenSSL was built without it or runs in FIPS mode
+  assert.fail(`The cipher 'chacha20-poly1305' is not supported by your Node.js ${process.version}. HAP-NodeJS cannot work without it!`)
 }
 
 const X25519_PKCS8_PREFIX = Buffer.from('302e020100300506032b656e04220420', 'hex')
