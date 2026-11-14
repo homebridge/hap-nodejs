@@ -10,6 +10,7 @@ import dbus, { DBusInterface, MessageBus, variantValue } from 'dbus-native'
 import createDebug from 'debug'
 
 import { AccessoryInfo } from './model/AccessoryInfo.js'
+import { errorStack } from './util/errors.js'
 import { PromiseTimeout } from './util/promise-utils.js'
 
 const debug = createDebug('HAP-NodeJS:Advertiser')
@@ -353,6 +354,11 @@ export class DBusInvokeError extends Error {
   }
 }
 
+/** Tells whether a value thrown by dbus-native has the shape `DBusInvokeError` reads. */
+function isDBusErrorObject(error: unknown): error is { name: string, message: any, dbusName?: string } {
+  return typeof error === 'object' && error !== null && 'message' in error
+}
+
 async function dbusInvoke(bus: MessageBus, destination: string, path: string, dbusInterface: string, member: string, others?: any): Promise<any> {
   const command = {
     destination,
@@ -365,7 +371,12 @@ async function dbusInvoke(bus: MessageBus, destination: string, path: string, db
   try {
     return await bus.invoke(command)
   } catch (error) {
-    throw new DBusInvokeError(error)
+    throw new DBusInvokeError(isDBusErrorObject(error)
+      ? error
+      : {
+          name: 'Error',
+          message: String(error),
+        })
   }
 }
 
@@ -509,8 +520,8 @@ export class AvahiAdvertiser extends EventEmitter implements Advertiser {
       // We have some problem on Synology https://github.com/homebridge/HAP-NodeJS/issues/993
       console.warn('Failed to create listener for avahi-daemon server state. The system will not be notified about restarts of avahi-daemon '
         + `and will therefore stay undiscoverable in those instances. Error message: ${error}`)
-      if (error.stack) {
-        debug(`Detailed error: ${error.stack}`)
+      if (errorStack(error)) {
+        debug(`Detailed error: ${errorStack(error)}`)
       }
     }
   }

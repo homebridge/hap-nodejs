@@ -1,5 +1,7 @@
 import os from 'node:os'
 
+import { errorMessage, errorStack } from './errors.js'
+
 /**
  * @group Utils
  */
@@ -70,7 +72,7 @@ export function getOSLoopbackAddressIfAvailable(): string | undefined {
   try {
     return loopbackAddress ?? (loopbackAddress = findLoopbackAddress())
   } catch (error) {
-    console.log(error.stack)
+    console.log(errorStack(error) ?? errorMessage(error))
     return undefined
   }
 }
