@@ -6,7 +6,7 @@ import { Characteristic } from '../Characteristic.js'
 import { HAPStatus } from '../HAPServer.js'
 import { Service } from '../Service.js'
 import * as tlv from '../util/tlv.js'
-import { AdaptiveLightingController, AdaptiveLightingControllerMode } from './AdaptiveLightingController.js'
+import { AdaptiveLightingController, AdaptiveLightingControllerEvents, AdaptiveLightingControllerMode } from './AdaptiveLightingController.js'
 
 const EPOCH_MILLIS_2001_01_01 = Date.UTC(2001, 0, 1)
 const HOUR = 3600000
@@ -127,6 +127,29 @@ describe('adaptiveLightingController', () => {
       .toBeUndefined()
 
     expect(controller.isAdaptiveLightingActive()).toBeFalsy()
+  })
+
+  it('should emit disable in manual mode when a malformed request turns adaptive lighting off', async () => {
+    const { lightbulb, controller } = createController(AdaptiveLightingControllerMode.MANUAL)
+    const update = vi.fn()
+    const disable = vi.fn()
+    controller.on(AdaptiveLightingControllerEvents.UPDATE, update)
+    controller.on(AdaptiveLightingControllerEvents.DISABLED, disable)
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    try {
+      await writeTransitionControl(lightbulb, buildUpdateTransition(lightbulb, Date.now(), curve(5)))
+      expect(update).toHaveBeenCalledTimes(1)
+
+      // an update request which is missing everything but the characteristic iid and the transition flag
+      const iid = lightbulb.getCharacteristic(Characteristic.ColorTemperature).iid!
+      const value = tlv.encode(0x02, tlv.encode(0x01, tlv.encode(0x01, tlv.writeVariableUIntLE(iid), 0x03, 1))).toString('base64')
+      await expect(writeTransitionControl(lightbulb, value)).rejects.toBe(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
+
+      expect(controller.isAdaptiveLightingActive()).toBeFalsy()
+      expect(disable).toHaveBeenCalledTimes(1)
+    } finally {
+      warn.mockRestore()
+    }
   })
 
   describe('a time before the first point of the curve', () => {

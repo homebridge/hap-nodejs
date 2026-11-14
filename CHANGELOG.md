@@ -41,6 +41,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(characteristic): ignore a minStep of zero or less and list valid values without drift
 - fix(adaptive-lighting): accept a context that is not an object on a manual color write
 - fix(adaptive-lighting): stay active when the clock is set back before the start of the curve
+- fix(adaptive-lighting): emit disable in manual mode when a malformed request turns it off
 
 ### Homebridge Dependencies
 
