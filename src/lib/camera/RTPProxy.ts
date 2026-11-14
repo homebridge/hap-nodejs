@@ -25,9 +25,9 @@ export interface RTPProxyOptions {
 /**
  * RTPProxy to proxy unencrypted RTP and RTCP
  *
- * At early days of HomeKit camera support, HomeKit allowed for unencrypted RTP stream.
- * The proxy was created to deal with RTCP and SSRC related stuff from external streams back in that days.
- * Later HomeKit removed support for unencrypted stream so it’s mostly no longer useful anymore, only really for testing
+ * In the early days of HomeKit camera support, HomeKit allowed for an unencrypted RTP stream.
+ * The proxy was created to deal with RTCP and SSRC related stuff from external streams back in those days.
+ * Later HomeKit removed support for unencrypted streams so it’s mostly no longer useful, only really for testing
  * with a custom HAP controller.
  * @group Camera
  */

@@ -46,7 +46,7 @@ export interface CameraRecordingOptions {
    * The size of the prebuffer in milliseconds. It must be at least 4000 ms.
    * A sensible value for this property is in the interval [4000, 8000].
    *
-   * In order to provide some context to recording event, it is a good user experience
+   * In order to provide some context to a recording event, it is a good user experience
    * to also have the recording of a few seconds before the event occurs.
    * This exactly is the prebuffer. A camera will constantly store the last
    * x seconds (the `prebufferLength`) to provide more context to a given event.
@@ -172,7 +172,7 @@ export interface AudioRecordingCodec {
 export interface CameraRecordingConfiguration {
   /**
    * The size of the prebuffer in milliseconds.
-   * This value is less or equal of the value advertised in the {@link Characteristic.SupportedCameraRecordingConfiguration}.
+   * This value is less than or equal to the value advertised in the {@link Characteristic.SupportedCameraRecordingConfiguration}.
    */
   prebufferLength: number
   /**
@@ -436,7 +436,7 @@ export class RecordingManagement {
    * Array of sensor services (e.g. {@link Service.MotionSensor} or {@link Service.OccupancySensor}).
    * Any service in this array owns a {@link Characteristic.StatusActive} characteristic.
    * The value of the {@link Characteristic.HomeKitCameraActive} is mirrored towards the {@link Characteristic.StatusActive} characteristic.
-   * The array is initialized my the caller shortly after calling the constructor.
+   * The array is initialized by the caller shortly after calling the constructor.
    */
   sensorServices: Service[] = []
 
@@ -620,7 +620,7 @@ export class RecordingManagement {
     // eslint-disable-next-line ts/no-use-before-define
     this.recordingStream = new CameraRecordingStream(connection, this.delegate, id, streamId)
     this.recordingStream.on(CameraRecordingStreamEvents.CLOSED, () => {
-      debug('[HDS %s] Removing active recoding session from recording management!', connection.remoteAddress)
+      debug('[HDS %s] Removing active recording session from recording management!', connection.remoteAddress)
       this.recordingStream = undefined
     })
 
@@ -700,7 +700,7 @@ export class RecordingManagement {
     const typedEventTriggers: EventTriggerOption[] = []
     let bit_index = 0
     while (eventTriggerOptions > 0) {
-      if (eventTriggerOptions & 0x01) { // of the lowest bit is set add the next event trigger option
+      if (eventTriggerOptions & 0x01) { // if the lowest bit is set, add the next event trigger option
         typedEventTriggers.push(1 << bit_index)
       }
       eventTriggerOptions = eventTriggerOptions >> 1 // shift to right till we reach zero.
@@ -1007,7 +1007,7 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
   private generator?: AsyncGenerator<RecordingPacket>
   /**
    * This timeout is used to detect non-returning generators.
-   * When we signal the delegate that it is being closed its generator must return withing 10s.
+   * When we signal the delegate that it is being closed its generator must return within 10s.
    */
   private generatorTimeout?: NodeJS.Timeout
   /**
@@ -1176,7 +1176,7 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
 
     // The HomeKit Controller will send a DATA_SEND ACK if we set the `endOfStream` flag in the last packet
     // of our DATA_SEND DATA packet.
-    // To my testing the session is then considered complete and the HomeKit controller will close the HDS Connection after 5 seconds.
+    // In my testing the session is then considered complete and the HomeKit controller will close the HDS Connection after 5 seconds.
 
     debug('[HDS %s] Received DATA_SEND ACK packet for streamId %s. Acknowledged %s.', this.connection.remoteAddress, streamId, endOfStream)
 
@@ -1249,7 +1249,7 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
     try {
       closure()
     } catch (error) {
-      console.error(`[HDS ${this.connection.remoteAddress}] CameraRecordingDelegated failed to handle closing the stream ${this.streamId}: ${errorStack(error) ?? errorMessage(error)}`)
+      console.error(`[HDS ${this.connection.remoteAddress}] CameraRecordingDelegate failed to handle closing the stream ${this.streamId}: ${errorStack(error) ?? errorMessage(error)}`)
     }
 
     this.emit(CameraRecordingStreamEvents.CLOSED)
@@ -1267,7 +1267,7 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
     debug('[HDS %s] Recording stream %d was closed manually with reason %s.',
       this.connection.remoteAddress, this.streamId, reason ? HDSProtocolSpecificErrorReason[reason] : 'CLOSED')
 
-    // the `isConsideredClosed` check just ensures that the won't ever throw here and that `handledClosed` is always executed.
+    // the `isConsideredClosed` check just ensures that we won't ever throw here and that `handledClosed` is always executed.
     if (!this.connection.isConsideredClosed()) {
       this.connection.sendEvent(Protocols.DATA_SEND, Topics.CLOSE, {
         streamId: this.streamId,

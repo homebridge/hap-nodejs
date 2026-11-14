@@ -110,7 +110,7 @@ enum AudioCodecConfigurationTypes {
   CODEC_PARAMETERS = 0x02,
 }
 
-enum AudioCodecTypes { // only really by HAP supported codecs are AAC-ELD and OPUS
+enum AudioCodecTypes { // the only codecs really supported by HAP are AAC-ELD and OPUS
   PCMU = 0x00,
   PCMA = 0x01,
   AAC_ELD = 0x02,
@@ -142,7 +142,7 @@ export enum AudioSamplerate {
   KHZ_8 = 0x00,
   KHZ_16 = 0x01,
   KHZ_24 = 0x02,
-  // 3, 4, 5 are theoretically defined, but no idea to what kHz value they correspond to
+  // 3, 4, 5 are theoretically defined, but no idea what kHz value they correspond to
   // probably KHZ_32, KHZ_44_1, KHZ_48 (as supported by Secure Video recordings)
 }
 
@@ -266,7 +266,7 @@ export type CameraStreamingOptions = CameraStreamingOptionsBase & (CameraStreami
  */
 export interface CameraStreamingOptionsBase {
   proxy?: boolean // default false
-  disable_audio_proxy?: boolean // default false; If proxy = true, you can opt out audio proxy via this
+  disable_audio_proxy?: boolean // default false; If proxy = true, you can opt out of the audio proxy via this
 
   video: VideoStreamingOptions
   /**
@@ -288,7 +288,7 @@ export interface CameraStreamingOptionsLegacySRTP {
  * @group Camera
  */
 export interface CameraStreamingOptionsSupportedCryptoSuites {
-  supportedCryptoSuites: SRTPCryptoSuites[] // Suite NONE should only be used for testing and will probably be never selected by iOS!
+  supportedCryptoSuites: SRTPCryptoSuites[] // Suite NONE should only be used for testing and will probably never be selected by iOS!
 }
 
 function isLegacySRTPOptions(options: CameraStreamingOptions): options is CameraStreamingOptionsBase & CameraStreamingOptionsLegacySRTP {
@@ -415,7 +415,7 @@ export interface PrepareStreamResponse {
   addressOverride?: string
   // video should be instanceOf ProxiedSourceResponse if proxy is required
   video: SourceResponse | ProxiedSourceResponse
-  // needs to be only supplied if audio is required; audio should be instanceOf ProxiedSourceResponse if proxy is required and audio proxy is not disabled
+  // only needs to be supplied if audio is required; audio should be instanceOf ProxiedSourceResponse if proxy is required and audio proxy is not disabled
   audio?: SourceResponse | ProxiedSourceResponse
 }
 
@@ -518,7 +518,7 @@ export interface VideoInfo { // minimum keyframe interval is about 5 seconds
   pt: number // payloadType, 99 for h264
   ssrc: number // synchronisation source
   max_bit_rate: number
-  rtcp_interval: number // minimum rtcp interval in seconds (floating point number), pretty much always 0.5 (standard says a rang from 0.5 to 1.5)
+  rtcp_interval: number // minimum rtcp interval in seconds (floating point number), pretty much always 0.5 (standard says a range from 0.5 to 1.5)
   mtu: number // maximum transmissions unit, default values: ipv4: 1378 bytes; ipv6: 1228 bytes
 }
 
@@ -783,7 +783,7 @@ export class RTPStreamManagement {
 
     // intercept the callback chain to check if an error occurred.
     const streamCallback: CharacteristicSetCallback = (error, writeResponse) => {
-      callback(error, writeResponse) // does not support writeResponse, but how knows what comes in the future.
+      callback(error, writeResponse) // does not support writeResponse, but who knows what comes in the future.
       if (error) {
         if (requestType !== SessionControlCommand.END_SESSION && this.sessionIdentifier === sessionIdentifier) {
           // The session is given up, but the delegate may still be streaming for it (it does after a failed
@@ -1443,7 +1443,7 @@ export class RTPStreamManagement {
 
   private static _supportedRTPConfiguration(supportedCryptoSuites: SRTPCryptoSuites[]): string {
     if (supportedCryptoSuites.length === 1 && supportedCryptoSuites[0] === SRTPCryptoSuites.NONE) {
-      debug('Client claims it doesn\'t support SRTP. The stream may stops working with future iOS releases.')
+      debug('Client claims it doesn\'t support SRTP. The stream may stop working with future iOS releases.')
     }
 
     return tlv.encode(SupportedRTPConfigurationTypes.SRTP_CRYPTO_SUITE, supportedCryptoSuites).toString('base64')

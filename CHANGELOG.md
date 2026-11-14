@@ -153,6 +153,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - build: forbid new const enums in the lint config and drop the preserveConstEnums option
 - docs(server): fix spelling mistakes in comments and messages
 - docs(model): fix spelling mistakes in comments and messages
+- docs(camera): fix spelling mistakes in comments and messages
 
 ### Homebridge Dependencies
 
