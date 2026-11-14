@@ -233,6 +233,51 @@ describe('remoteController', () => {
     })
   })
 
+  describe('restoring the services', () => {
+    class Producer {
+      startAudioProduction = vi.fn()
+      stopAudioProduction = vi.fn()
+    }
+
+    it('should create the siri services when siri was enabled for a saved remote', () => {
+      const savedServices = new RemoteController().constructServices()
+      expect(savedServices.siri).toBeUndefined()
+
+      const controller = new RemoteController(Producer)
+      const updated = controller.initWithServices(savedServices)
+
+      expect(updated?.siri).toBeDefined()
+      expect(updated?.audioStreamManagement).toBeDefined()
+      expect(updated?.dataStreamTransportManagement).toBeDefined()
+      expect(updated!.siri!.linkedServices).toEqual([updated!.dataStreamTransportManagement, updated!.audioStreamManagement])
+      expect(() => controller.configureServices()).not.toThrow()
+    })
+
+    it('should remove the siri services when siri is no longer enabled', () => {
+      const savedServices = new RemoteController(Producer).constructServices()
+      expect(savedServices.siri).toBeDefined()
+
+      const controller = new RemoteController()
+      const updated = controller.initWithServices(savedServices)
+
+      expect(updated).toBeDefined()
+      expect(updated?.siri).toBeUndefined()
+      expect(updated?.audioStreamManagement).toBeUndefined()
+      expect(updated?.dataStreamTransportManagement).toBeUndefined()
+      // @ts-expect-error: private access
+      expect(controller.dataStreamManagement).toBeUndefined()
+      expect(() => controller.configureServices()).not.toThrow()
+    })
+
+    it('should leave the saved services of a remote without siri alone', () => {
+      const controller = new RemoteController()
+
+      expect(controller.initWithServices(new RemoteController().constructServices())).toBeUndefined()
+      // @ts-expect-error: private access
+      expect(controller.dataStreamManagement).toBeUndefined() // no data stream server for a remote without siri
+    })
+  })
+
   describe('siri audio session', () => {
     it('should stop the audio producer when the controller refuses the stream', async () => {
       const startAudioProduction = vi.fn()

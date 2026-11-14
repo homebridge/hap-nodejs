@@ -46,6 +46,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(adaptive-lighting): accept a transition curve of a single entry
 - fix(controller-storage): remove stored data a restored controller has no use for
 - fix(remote): refuse a new target without a name or category before it is stored
+- fix(remote): create or remove the siri services when a saved remote is restored
 
 ### Homebridge Dependencies
 
