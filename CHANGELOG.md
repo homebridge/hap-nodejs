@@ -88,6 +88,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(controller): type caught errors as unknown in the remote and adaptive lighting controllers
 - refactor: type caught errors as unknown everywhere by dropping useUnknownInCatchVariables: false
 - refactor(advertiser): type the D-Bus call helpers instead of using any
+- refactor(storage): type stored controller data as unknown instead of any
 
 ### Homebridge Dependencies
 

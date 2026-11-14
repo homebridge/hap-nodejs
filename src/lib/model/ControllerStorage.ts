@@ -22,8 +22,7 @@ interface StoredControllerData {
 }
 
 interface ControllerData {
-
-  data: any
+  data: unknown
   /*
   This property and the exact sequence this property is accessed solves the following problems:
     - Orphaned ControllerData won't be there forever and gets cleared at some point
@@ -131,12 +130,13 @@ export class ControllerStorage {
    */
   public unlinkAccessory(accessory: Accessory): void {
     const storage = accessory.controllerStorage
-    const index = this.linkedAccessories?.indexOf(storage) ?? -1
-    if (index === -1) {
+    const linkedAccessories = this.linkedAccessories
+    const index = linkedAccessories?.indexOf(storage) ?? -1
+    if (!linkedAccessories || index === -1) {
       return
     }
 
-    this.linkedAccessories!.splice(index, 1)
+    linkedAccessories.splice(index, 1)
     storage.parent = undefined
 
     if (this.initialized) {
