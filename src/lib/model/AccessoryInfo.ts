@@ -39,6 +39,23 @@ export interface PairingInformation {
 }
 
 /**
+ * The shape in which an {@link AccessoryInfo} is persisted to disk.
+ */
+interface SavedAccessoryInfo {
+  displayName: string
+  category: Categories
+  pincode: string
+  signSk: string // hex
+  signPk: string // hex
+  pairedClients: Record<HAPUsername, string> // public key as hex, indexed by the username of the client
+  pairedClientsPermission: Record<HAPUsername, PermissionTypes>
+  configVersion: number
+  configHash: string
+  setupID: string
+  lastFirmwareVersion: string
+}
+
+/**
  * AccessoryInfo is a model class containing a subset of Accessory data relevant to the internal HAP server,
  * such as encryption keys and username. It is persisted to disk.
  * @group Model
@@ -266,7 +283,7 @@ export class AccessoryInfo {
   }
 
   save(): void {
-    const saved = {
+    const saved: SavedAccessoryInfo = {
       displayName: this.displayName,
       category: this.category,
       pincode: this.pincode,
@@ -284,9 +301,7 @@ export class AccessoryInfo {
     }
 
     for (const [username, pairingInformation] of Object.entries(this.pairedClients)) {
-      // @ts-expect-error: missing typing, object instead of Record
       saved.pairedClients[username] = pairingInformation.publicKey.toString('hex')
-      // @ts-expect-error: missing typing, object instead of Record
       saved.pairedClientsPermission[username] = pairingInformation.permission
     }
 
@@ -319,7 +334,8 @@ export class AccessoryInfo {
     AccessoryInfo.assertValidUsername(username)
 
     const key = AccessoryInfo.persistKey(username)
-    const saved = HAPStorage.storage().getItem(key)
+    // a file written by an older version, or one edited by hand, may lack any of the fields
+    const saved: Partial<SavedAccessoryInfo> | undefined = HAPStorage.storage().getItem(key)
 
     if (saved) {
       const info = new AccessoryInfo(username)
@@ -330,8 +346,9 @@ export class AccessoryInfo {
       info.signPk = Buffer.from(saved.signPk || '', 'hex')
 
       info.pairedClients = {}
-      for (const username of Object.keys(saved.pairedClients || {})) {
-        const publicKey = saved.pairedClients[username]
+      const savedPairedClients = saved.pairedClients || {}
+      for (const username of Object.keys(savedPairedClients)) {
+        const publicKey = savedPairedClients[username]
         let permission = saved.pairedClientsPermission ? saved.pairedClientsPermission[username] : undefined
         if (permission === undefined) {
           permission = PermissionTypes.ADMIN
