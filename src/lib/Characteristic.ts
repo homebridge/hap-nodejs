@@ -2372,9 +2372,9 @@ export class Characteristic extends EventEmitter {
    * @param context - Passed to the {@link CharacteristicEventTypes.CHANGE} event handler.
    */
   public sendEventNotification(value: CharacteristicValue, context?: CharacteristicContext): Characteristic {
+    value = this.validateUserInput(value)! // may throw, and then nothing has changed
     this.statusCode = HAPStatus.SUCCESS
 
-    value = this.validateUserInput(value)!
     const oldValue = this.value
     this.value = value
 
@@ -2538,8 +2538,6 @@ export class Characteristic extends EventEmitter {
    * @private
    */
   async handleSetRequest(value: CharacteristicValue, connection?: HAPConnection, context?: CharacteristicContext): Promise<CharacteristicValue | void> {
-    this.statusCode = HAPStatus.SUCCESS
-
     if (connection !== undefined) {
       // if connection is undefined, the set "request" comes from the setValue method.
       // for setValue a value of "null" is allowed and checked via validateUserInput.
@@ -2550,6 +2548,9 @@ export class Characteristic extends EventEmitter {
         return Promise.reject(HAPStatus.INVALID_VALUE_IN_REQUEST)
       }
     }
+
+    // only now: a write which was refused above changes nothing, so it must not clear an error state either
+    this.statusCode = HAPStatus.SUCCESS
 
     const oldValue = this.value
 

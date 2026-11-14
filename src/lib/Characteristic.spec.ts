@@ -20,6 +20,7 @@ import {
 } from './Characteristic.js'
 import { SelectedRTPStreamConfiguration } from './definitions/index.js'
 import { HAPStatus } from './HAPServer.js'
+import { HAPConnection } from './util/eventedhttp.js'
 import { HapStatusError } from './util/hapStatusError.js'
 import * as uuid from './util/uuid.js'
 
@@ -2291,6 +2292,32 @@ describe('characteristic', () => {
 
       expect(handlerMock).toHaveBeenCalledTimes(1)
       expect(listenerCallback).toHaveBeenCalledTimes(0)
+    })
+
+    it('should keep the error state when a client write is refused', async () => {
+      const characteristic = createCharacteristicWithProps({
+        format: Formats.UINT8,
+        perms: [Perms.PAIRED_READ, Perms.PAIRED_WRITE],
+        maxValue: 10,
+      })
+      characteristic.updateValue(3)
+      characteristic.updateValue(new HapStatusError(HAPStatus.NOT_ALLOWED_IN_CURRENT_STATE))
+      expect(characteristic.statusCode).toBe(HAPStatus.NOT_ALLOWED_IN_CURRENT_STATE)
+
+      await expect(characteristic.handleSetRequest(999, {} as HAPConnection)).rejects.toBe(HAPStatus.INVALID_VALUE_IN_REQUEST)
+      expect(characteristic.statusCode).toBe(HAPStatus.NOT_ALLOWED_IN_CURRENT_STATE)
+
+      // a write which is accepted clears it
+      await characteristic.handleSetRequest(5, {} as HAPConnection)
+      expect(characteristic.statusCode).toBe(HAPStatus.SUCCESS)
+    })
+
+    it('should keep the error state when an event notification has an invalid value', () => {
+      const characteristic = createCharacteristic(Formats.DATA)
+      characteristic.updateValue(new HapStatusError(HAPStatus.NOT_ALLOWED_IN_CURRENT_STATE))
+
+      expect(() => characteristic.sendEventNotification(undefined as unknown as string)).toThrow()
+      expect(characteristic.statusCode).toBe(HAPStatus.NOT_ALLOWED_IN_CURRENT_STATE)
     })
 
     it.each([0, 4])('should pass a write response of %d to the setValue callback', async (response) => {
