@@ -148,10 +148,13 @@ export interface Controller<M extends ControllerServiceMap = ControllerServiceMa
 /**
  * A SerializableController is a Controller which additionally carries states/data (beside services and characteristics)
  * which needs to be persistently stored. For example current target configuration for an AppleTV remote.
+ *
+ * `S` is the type of the data the controller saves. Name it, as otherwise the data is typed as `unknown`.
+ * What is read back from disk was written by an earlier version of the controller, so {@link deserialize}
+ * should check it before relying on it.
  * @group Controller API
  */
-
-export interface SerializableController<M extends ControllerServiceMap = ControllerServiceMap, S = any> extends Controller<M> {
+export interface SerializableController<M extends ControllerServiceMap = ControllerServiceMap, S = unknown> extends Controller<M> {
   /**
    * This method can be used to persistently save controller related configuration across reboots.
    * It should return undefined, if the controller data was reset to default values and nothing needs to be stored anymore.
