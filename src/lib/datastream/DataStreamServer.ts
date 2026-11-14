@@ -313,7 +313,7 @@ export class DataStreamServer extends EventEmitter {
 
   /**
    * Registers a new event handler to handle incoming event messages.
-   * The handler is only called for a connection if for the give protocol no ProtocolHandler
+   * The handler is only called for a connection if for the given protocol no ProtocolHandler
    * was registered on the connection level.
    *
    * @param protocol - name of the protocol to register the handler for
@@ -339,7 +339,7 @@ export class DataStreamServer extends EventEmitter {
 
   /**
    * Registers a new request handler to handle incoming request messages.
-   * The handler is only called for a connection if for the give protocol no ProtocolHandler
+   * The handler is only called for a connection if for the given protocol no ProtocolHandler
    * was registered on the connection level.
    *
    * @param protocol - name of the protocol to register the handler for
@@ -402,7 +402,7 @@ export class DataStreamServer extends EventEmitter {
   }
 
   private timeoutPreparedSession(preparedSession: PreparedDataStreamSession) {
-    debug('Prepared HDS session timed out out since no connection was opened for 10 seconds (%s)', preparedSession.connection.sessionID)
+    debug('Prepared HDS session timed out since no connection was opened for 10 seconds (%s)', preparedSession.connection.sessionID)
     const index = this.preparedSessions.indexOf(preparedSession)
     if (index >= 0) {
       this.preparedSessions.splice(index, 1)
@@ -529,7 +529,7 @@ export class DataStreamServer extends EventEmitter {
       // we have currently no experience with data stream connections, maybe it would be good to index active connections
       // by their hap sessionId in order to clear out old but still open connections when the controller opens a new one
       // on the other hand the keepAlive should handle that also :thinking:
-    } else { // we looped through all session and didn't find anything
+    } else { // we looped through all sessions and didn't find anything
       debug('[%s] Could not identify connection. Terminating.', connection.remoteAddress)
       connection.close() // disconnecting since first message was not a valid hello
     }
@@ -747,8 +747,8 @@ export class DataStreamConnection extends EventEmitter {
     // this is to mitigate the event emitter "memory leak warning".
     // e.g. with HSV there might be multiple cameras subscribing to the CLOSE event. one subscription for
     // every active recording stream on a camera. The default limit of 10 might be easily reached.
-    // Setting a high limit isn't the prefect solution, but will avoid false positives but ensures that
-    // a warning is still be printed if running long enough.
+    // Setting a high limit isn't the perfect solution, but it will avoid false positives and ensures that
+    // a warning is still printed if running long enough.
     this.setMaxListeners(100)
   }
 
@@ -844,7 +844,7 @@ export class DataStreamConnection extends EventEmitter {
       delete this.responseHandlers[requestId]
       delete this.responseTimers[requestId]
 
-      // handler should be able to clean up their stuff
+      // handlers should be able to clean up their stuff
       handler(new Error('timeout'), undefined, {})
     }, 10000) // 10s timer
 
@@ -906,7 +906,7 @@ export class DataStreamConnection extends EventEmitter {
       const firstFrame = frames[frameIndex++]
       this.emit(DataStreamConnectionEvent.IDENTIFICATION, firstFrame, (identifiedSession?: PreparedDataStreamSession) => {
         if (identifiedSession) {
-          // horray, we found our connection
+          // hooray, we found our connection
           this.connection = identifiedSession.connection
           this.accessoryToControllerEncryptionKey = identifiedSession.accessoryToControllerEncryptionKey
           this.controllerToAccessoryEncryptionKey = identifiedSession.controllerToAccessoryEncryptionKey
@@ -1042,7 +1042,7 @@ export class DataStreamConnection extends EventEmitter {
       const payloadLength = data.readUIntBE(frameBegin + 1, 3) // read 24-bit big-endian uint length field
 
       if (payloadLength > DataStreamConnection.MAX_PAYLOAD_LENGTH) {
-        debug('[%s] Connection send payload with size bigger than the maximum allow for data stream', this.remoteAddress)
+        debug('[%s] Connection sent payload with size bigger than the maximum allowed for data stream', this.remoteAddress)
         this.close()
         return []
       }
@@ -1120,7 +1120,7 @@ export class DataStreamConnection extends EventEmitter {
     frames.forEach((frame) => {
       const payload = frame.plaintextPayload
       if (!payload) {
-        throw new HDSConnectionError('Reached illegal state. Encountered HDSFrame with wasn\'t decrypted yet!', HDSConnectionErrorType.ILLEGAL_STATE)
+        throw new HDSConnectionError('Reached illegal state. Encountered HDSFrame which wasn\'t decrypted yet!', HDSConnectionErrorType.ILLEGAL_STATE)
       }
 
       if (payload.length < 1 || payload.readUInt8(0) > payload.length - 1) {
@@ -1161,7 +1161,7 @@ export class DataStreamConnection extends EventEmitter {
       }
 
       // the payload is sent by the controller, so nothing is known about its shape before it is checked.
-      // a message which is not of the expected shape is dropped, so that no handler is called with something it can not read
+      // a message which is not of the expected shape is dropped, so that no handler is called with something it cannot read
       const header = parseHeader(headerDictionary)
       if (!header) {
         debug('[%s] Encountered unknown payload header format: %o (message: %o)', this.remoteAddress, headerDictionary, messageDictionary)

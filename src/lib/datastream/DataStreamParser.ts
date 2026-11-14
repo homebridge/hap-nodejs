@@ -9,7 +9,7 @@ import * as hapCrypto from '../util/hapCrypto.js'
 import * as uuid from '../util/uuid.js'
 
 // welcome to hell :)
-// in this file lies madness and frustration. and It's not only about HDS. Also, JavaScript is hell
+// in this file lies madness and frustration. and it's not only about HDS. Also, JavaScript is hell
 
 const debug = createDebug('HAP-NodeJS:DataStream:Parser')
 
@@ -403,7 +403,7 @@ export class DataStreamReader {
   finished(): void {
     if (this.readerIndex < this.data.length) {
       const remainingHex = this.data.subarray(this.readerIndex, this.data.length).toString('hex')
-      debug('WARNING Finished reading HDS stream, but there are still %d bytes remaining () %s', this.data.length - this.readerIndex, remainingHex)
+      debug('WARNING Finished reading HDS stream, but there are still %d bytes remaining: %s', this.data.length - this.readerIndex, remainingHex)
     }
   }
 
@@ -870,7 +870,7 @@ export class DataStreamWriter {
       this.writeUTF8_Length16LE(utf8)
     } else if (length <= 4294967295) {
       this.writeUTF8_Length32LE(utf8)
-    } else if (length <= Number.MAX_SAFE_INTEGER) { // use correct uin64 restriction when we convert to bigint
+    } else if (length <= Number.MAX_SAFE_INTEGER) { // use correct uint64 restriction when we convert to bigint
       this.writeUTF8_Length64LE(utf8)
     } else {
       this.writeUTF8_NULL_terminated(utf8)
