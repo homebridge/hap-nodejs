@@ -1187,6 +1187,14 @@ export class RTPStreamManagement {
 
     Promise.all(promises).then(() => {
       this.delegate.prepareStream(prepareRequest, once((error?: Error, response?: PrepareStreamResponse) => {
+        if (this.sessionIdentifier !== sessionIdentifier) {
+          // The session ended while the delegate was preparing it (e.g. the connection closed), and another one
+          // may have started since. This answer must not touch that one.
+          debug('Ignoring the PrepareStream response for session %s which is not the current session anymore', sessionIdentifier)
+          callback(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
+          return
+        }
+
         if (error || !response) {
           debug(`PrepareStream request encountered an error: ${error ? error.message : undefined}`)
           this.setupEndpointsResponse = tlv.encode(
@@ -1214,6 +1222,10 @@ export class RTPStreamManagement {
       }))
     }).catch((error: Error) => {
       debug(`RTP proxy setup failed: ${error.message}`)
+      if (this.sessionIdentifier !== sessionIdentifier) {
+        callback(HAPStatus.SERVICE_COMMUNICATION_FAILURE) // as above: not the current session anymore
+        return
+      }
       this.setupEndpointsResponse = tlv.encode(
         SetupEndpointsResponseTypes.SESSION_ID, uuid.write(sessionIdentifier),
         SetupEndpointsResponseTypes.STATUS, SetupEndpointsStatus.ERROR,
