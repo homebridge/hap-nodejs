@@ -6,6 +6,8 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { Characteristic } from '../Characteristic.js'
 import { MockDelegate, mockRecordingOptions } from '../controller/CameraController.spec.js'
+import { HAPStatus } from '../HAPServer.js'
+import { HapStatusError } from '../util/hapStatusError.js'
 import {
   AudioRecordingCodecType,
   AudioRecordingSamplerate,
@@ -62,6 +64,20 @@ describe('recordingManagement', () => {
       },
     }
     expect(configuration!.parsed).toEqual(expected)
+  })
+
+  it('should reject a selected configuration which is not a string as an invalid value', () => {
+    const management = new RecordingManagement(
+      mockRecordingOptions,
+      new MockDelegate(),
+      new Set([EventTriggerOption.MOTION, EventTriggerOption.DOORBELL]),
+    )
+
+    // @ts-expect-error: private access
+    expect(() => management.handleSelectedCameraRecordingConfigurationWrite(5))
+      .toThrow(new HapStatusError(HAPStatus.INVALID_VALUE_IN_REQUEST))
+    // @ts-expect-error: private access
+    expect(management.selectedConfiguration).toBeUndefined()
   })
 
   it('should tell the delegate when recording is turned on again after a factory reset', async () => {

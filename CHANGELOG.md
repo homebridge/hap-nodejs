@@ -90,6 +90,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(advertiser): type the D-Bus call helpers instead of using any
 - refactor(storage): type stored controller data as unknown instead of any
 - refactor(storage): type the file storage's internal values as unknown instead of any
+- fix(camera): reject a selected recording configuration which is not a string as an invalid value
 
 ### Homebridge Dependencies
 
