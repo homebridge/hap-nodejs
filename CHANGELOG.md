@@ -83,6 +83,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor: add helpers to read the message and stack of a caught value
 - refactor(model): type caught errors as unknown in the accessory model
 - refactor(server): type caught errors as unknown in the server and the advertisers
+- refactor(camera): type caught errors as unknown in the camera code
 
 ### Homebridge Dependencies
 

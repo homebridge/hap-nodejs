@@ -36,6 +36,7 @@ import {
   VideoCodecType,
   VideoInfo,
 } from '../index.js'
+import { errorMessage, errorStack } from '../lib/util/errors.js'
 
 interface MP4Atom {
   header: Buffer
@@ -460,8 +461,8 @@ class ExampleCamera implements CameraStreamingDelegate, CameraRecordingDelegate 
         }
       }
     } catch (error) {
-      if (!error.message.startsWith('FFMPEG')) { // cheap way of identifying our own emitted errors
-        console.error(`Encountered unexpected error on generator ${error.stack}`)
+      if (!errorMessage(error).startsWith('FFMPEG')) { // cheap way of identifying our own emitted errors
+        console.error(`Encountered unexpected error on generator ${errorStack(error) ?? errorMessage(error)}`)
       }
     }
   }

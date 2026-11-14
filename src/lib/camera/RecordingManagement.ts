@@ -25,6 +25,7 @@ import {
 import { CameraOperatingMode, CameraRecordingManagement } from '../definitions/index.js'
 import { HAPStatus } from '../HAPServer.js'
 import { Service } from '../Service.js'
+import { errorMessage, errorStack } from '../util/errors.js'
 import { HapStatusError } from '../util/hapStatusError.js'
 import * as tlv from '../util/tlv.js'
 import { AudioBitrate, VideoCodecType } from './index.js'
@@ -911,7 +912,7 @@ export class RecordingManagement {
         this.delegate.updateRecordingActive(serialized.recordingActive)
       }
     } catch (error) {
-      console.error(`Failed to properly initialize CameraRecordingDelegate from persistent storage: ${error.stack}`)
+      console.error(`Failed to properly initialize CameraRecordingDelegate from persistent storage: ${errorStack(error) ?? errorMessage(error)}`)
     }
 
     if (changedState) {
@@ -950,7 +951,7 @@ export class RecordingManagement {
       this.delegate.updateRecordingActive(false)
       this.delegate.updateRecordingConfiguration(undefined)
     } catch (error) {
-      console.error(`CameraRecordingDelegate failed to update state after handleFactoryReset: ${error.stack}`)
+      console.error(`CameraRecordingDelegate failed to update state after handleFactoryReset: ${errorStack(error) ?? errorMessage(error)}`)
     }
   }
 }
@@ -1120,7 +1121,7 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
       }
     } catch (error) {
       if (this.closed) {
-        console.warn(`[HDS ${this.connection.remoteAddress}] Encountered unexpected error on already closed recording stream ${this.streamId}: ${error.stack}`)
+        console.warn(`[HDS ${this.connection.remoteAddress}] Encountered unexpected error on already closed recording stream ${this.streamId}: ${errorStack(error) ?? errorMessage(error)}`)
       } else {
         let closeReason = HDSProtocolSpecificErrorReason.UNEXPECTED_FAILURE
 
@@ -1132,7 +1133,7 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
           debug('[HDS %s] Exited recording stream due to closed HDS socket: stream id %d.', this.connection.remoteAddress, this.streamId)
           return // execute finally and then exit (we want to skip the `sendEvent` below)
         } else {
-          console.error(`[HDS ${this.connection.remoteAddress}] Encountered unexpected error for recording stream ${this.streamId}: ${error.stack}`)
+          console.error(`[HDS ${this.connection.remoteAddress}] Encountered unexpected error for recording stream ${this.streamId}: ${errorStack(error) ?? errorMessage(error)}`)
         }
 
         // call close to go through standard close routine!
@@ -1236,7 +1237,7 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
     try {
       closure()
     } catch (error) {
-      console.error(`[HDS ${this.connection.remoteAddress}] CameraRecordingDelegated failed to handle closing the stream ${this.streamId}: ${error.stack}`)
+      console.error(`[HDS ${this.connection.remoteAddress}] CameraRecordingDelegated failed to handle closing the stream ${this.streamId}: ${errorStack(error) ?? errorMessage(error)}`)
     }
 
     this.emit(CameraRecordingStreamEvents.CLOSED)
