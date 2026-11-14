@@ -766,6 +766,11 @@ export class DataStreamConnection extends EventEmitter {
    */
 
   sendRequest(protocol: string | Protocols, request: string | Topics, message: Record<any, any> = {}, callback: ResponseHandler): void {
+    if (this.state >= ConnectionState.CLOSING) {
+      // before anything is registered: the caller gets this error, and must not get a timeout for the same request later
+      throw new HDSConnectionError('Cannot send message on closing/closed socket!', HDSConnectionErrorType.CLOSED_SOCKET)
+    }
+
     let requestId: number
     do { // generate unused requestId
       // currently writing int64 to data stream is not really supported, so 32-bit int will be the max
@@ -791,7 +796,15 @@ export class DataStreamConnection extends EventEmitter {
     header.request = request
     header.id = new Int64(requestId)
 
-    this.sendHDSFrame(header, message)
+    try {
+      this.sendHDSFrame(header, message)
+    } catch (error) {
+      // the request never left (e.g. it is too large): the caller gets the error, so the handler is not needed
+      clearTimeout(this.responseTimers[requestId])
+      delete this.responseHandlers[requestId]
+      delete this.responseTimers[requestId]
+      throw error
+    }
   }
 
   /**

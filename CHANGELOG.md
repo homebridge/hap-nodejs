@@ -61,6 +61,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): read the rtp proxy ssrc from the right field and send controller rtcp to the server
 - fix(camera): free the stream when the local address for the rtp proxy can not be found
 - fix(camera): tell the delegate to stop a stream whose start or reconfigure failed
+- fix(datastream): leave no handler or timer behind for a request which could not be sent
 
 ### Homebridge Dependencies
 
