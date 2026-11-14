@@ -1356,6 +1356,22 @@ describe('characteristic', () => {
     })
   })
 
+  it('should word the warning about a too short Model without the warning type, and pass the type on', () => {
+    const characteristic = new Characteristic.Model()
+    characteristic.updateValue('Model 1')
+    const warning = vi.fn()
+    characteristic.on(CharacteristicEventTypes.CHARACTERISTIC_WARNING, warning)
+
+    // @ts-expect-error: private access
+    characteristic.validateUserInput('X', CharacteristicWarningType.ERROR_MESSAGE)
+
+    expect(warning).toHaveBeenCalledTimes(1)
+    const [type, message] = warning.mock.calls[0]
+    expect(type).toEqual(CharacteristicWarningType.ERROR_MESSAGE)
+    expect(message).toMatch(/ignoring new value$/)
+    expect(message).not.toContain('[Model]')
+  })
+
   describe('a string characteristic which is given no string', () => {
     it.each([undefined, {}, true])('should stay empty, and not hold the text of %j, when it had no value', (value) => {
       const characteristic = new Characteristic('Text', uuid.generate('text without a value'), {

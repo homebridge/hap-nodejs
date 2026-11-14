@@ -70,6 +70,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): keep the SRTP keys of a stream out of the debug log
 - build: stop publishing the example accessories and the definitions generator
 - fix(hap-status-error): let it be subclassed and name it HapStatusError
+- fix(characteristic): word the too short model or serial number warning without the warning type
 
 ### Homebridge Dependencies
 
