@@ -293,6 +293,65 @@ describe('d-Bus advertisers', () => {
     }
   })
 
+  describe('avahi entry groups', () => {
+    let calls: string[]
+    let groups: number
+
+    beforeEach(() => {
+      calls = []
+      groups = 0
+      vi.spyOn(console, 'warn').mockImplementation(() => undefined) // the fake bus has no StateChanged signal
+    })
+
+    function avahi(failAddService = false): AvahiAdvertiser {
+      invokeHandler = (msg) => {
+        if (msg.member === 'EntryGroupNew') {
+          groups++
+          calls.push(`new /group${groups}`)
+          return `/group${groups}`
+        }
+        calls.push(`${msg.member} ${msg.path}`)
+        if (msg.member === 'AddService' && failAddService) {
+          throw dbusError('org.freedesktop.Avahi.CollisionError', 'Local name collision')
+        }
+      }
+      const advertiser = new AvahiAdvertiser(AccessoryInfo.create('AA:BB:CC:DD:EE:FF'))
+      advertiser.initPort(51826)
+      return advertiser
+    }
+
+    it('should free the old entry group before it registers again', async () => {
+      const advertiser = avahi()
+      await advertiser.startAdvertising()
+      ;(advertiser as any).handleStateChangedEvent(2) // AvahiServerState.RUNNING
+      await new Promise(resolve => setTimeout(resolve, 5))
+
+      expect(calls).toEqual([
+        'new /group1',
+        'AddService /group1',
+        'Commit /group1',
+        'Free /group1',
+        'new /group2',
+        'AddService /group2',
+        'Commit /group2',
+      ])
+      expect((advertiser as any).path).toEqual('/group2')
+    })
+
+    it('should not keep an entry group the service could not be added to', async () => {
+      const advertiser = avahi(true)
+
+      await expect(advertiser.startAdvertising()).rejects.toThrow('Local name collision')
+
+      expect(calls).toEqual(['new /group1', 'AddService /group1', 'Free /group1'])
+      expect((advertiser as any).path).toBeUndefined()
+
+      // a later txt update has no group to go to, so it does not touch the bus
+      await advertiser.updateAdvertisement()
+      expect(calls).toHaveLength(3)
+    })
+  })
+
   it('should run systemd-resolved updates one at a time', async () => {
     const calls: string[] = []
     let registered = 0
