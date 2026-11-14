@@ -1,4 +1,7 @@
-import { describe, expect, it } from 'vitest'
+import { EventEmitter } from 'node:events'
+import process from 'node:process'
+
+import { describe, expect, it, vi } from 'vitest'
 
 import { Characteristic } from '../Characteristic.js'
 import { MockDelegate, mockRecordingOptions } from '../controller/CameraController.spec.js'
@@ -57,6 +60,76 @@ describe('recordingManagement', () => {
       },
     }
     expect(configuration!.parsed).toEqual(expected)
+  })
+
+  describe('dataSend open', () => {
+    function managementReadyToRecord(): RecordingManagement {
+      const management = new RecordingManagement(
+        mockRecordingOptions,
+        new MockDelegate(),
+        new Set([EventTriggerOption.MOTION, EventTriggerOption.DOORBELL]),
+      )
+      const internals = management as any
+      internals.recordingActive = true
+      internals.selectedConfiguration = {}
+      internals.operatingModeService.getCharacteristic(Characteristic.HomeKitCameraActive).value = true
+      return management
+    }
+
+    function fakeConnection(sendResponse: () => void) {
+      return Object.assign(new EventEmitter(), {
+        remoteAddress: '127.0.0.1',
+        sendResponse: vi.fn(sendResponse),
+        sendEvent: vi.fn(),
+        addProtocolHandler: vi.fn(() => true),
+        removeProtocolHandler: vi.fn(),
+        isConsideredClosed: () => false,
+      })
+    }
+
+    it('should free the stream instead of rejecting when the open response can not be sent', async () => {
+      const unhandled: unknown[] = []
+      const onUnhandled = (reason: unknown) => unhandled.push(reason)
+      process.on('unhandledRejection', onUnhandled)
+      const error = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+      try {
+        const management = managementReadyToRecord()
+        const connection = fakeConnection(() => {
+          throw new Error('Cannot send message on closing/closed socket!')
+        })
+
+        ;(management as any).handleDataSendOpen(connection, 1, {
+          streamId: 5,
+          type: 'ipcamera.recording',
+          target: 'controller',
+          reason: 'record',
+        })
+        await new Promise(resolve => setTimeout(resolve, 10))
+
+        expect(connection.sendResponse).toHaveBeenCalledTimes(1)
+        expect(unhandled).toEqual([])
+        expect((management as any).recordingStream).toBeUndefined() // the next open is not answered with "busy"
+      } finally {
+        process.off('unhandledRejection', onUnhandled)
+        error.mockRestore()
+      }
+    })
+
+    it('should reject an open without a numeric stream id', () => {
+      const management = managementReadyToRecord()
+      const connection = fakeConnection(() => undefined)
+
+      ;(management as any).handleDataSendOpen(connection, 1, {
+        streamId: 'five',
+        type: 'ipcamera.recording',
+        target: 'controller',
+      })
+
+      expect(connection.sendResponse).toHaveBeenCalledExactlyOnceWith('dataSend', 'open', 1, 6, {
+        status: 5,
+      })
+      expect((management as any).recordingStream).toBeUndefined()
+    })
   })
 
   it('supported configuration', () => {
