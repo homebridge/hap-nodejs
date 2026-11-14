@@ -35,6 +35,7 @@ import {
 } from '../definitions/index.js'
 import { HAPStatus } from '../HAPServer.js'
 import { Service } from '../Service.js'
+import { errorMessage, errorStack } from '../util/errors.js'
 import { HapStatusError } from '../util/hapStatusError.js'
 import { ControllerIdentifier, ControllerServiceMap, DefaultControllerType, SerializableController, StateChangeDelegate } from './Controller.js'
 
@@ -1075,7 +1076,7 @@ export class CameraController extends EventEmitter implements SerializableContro
           timeout = undefined
         }
 
-        console.warn(`[${accessoryName}] Unhandled error thrown inside snapshot request handler: ${error.stack}`)
+        console.warn(`[${accessoryName}] Unhandled error thrown inside snapshot request handler: ${errorStack(error) ?? errorMessage(error)}`)
         reject(error instanceof HapStatusError
           ? error.hapStatus
           : HAPStatus.SERVICE_COMMUNICATION_FAILURE)

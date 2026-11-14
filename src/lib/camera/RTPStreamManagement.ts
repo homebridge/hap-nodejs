@@ -12,6 +12,7 @@ import { Access, Characteristic, CharacteristicEventTypes, CharacteristicSetCall
 import { CameraController, CameraStreamingDelegate, ResourceRequestReason, StateChangeDelegate } from '../controller/index.js'
 import { HAPStatus } from '../HAPServer.js'
 import { Service } from '../Service.js'
+import { errorMessage } from '../util/errors.js'
 import { HAPConnection, HAPConnectionEvent } from '../util/eventedhttp.js'
 import { HapStatusError } from '../util/hapStatusError.js'
 import { once } from '../util/once.js'
@@ -790,7 +791,7 @@ export class RTPStreamManagement {
           try {
             this._handleStopStream()
           } catch (stopError) {
-            debug('Failed to stop the stream after a failed request: %s', (stopError as Error).message)
+            debug('Failed to stop the stream after a failed request: %s', errorMessage(stopError))
           }
         } else {
           this.handleSessionClosed()
@@ -831,7 +832,7 @@ export class RTPStreamManagement {
     try {
       this._handleStartStreamInner(videoConfiguration, audioConfiguration, callback)
     } catch (error) {
-      debug('Failed to parse stream start request: %s', (error as Error).message)
+      debug('Failed to parse stream start request: %s', errorMessage(error))
       callback(HAPStatus.INVALID_VALUE_IN_REQUEST)
     }
   }
@@ -1052,7 +1053,7 @@ export class RTPStreamManagement {
       // parse and check every field before changing any state, so a malformed request can't leave the stream stuck as busy
       request = this.parseSetupEndpointsRequest(value)
     } catch (error) {
-      debug('Failed to parse SetupEndpoints request: %s', (error as Error).message)
+      debug('Failed to parse SetupEndpoints request: %s', errorMessage(error))
       callback(HAPStatus.INVALID_VALUE_IN_REQUEST)
       return
     }
@@ -1133,9 +1134,11 @@ export class RTPStreamManagement {
           : 'ipv4') // ip versions must be the same
       } catch (error) {
         // the stream is marked as in use by now: free it and answer, or it stays blocked until the connection closes
-        debug(`Could not find the local address for the RTP proxy: ${(error as Error).message}`)
+        debug(`Could not find the local address for the RTP proxy: ${errorMessage(error)}`)
         this.handleSessionClosed()
-        callback(error as Error)
+        callback(error instanceof Error
+          ? error
+          : new Error(String(error)))
         return
       }
 
@@ -1190,14 +1193,16 @@ export class RTPStreamManagement {
             this.generateSetupEndpointResponse(connection, sessionIdentifier, prepareRequest, response, callback)
           } catch (error) {
             // the delegate usually calls back asynchronously, so nothing up the stack would catch this
-            debug(`Failed to build the SetupEndpoints response from the PrepareStreamResponse: ${error.message}`)
+            debug(`Failed to build the SetupEndpoints response from the PrepareStreamResponse: ${errorMessage(error)}`)
             this.setupEndpointsResponse = tlv.encode(
               SetupEndpointsResponseTypes.SESSION_ID, uuid.write(sessionIdentifier),
               SetupEndpointsResponseTypes.STATUS, SetupEndpointsStatus.ERROR,
             ).toString('base64')
 
             this.handleSessionClosed()
-            callback(error)
+            callback(error instanceof Error
+              ? error
+              : new Error(String(error)))
           }
         }
       }))
