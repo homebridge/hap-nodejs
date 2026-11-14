@@ -581,7 +581,7 @@ export const enum CharacteristicEventTypes {
 /**
  * @group Characteristic
  */
-export type CharacteristicContext = any
+export type CharacteristicContext = unknown
 
 /**
  * @group Characteristic
