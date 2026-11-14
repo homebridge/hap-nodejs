@@ -145,13 +145,13 @@ export class CiaoAdvertiser extends EventEmitter implements Advertiser {
 
   public startAdvertising(): Promise<void> {
     debug(`Starting to advertise '${this.accessoryInfo.displayName}' using ciao backend!`)
-    return this.advertisedService!.advertise()
+    return this.advertisedService.advertise()
   }
 
   public updateAdvertisement(silent?: boolean): void {
     const txt = CiaoAdvertiser.createTxt(this.accessoryInfo, this.setupHash)
     debug('Updating txt record (txt: %o, silent: %d)', txt, silent)
-    this.advertisedService!.updateTxt(txt, silent)
+    this.advertisedService.updateTxt(txt, silent)
   }
 
   public destroy(): Promise<void> {

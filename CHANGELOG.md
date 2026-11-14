@@ -104,6 +104,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(camera): type the legacy SRTP options check instead of using any
 - refactor(camera): close the recording generator without a ts-expect-error
 - refactor(storage): type the saved accessory info and drop two ts-expect-error
+- refactor(advertiser): drop two needless non-null assertions in the ciao advertiser
 
 ### Homebridge Dependencies
 
