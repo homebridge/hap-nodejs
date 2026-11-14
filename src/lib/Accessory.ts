@@ -154,7 +154,7 @@ export interface SerializedAccessory {
  * @group Controller API
  */
 export interface SerializedControllerContext {
-  type: ControllerIdentifier // this field is called type out of history
+  type: ControllerIdentifier // this field is called type for historical reasons
   services: SerializedServiceMap
 }
 
@@ -203,7 +203,7 @@ export interface PublishInfo {
   pincode: HAPPincode
   /**
    * Specify the category for the HomeKit accessory.
-   * The category is used only in the mdns advertisement and specifies the devices type
+   * The category is used only in the mdns advertisement and specifies the device's type
    * for the HomeKit controller.
    * Currently, this only affects the icon shown in the pairing screen.
    * For the Television and Smart Speaker service it also affects the icon shown in
@@ -220,7 +220,7 @@ export interface PublishInfo {
    * Depending on the mixture of supplied addresses/names hap-nodejs will bind differently.
    *
    * It is advised to not just bind to a specific address, but specifying the interface name
-   * in oder to bind on all address records (and ip version) available.
+   * in order to bind on all address records (and ip version) available.
    *
    * HAP-NodeJS (or the underlying ciao library) will not report about misspelled interface names,
    * as it could be that the interface is currently just down and will come up later.
@@ -300,8 +300,8 @@ export enum MDNSAdvertiser {
    * Use systemd-resolved/D-Bus as advertiser.
    *
    * Note: The systemd-resolved D-Bus interface doesn't provide means to detect restarts of the service.
-   * Therefore, we can't detect if our advertisement might be lost due to a restart of the systemd-resolved daemon restart.
-   * Consequentially, treat this feature as an experimental feature.
+   * Therefore, we can't detect if our advertisement might be lost due to a restart of the systemd-resolved daemon.
+   * Consequently, treat this feature as an experimental feature.
    */
   RESOLVED = 'resolved',
 }
@@ -412,7 +412,7 @@ interface BridgedAccessoryListeners {
  * @group Accessory
  */
 export class Accessory extends EventEmitter {
-  // Timeout in milliseconds until a characteristic warning is issue
+  // Timeout in milliseconds until a characteristic warning is issued
   private static readonly TIMEOUT_WARNING = 3000
   // Timeout in milliseconds after `TIMEOUT_WARNING` until the operation on the characteristic is considered timed out.
   private static readonly TIMEOUT_AFTER_WARNING = 6000
@@ -437,7 +437,7 @@ export class Accessory extends EventEmitter {
   private initialized = false
 
   private controllers: Record<ControllerIdentifier, ControllerContext> = {}
-  private serializedControllers?: Record<ControllerIdentifier, ControllerServiceMap> // store uninitialized controller data after a Accessory.deserialize call
+  private serializedControllers?: Record<ControllerIdentifier, ControllerServiceMap> // store uninitialized controller data after an Accessory.deserialize call
   private activeCameraController?: CameraController
 
   /**
@@ -618,7 +618,7 @@ export class Accessory extends EventEmitter {
     if (index >= 0) {
       this.services.splice(index, 1)
 
-      if (this.primaryService === service) { // check if we are removing out primary service
+      if (this.primaryService === service) { // check if we are removing our primary service
         this.primaryService = undefined
       }
       this.removeLinkedService(service) // remove it from linked service entries on the local accessory
@@ -853,7 +853,7 @@ export class Accessory extends EventEmitter {
         this.serializedControllers = undefined
       }
     } else {
-      serviceMap = controller.constructServices() // let the controller create his services
+      serviceMap = controller.constructServices() // let the controller create its services
       controller.configureServices() // let the controller setup all its handlers
 
       Object.values(serviceMap).forEach((service) => {
@@ -1084,14 +1084,14 @@ export class Accessory extends EventEmitter {
 
   /**
    * This method is called right before the accessory is published. It should be used to check for common
-   * mistakes in Accessory structured, which may lead to HomeKit rejecting the accessory when pairing.
+   * mistakes in the Accessory structure, which may lead to HomeKit rejecting the accessory when pairing.
    * If it is called on a bridge it will call this method for all bridged accessories.
    */
   private validateAccessory(mainAccessory?: boolean) {
     const service = this.getService(Service.AccessoryInformation)
     if (!service) {
-      console.log(`HAP-NodeJS WARNING: The accessory '${this.displayName}' is getting published without a AccessoryInformation service. `
-        + 'This might prevent the accessory from being added to the Home app or leading to the accessory being unresponsive!')
+      console.log(`HAP-NodeJS WARNING: The accessory '${this.displayName}' is getting published without an AccessoryInformation service. `
+        + 'This might prevent the accessory from being added to the Home app or lead to the accessory being unresponsive!')
     } else {
       const checkValue = (name: string, value?: Nullable<CharacteristicValue>) => {
         if (!value) {
@@ -1125,7 +1125,7 @@ export class Accessory extends EventEmitter {
    */
   _assignIDs(identifierCache: IdentifierCache): void {
     // if we are responsible for our own identifierCache, start the expiration process
-    // also check weather we want to have an expiration process
+    // also check whether we want to have an expiration process
     if (this._identifierCache && this.shouldPurgeUnusedIDs) {
       this._identifierCache.startTrackingUsage()
     }
@@ -1156,7 +1156,7 @@ export class Accessory extends EventEmitter {
     // expire any now-unused cache keys (for Accessories, Services, or Characteristics
     // that have been removed since the last call to assignIDs())
     if (this._identifierCache) {
-      // Check weather we want to purge the unused ids
+      // Check whether we want to purge the unused ids
       if (this.shouldPurgeUnusedIDs) {
         this._identifierCache.stopTrackingUsageAndExpireUnused()
       }
@@ -1174,7 +1174,7 @@ export class Accessory extends EventEmitter {
   }
 
   /**
-   * Manually purge the unused ids if you like, comes handy
+   * Manually purge the unused ids if you like, comes in handy
    * when you have disabled auto purge, so you can do it manually
    */
   purgeUnusedIDs(): void {
@@ -1258,7 +1258,7 @@ export class Accessory extends EventEmitter {
    */
   public async publish(info: PublishInfo, allowInsecureRequest?: boolean): Promise<void> {
     if (this.bridged) {
-      throw new Error(`Can't publish in accessory which is bridged by another accessory. Bridged by ${this.bridge?.displayName}`)
+      throw new Error(`Can't publish an accessory which is bridged by another accessory. Bridged by ${this.bridge?.displayName}`)
     }
 
     /* Bridged accessories with malformed permissions are quarantined at the serving boundary, but the accessory being published is the root of its own
@@ -1329,7 +1329,7 @@ export class Accessory extends EventEmitter {
       this._identifierCache = new IdentifierCache(info.username)
     }
 
-    // If it's bridge and there are no accessories already assigned to the bridge
+    // If it's a bridge and there are no accessories already assigned to the bridge
     // probably purge is not needed since it's going to delete all the ids
     // of accessories that might be added later. Useful when dynamically adding
     // accessories.
@@ -1428,8 +1428,8 @@ export class Accessory extends EventEmitter {
 
   /**
    * Removes this Accessory from the local network
-   * Accessory object will no longer valid after invoking this method
-   * Trying to invoke publish() on the object will result undefined behavior
+   * Accessory object will no longer be valid after invoking this method
+   * Trying to invoke publish() on the object will result in undefined behavior
    */
   public destroy(): Promise<void> {
     const promise = this.unpublish()
@@ -1493,7 +1493,7 @@ export class Accessory extends EventEmitter {
       }
     }, 1000)
     this.configurationChangeDebounceTimeout.unref()
-    // 1s is fine, HomeKit is built that with configuration updates no iid or aid conflicts occur.
+    // 1s is fine, HomeKit is built so that no iid or aid conflicts occur with configuration updates.
     // Thus, the only thing happening when the txt update arrives late is already removed accessories/services
     // not responding or new accessories/services not yet shown
   }
@@ -1676,7 +1676,7 @@ export class Accessory extends EventEmitter {
           : (slow ? CharacteristicWarningType.SLOW_WRITE : CharacteristicWarningType.TIMEOUT_WRITE)
         const message = slow
           ? 'was slow to respond!'
-          : 'didn\'t respond at all!. Please check that you properly call the callback!'
+          : 'didn\'t respond at all! Please check that you properly call the callback!'
         accessory.sendCharacteristicWarning(characteristic, type, `The ${operation} handler for the characteristic '${
           characteristic.displayName}' on the accessory '${accessory.displayName}' ${message}`)
 
@@ -1693,7 +1693,7 @@ export class Accessory extends EventEmitter {
     let timeout: NodeJS.Timeout | undefined = setTimeout(() => {
       warnMissing(true)
 
-      // after a total of 10s we do no longer wait for a request to appear and just return status code timeout
+      // after a total of 10s we no longer wait for a request to appear and just return status code timeout
       timeout = setTimeout(() => {
         timeout = undefined
 
@@ -2013,7 +2013,7 @@ export class Accessory extends EventEmitter {
 
   private handleServiceConfigurationChangeEvent(service: Service): void {
     if (!service.isPrimaryService && service === this.primaryService) {
-      // service changed form primary to non-primary service
+      // service changed from primary to non-primary service
       this.primaryService = undefined
     } else if (service.isPrimaryService && service !== this.primaryService) {
       // service changed from non-primary to primary service
@@ -2050,11 +2050,11 @@ export class Accessory extends EventEmitter {
       }
 
       if (!(change.reason === ChangeReason.EVENT || change.oldValue !== change.newValue
-        || change.characteristic.UUID === Characteristic.ProgrammableSwitchEvent.UUID // those specific checks are out of backwards compatibility
+        || change.characteristic.UUID === Characteristic.ProgrammableSwitchEvent.UUID // those specific checks are there for backwards compatibility
         || change.characteristic.UUID === Characteristic.ButtonEvent.UUID // new characteristics should use sendEventNotification call
       )) {
         // we only emit a change event if the reason was a call to sendEventNotification, if the value changed
-        // as of a write request or a read request or if the change happened on dedicated event characteristics
+        // because of a write request or a read request or if the change happened on dedicated event characteristics
         // otherwise we ignore this change event (with the return below)
         return
       }

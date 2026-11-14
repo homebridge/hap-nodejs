@@ -628,7 +628,7 @@ export class Service extends EventEmitter {
 
   // If a Characteristic constructor is passed a Characteristic object will always be returned
   public getCharacteristic(constructor: WithUUID<{ new (): Characteristic }>): Characteristic
-  // Still support using a Characteristic constructor or a name so "passing though" a value still works
+  // Still support using a Characteristic constructor or a name so "passing through" a value still works
   // https://www.typescriptlang.org/docs/handbook/declaration-files/do-s-and-don-ts.html#use-union-types
   public getCharacteristic(name: string | WithUUID<{ new (): Characteristic }>): Characteristic | undefined
   public getCharacteristic(name: string | WithUUID<{ new (): Characteristic }>): Characteristic | undefined {
@@ -720,7 +720,7 @@ export class Service extends EventEmitter {
     name: string | T,
     value: CharacteristicValue | HapStatusError | Error,
   ): Service {
-    // @ts-expect-error: We know that both overloads exists individually. There is just no publicly exposed type for that!
+    // @ts-expect-error: We know that both overloads exist individually. There is just no publicly exposed type for that!
     this.getCharacteristic(name)!.setValue(value)
     return this // for chaining
   }
@@ -775,11 +775,11 @@ export class Service extends EventEmitter {
   // noinspection JSUnusedGlobalSymbols
   /**
    * This method was created to copy all characteristics from another service to this.
-   * It's only adopting is currently in homebridge to merge the AccessoryInformation service. So some things
+   * It is currently only used in homebridge to merge the AccessoryInformation service. So some things
    * may be explicitly tailored towards this use case.
    *
    * It will not remove characteristics which are present currently but not added on the other characteristic.
-   * It will not replace the characteristic if the value is falsy (except of '0' or 'false')
+   * It will not replace the characteristic if the value is falsy (except for '0' or 'false')
    * @param service
    * @private
    */
@@ -804,7 +804,7 @@ export class Service extends EventEmitter {
       }
     })
 
-    // add all additional characteristics which where not present already
+    // add all additional characteristics which were not present already
     Object.values(foreignCharacteristics).forEach(characteristic => this.addCharacteristic(characteristic))
   }
 
@@ -859,7 +859,7 @@ export class Service extends EventEmitter {
         for (const linked of this.linkedServices) {
           if (!linked.iid) {
             // we got a linked service which is not added to the accessory
-            // as it doesn't "exists" we just ignore it.
+            // as it doesn't "exist" we just ignore it.
             // we have some (at least one) plugins on homebridge which link to the AccessoryInformation service.
             // homebridge always creates its own AccessoryInformation service and ignores the user supplied one
             // thus the link is automatically broken.
@@ -883,7 +883,7 @@ export class Service extends EventEmitter {
           for (const characteristic of missingCharacteristics) {
             this.emitCharacteristicWarningEvent(characteristic, CharacteristicWarningType.TIMEOUT_READ,
               `The read handler for the characteristic '${characteristic?.displayName
-              }' didn't respond at all!. Please check that you properly call the callback!`)
+              }' didn't respond at all! Please check that you properly call the callback!`)
             service.characteristics.push(characteristic.internalHAPRepresentation()) // value is set to null
           }
 
@@ -937,7 +937,7 @@ export class Service extends EventEmitter {
       for (const linked of this.linkedServices) {
         if (!linked.iid) {
           // we got a linked service which is not added to the accessory
-          // as it doesn't "exists" we just ignore it.
+          // as it doesn't "exist" we just ignore it.
           // we have some (at least one) plugins on homebridge which link to the AccessoryInformation service.
           // homebridge always creates its own AccessoryInformation service and ignores the user supplied one
           // thus the link is automatically broken.
