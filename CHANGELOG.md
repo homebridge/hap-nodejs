@@ -73,6 +73,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(characteristic): word the too short model or serial number warning without the warning type
 - fix(characteristic): copy the props in replaceBy instead of sharing them
 - fix(characteristic): leave the object passed to setProps unchanged
+- fix(accessory): keep the listeners of the plugin when a bridged accessory is removed
 
 ### Homebridge Dependencies
 

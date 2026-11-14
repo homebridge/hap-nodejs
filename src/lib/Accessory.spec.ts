@@ -238,6 +238,24 @@ describe('accessory', () => {
   })
 
   describe('bridged accessories', () => {
+    it('should keep the listeners of the plugin when a bridged accessory is removed', () => {
+      const bridge = new Bridge('TestBridge', uuid.generate('bridge listener test'))
+      const bridged = new Accessory('Bridged', uuid.generate('bridged with listeners'))
+      const identify = vi.fn()
+      bridged.on(AccessoryEventTypes.IDENTIFY, identify)
+
+      bridge.addBridgedAccessory(bridged)
+      const whileBridged = bridged.listenerCount(AccessoryEventTypes.SERVICE_CONFIGURATION_CHANGE)
+      bridge.removeBridgedAccessory(bridged)
+
+      expect(bridged.listenerCount(AccessoryEventTypes.IDENTIFY)).toBe(1)
+      // what the bridge added itself is gone again, also after it was bridged a second time
+      expect(bridged.listenerCount(AccessoryEventTypes.SERVICE_CONFIGURATION_CHANGE)).toBe(whileBridged - 1)
+      bridge.addBridgedAccessory(bridged)
+      expect(bridged.listenerCount(AccessoryEventTypes.SERVICE_CONFIGURATION_CHANGE)).toBe(whileBridged)
+      expect(bridged.listenerCount(AccessoryEventTypes.CHARACTERISTIC_WARNING)).toBe(1)
+    })
+
     it('should refuse a second bridged accessory with the same UUID', () => {
       const bridge = new Bridge('TestBridge', uuid.generate('bridge duplicate uuid test'))
       const sharedUUID = uuid.generate('bridged twice')

@@ -393,6 +393,12 @@ export declare interface Accessory {
   emit(event: 'characteristic-warning', warning: CharacteristicWarning): boolean
 }
 
+interface BridgedAccessoryListeners {
+  characteristicChange: (change: AccessoryCharacteristicChange) => void
+  configurationChange: () => void
+  characteristicWarning: (warning: CharacteristicWarning) => void
+}
+
 /**
  * Accessory is a virtual HomeKit device. It can publish an associated HAP server for iOS devices to communicate
  * with - or it can run behind another "Bridge" Accessory server.
@@ -464,6 +470,10 @@ export class Accessory extends EventEmitter {
   _setupURI?: string
 
   private configurationChangeDebounceTimeout?: NodeJS.Timeout
+  /**
+   * The listeners this accessory, as a bridge, registered on each of its bridged accessories.
+   */
+  private readonly bridgedAccessoryListeners = new Map<Accessory, BridgedAccessoryListeners>()
   /**
    * This property captures the time when we last served a /accessories request.
    * For multiple bursts of /accessories request we don't want to always contact GET handlers
@@ -693,9 +703,15 @@ export class Accessory extends EventEmitter {
     }
 
     // listen for changes in ANY characteristics of ANY services on this Accessory
-    accessory.on(AccessoryEventTypes.SERVICE_CHARACTERISTIC_CHANGE, change => this.handleCharacteristicChangeEvent(accessory, change.service, change))
-    accessory.on(AccessoryEventTypes.SERVICE_CONFIGURATION_CHANGE, this.enqueueConfigurationUpdate.bind(this))
-    accessory.on(AccessoryEventTypes.CHARACTERISTIC_WARNING, this.handleCharacteristicWarning.bind(this))
+    const listeners: BridgedAccessoryListeners = {
+      characteristicChange: change => this.handleCharacteristicChangeEvent(accessory, change.service, change),
+      configurationChange: this.enqueueConfigurationUpdate.bind(this),
+      characteristicWarning: this.handleCharacteristicWarning.bind(this),
+    }
+    accessory.on(AccessoryEventTypes.SERVICE_CHARACTERISTIC_CHANGE, listeners.characteristicChange)
+    accessory.on(AccessoryEventTypes.SERVICE_CONFIGURATION_CHANGE, listeners.configurationChange)
+    accessory.on(AccessoryEventTypes.CHARACTERISTIC_WARNING, listeners.characteristicWarning)
+    this.bridgedAccessoryListeners.set(accessory, listeners)
 
     accessory.bridged = true
     accessory.bridge = this
@@ -738,7 +754,15 @@ export class Accessory extends EventEmitter {
     accessory.bridged = false
     accessory.bridge = undefined
     accessory.permsQuarantined = false // a later bridge starts from a clean slate and re-evaluates the accessory itself
-    accessory.removeAllListeners()
+
+    // only the listeners this bridge added: the others belong to whoever created the accessory, and it may be bridged again
+    const listeners = this.bridgedAccessoryListeners.get(accessory)
+    if (listeners) {
+      accessory.removeListener(AccessoryEventTypes.SERVICE_CHARACTERISTIC_CHANGE, listeners.characteristicChange)
+      accessory.removeListener(AccessoryEventTypes.SERVICE_CONFIGURATION_CHANGE, listeners.configurationChange)
+      accessory.removeListener(AccessoryEventTypes.CHARACTERISTIC_WARNING, listeners.characteristicWarning)
+      this.bridgedAccessoryListeners.delete(accessory)
+    }
 
     this.controllerStorage.unlinkAccessory(accessory)
 
