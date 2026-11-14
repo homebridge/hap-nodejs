@@ -736,7 +736,7 @@ function minWithUndefined(a?: number, b?: number): number | undefined {
  * Characteristic represents a particular typed variable that can be assigned to a Service. For instance, a
  * "Hue" Characteristic might store a 'float' value of type 'arcdegrees'. You could add the Hue Characteristic
  * to a {@link Service} in order to store that value. A particular Characteristic is distinguished from others by its
- * UUID. HomeKit provides a set of known Characteristic UUIDs defined in HomeKit.ts along with a
+ * UUID. HomeKit provides a set of known Characteristic UUIDs defined in CharacteristicDefinitions.ts along with a
  * corresponding concrete subclass.
  *
  * You can also define custom Characteristics by providing your own UUID. Custom Characteristics can be added
@@ -2401,7 +2401,7 @@ export class Characteristic extends EventEmitter {
    * Called when a HAP request wants to know the current value of the characteristic.
    *
    * @param connection - The HAP connection from which the request originated from.
-   * @param context - Deprecated parameter. There for backwards compatibility.
+   * @param context - Passed on to the handler and to the listeners of the change event.
    * @private
    */
   async handleGetRequest(connection?: HAPConnection, context?: CharacteristicContext): Promise<Nullable<CharacteristicValue>> {
@@ -2539,7 +2539,7 @@ export class Characteristic extends EventEmitter {
    *
    * @param value - The updated value
    * @param connection - The connection from which the request originated from
-   * @param context - Deprecated parameter. There for backwards compatibility.
+   * @param context - Passed on to the handler and to the listeners of the change event.
    * @returns Promise resolve to void in normal operation. When characteristic supports write-response, HAP
    * requests a write-response and the set handler returns a write-response value, the respective
    * write response value is resolved.
@@ -2900,7 +2900,7 @@ export class Characteristic extends EventEmitter {
           return this.value
         }
       } else {
-        // we currently allow null for any non-custom defined characteristics
+        // we currently allow null for any custom defined characteristics
         return value
       }
     }

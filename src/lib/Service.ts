@@ -149,7 +149,7 @@ export declare interface Service {
  * Service represents a set of grouped values necessary to provide a logical function. For instance, a
  * "Door Lock Mechanism" service might contain two values, one for the "desired lock state" and one for the
  * "current lock state". A particular Service is distinguished from others by its "type", which is a UUID.
- * HomeKit provides a set of known Service UUIDs defined in HomeKit.ts along with a corresponding
+ * HomeKit provides a set of known Service UUIDs defined in ServiceDefinitions.ts along with a corresponding
  * concrete subclass that you can instantiate directly to set up the necessary values. These natively-supported
  * Services are expected to contain a particular set of Characteristics.
  *
@@ -608,7 +608,6 @@ export class Service extends EventEmitter {
    * @param service - Previously linked service
    */
   public removeLinkedService(service: Service): void {
-    // TODO: Add a check if the service is on the same accessory.
     const index = this.linkedServices.indexOf(service)
     if (index !== -1) {
       this.linkedServices.splice(index, 1)
