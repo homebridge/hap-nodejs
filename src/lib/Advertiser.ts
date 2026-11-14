@@ -710,8 +710,13 @@ export class ResolvedAdvertiser extends EventEmitter implements Advertiser {
     debug('Updating txt record (txt: %o, silent: %d)', CiaoAdvertiser.createTxt(this.accessoryInfo, this.setupHash), silent)
 
     // Currently, systemd-resolved has no way to update an existing record.
-    await this.stopAdvertising()
-    await this.startAdvertising()
+    try {
+      await this.stopAdvertising()
+      await this.startAdvertising()
+    } catch (error) {
+      // the callers do not wait for this promise, so a rejection here would end the process
+      console.error(`Failed to update systemd-resolved advertisement: ${error}`)
+    }
   }
 
   private async stopAdvertising(): Promise<void> {
