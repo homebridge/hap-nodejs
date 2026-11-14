@@ -870,10 +870,8 @@ export class DataStreamWriter {
       this.writeUTF8_Length16LE(utf8)
     } else if (length <= 4294967295) {
       this.writeUTF8_Length32LE(utf8)
-    } else if (length <= Number.MAX_SAFE_INTEGER) { // use correct uint64 restriction when we convert to bigint
+    } else { // a string can never be longer than a number can count
       this.writeUTF8_Length64LE(utf8)
-    } else {
-      this.writeUTF8_NULL_terminated(utf8)
     }
   }
 
@@ -921,14 +919,6 @@ export class DataStreamWriter {
     this._writeUTF8(utf8)
   }
 
-  private writeUTF8_NULL_terminated(utf8: string): void {
-    this.ensureLength(1 + Buffer.byteLength(utf8) + 1)
-
-    this.writeTag(DataFormatTags.UTF8_NULL_TERMINATED)
-    this._writeUTF8(utf8)
-    this.data.writeUInt8(0, this.writerIndex++)
-  }
-
   writeData(data: Buffer): void {
     if (data.length === 0) {
       // a one-byte value, which is never tracked for back-references (see DataStreamReader.trackData)
@@ -949,10 +939,8 @@ export class DataStreamWriter {
       this.writeData_Length16LE(data)
     } else if (data.length <= 4294967295) {
       this.writeData_Length32LE(data)
-    } else if (data.length <= Number.MAX_SAFE_INTEGER) {
+    } else { // a buffer can never be longer than a number can count
       this.writeData_Length64LE(data)
-    } else {
-      this.writeData_terminated(data)
     }
   }
 
@@ -993,14 +981,6 @@ export class DataStreamWriter {
     this.writeTag(DataFormatTags.DATA_LENGTH64LE)
     this.writeLength64LE(data.length)
     this._writeData(data)
-  }
-
-  private writeData_terminated(data: Buffer): void {
-    this.ensureLength(1 + data.length + 1)
-
-    this.writeTag(DataFormatTags.DATA_TERMINATED)
-    this._writeData(data)
-    this.writeTag(DataFormatTags.TERMINATOR)
   }
 
   writeSecondsSince2001_01_01(seconds: SecondsSince2001): void {

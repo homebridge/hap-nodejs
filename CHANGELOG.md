@@ -166,6 +166,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(server): drop the unused request parameter of the pairing steps and a catch variable
 - fix(crypto): stop naming node 10 in the error for a missing chacha20-poly1305 cipher
 - refactor(camera): drop a branch which can never run and a repeated assignment of the proxy port
+- refactor(datastream): drop writer branches which can never run and a commented-out debug block
 
 ### Homebridge Dependencies
 
