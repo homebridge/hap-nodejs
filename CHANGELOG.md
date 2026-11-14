@@ -27,6 +27,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(controller-storage): stop saving cleared controller data again after an earlier save
 - fix(controller-storage): restore the stored data again on a second load in one process
 - fix(storage): fail again instead of handing out an empty store after a failed init
+- fix(characteristic): keep the error state when a client write is refused
 
 ### Homebridge Dependencies
 
