@@ -197,7 +197,7 @@ export default class RTPProxy {
     }
 
     if (this.incomingSSRC === null) {
-      this.incomingSSRC = msg.readUInt32BE(4)
+      this.incomingSSRC = msg.readUInt32BE(8) // the SSRC follows the sequence number (2) and the timestamp (4-7)
     }
 
     msg.writeUInt32BE(this.outgoingSSRC, 8)
@@ -261,7 +261,7 @@ export default class RTPProxy {
     })
 
     if (processed) {
-      this.sendOut(processed)
+      this.sendBack(processed) // it came from the controller, so it goes on to the server
     }
   }
 

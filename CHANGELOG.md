@@ -58,6 +58,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): leave the streaming options of the plugin unchanged
 - fix(camera): ignore a prepared stream which arrives after its session has ended
 - fix(camera): close the rtp proxy sockets when the proxy is destroyed while they are being bound
+- fix(camera): read the rtp proxy ssrc from the right field and send controller rtcp to the server
 
 ### Homebridge Dependencies
 
