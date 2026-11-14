@@ -49,6 +49,24 @@ describe('service', () => {
   })
 
   describe('#deserialize', () => {
+    it('should restore a custom class named like a definition with its own UUID', () => {
+      const customUUID = 'E863F007-079E-48FF-8F27-9C2605A29F52'
+      class Switch extends Service {
+        constructor(displayName?: string, subtype?: string) {
+          super(displayName, customUUID, subtype)
+        }
+      }
+      const json = JSON.parse(JSON.stringify(Service.serialize(new Switch('Custom Switch'))))
+      expect(json.constructorName).toEqual('Switch')
+
+      const restored = Service.deserialize(json)
+
+      expect(restored.UUID).toEqual(customUUID)
+      expect(restored).not.toBeInstanceOf(Service.Switch)
+      expect(Service.deserialize(JSON.parse(JSON.stringify(Service.serialize(new Service.Switch('Real Switch'))))))
+        .toBeInstanceOf(Service.Switch)
+    })
+
     it('should deserialize legacy json from homebridge', () => {
       const json = JSON.parse('{"displayName":"Test Light","UUID":"00000043-0000-1000-8000-0026BB765291",'
         + '"characteristics":[{"displayName":"Name","UUID":"00000023-0000-1000-8000-0026BB765291",'

@@ -1024,9 +1024,13 @@ export class Service extends EventEmitter {
   static deserialize(json: SerializedService): Service {
     let service: Service
 
-    if (json.constructorName && json.constructorName.charAt(0).toUpperCase() === json.constructorName.charAt(0)
-      && Service[json.constructorName as keyof (typeof Service)]) { // MUST start with uppercase character and must exist on Service object
-      const constructor = Service[json.constructorName as keyof (typeof Service)] as { new(displayName?: string, subtype?: string): Service }
+    // The saved name must be one of the service definitions, and it must be the SAME service:
+    // a plugin's own class may share its name with a definition (e.g. "Switch") while having its own UUID.
+    const constructor = json.constructorName && Object.hasOwn(Service, json.constructorName)
+      ? Service[json.constructorName as keyof (typeof Service)] as { new(displayName?: string, subtype?: string): Service, UUID?: string }
+      : undefined
+
+    if (typeof constructor === 'function' && constructor.UUID === json.UUID) {
       service = new constructor(json.displayName, json.subtype)
     } else {
       service = new Service(json.displayName, json.UUID, json.subtype)
