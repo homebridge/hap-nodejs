@@ -143,7 +143,7 @@ http.createServer((request, response) => {
     response.writeHead(200, { 'Content-Type': 'text/html' })
     response.end('OK')
   } else if (pathname === 'listTargets') {
-    const targets = controller.targetConfigurations
+    const targets = Object.fromEntries(controller.targetConfigurations) // JSON.stringify prints a Map as {}
 
     response.writeHead(200, { 'Content-Type': 'application/json' })
     response.end(JSON.stringify(targets, undefined, 4))
