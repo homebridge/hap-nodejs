@@ -29,7 +29,11 @@ import { HAPConnection } from '../util/eventedhttp.js'
 import * as tlv from '../util/tlv.js'
 import * as uuid from '../util/uuid.js'
 import RTPProxy from './RTPProxy.js'
-import { CameraStreamingOptions, RTPStreamManagement, SRTPCryptoSuites } from './RTPStreamManagement.js'
+import {
+  CameraStreamingOptions,
+  RTPStreamManagement,
+  SRTPCryptoSuites,
+} from './RTPStreamManagement.js'
 
 import '../definitions/index.js'
 
@@ -180,6 +184,47 @@ function buildMockConnection(): HAPConnection {
 }
 
 describe('rTPStreamManagement', () => {
+  describe('streaming options shared by all streams', () => {
+    it('should leave the lists of the plugin alone', () => {
+      const options: CameraStreamingOptions = {
+        ...baseStreamingOptions,
+        supportedCryptoSuites: [],
+        audio: {
+          codecs: [],
+        },
+      }
+
+      const controller = new CameraController(buildControllerOptions(options))
+      controller.constructServices()
+
+      expect(options.audio?.codecs).toEqual([])
+      expect(options.supportedCryptoSuites).toEqual([])
+      // without a codec there is no audio, and that holds for every stream, not only for the first
+      expect(controller.streamManagements.map(management => management.videoOnly)).toEqual([true, true])
+      controller.handleFactoryReset()
+    })
+
+    it('should not merge legacy codec entries inside the options of the plugin', () => {
+      const codecs = [
+        { type: AudioStreamingCodecType.OPUS, samplerate: AudioStreamingSamplerate.KHZ_16 },
+        { type: AudioStreamingCodecType.OPUS, samplerate: AudioStreamingSamplerate.KHZ_24 },
+      ]
+      const options: CameraStreamingOptions = {
+        ...baseStreamingOptions,
+        audio: { codecs },
+      }
+
+      const controller = new CameraController(buildControllerOptions(options))
+      controller.constructServices()
+
+      expect(codecs).toEqual([
+        { type: AudioStreamingCodecType.OPUS, samplerate: AudioStreamingSamplerate.KHZ_16 },
+        { type: AudioStreamingCodecType.OPUS, samplerate: AudioStreamingSamplerate.KHZ_24 },
+      ])
+      controller.handleFactoryReset()
+    })
+  })
+
   describe('_handleStartStream malformed TLV (fix 34056583)', () => {
     let controller: CameraController
 
