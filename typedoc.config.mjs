@@ -8,9 +8,6 @@ const config = {
   entryPoints: [
     'src/index.ts',
   ],
-  intentionallyNotExported: [
-    'MulticastOptions',
-  ],
   excludePrivate: true,
   excludeProtected: true,
   excludeExternals: true,
