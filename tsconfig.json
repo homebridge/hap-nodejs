@@ -8,7 +8,6 @@
     "strict": true,
     "declaration": true,
     "declarationMap": true,
-    "importHelpers": true,
     "outDir": "./dist",
     "sourceMap": true
   },
