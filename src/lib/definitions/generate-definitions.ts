@@ -7,6 +7,7 @@ import { Command } from 'commander'
 import * as plist from 'simple-plist'
 
 import { Access, Characteristic, Formats, Units } from '../Characteristic.js'
+import { errorMessage } from '../util/errors.js'
 import { toLongForm } from '../util/uuid.js'
 import {
   CharacteristicClassAdditions,
@@ -312,7 +313,7 @@ for (const [id, definition] of Object.entries(characteristics)) {
       writtenCharacteristicEntries[deprecatedClassName] = generatedCharacteristic
     }
   } catch (error) {
-    throw new Error(`Error thrown generating characteristic '${id}' (${definition.DefaultDescription}): ${error.message}`, { cause: error })
+    throw new Error(`Error thrown generating characteristic '${id}' (${definition.DefaultDescription}): ${errorMessage(error)}`, { cause: error })
   }
 }
 
@@ -403,7 +404,7 @@ for (const generated of Object.values(generatedCharacteristics)
     }
     characteristicOutput.write(`Characteristic.${generated.className} = ${generated.className};\n\n`)
   } catch (error) {
-    throw new Error(`Error thrown writing characteristic '${generated.id}' (${generated.className}): ${error.message}`, { cause: error })
+    throw new Error(`Error thrown writing characteristic '${generated.id}' (${generated.className}): ${errorMessage(error)}`, { cause: error })
   }
 }
 
@@ -495,7 +496,7 @@ for (const [id, definition] of Object.entries(services)) {
       writtenServiceEntries[deprecatedClassName] = generatedService
     }
   } catch (error) {
-    throw new Error(`Error thrown generating service '${id}' (${definition.DefaultDescription}): ${error.message}`, { cause: error })
+    throw new Error(`Error thrown generating service '${id}' (${definition.DefaultDescription}): ${errorMessage(error)}`, { cause: error })
   }
 }
 
@@ -566,7 +567,7 @@ for (const generated of Object.values(generatedServices)
     }
     serviceOutput.write(`Service.${generated.className} = ${generated.className};\n\n`)
   } catch (error) {
-    throw new Error(`Error thrown writing service '${generated.id}' (${generated.className}): ${error.message}`, { cause: error })
+    throw new Error(`Error thrown writing service '${generated.id}' (${generated.className}): ${errorMessage(error)}`, { cause: error })
   }
 }
 
