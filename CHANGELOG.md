@@ -29,6 +29,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(storage): fail again instead of handing out an empty store after a failed init
 - fix(characteristic): keep the error state when a client write is refused
 - fix: restore a custom class named like a hap definition with its own uuid
+- fix(server): answer a failed pair-setup M5 with state M6
 
 ### Homebridge Dependencies
 

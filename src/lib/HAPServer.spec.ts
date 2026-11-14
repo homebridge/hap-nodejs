@@ -265,7 +265,7 @@ describe('hAPServer', () => {
       expect(response.statusCode).toBe(HAPPairingHTTPCode.OK)
 
       const objects = tlv.decode(response.body)
-      expect(objects[TLVValues.STATE].readUInt8(0)).toEqual(PairingStates.M4)
+      expect(objects[TLVValues.STATE].readUInt8(0)).toEqual(PairingStates.M6) // an error in answer to M5 is an M6
       expect(objects[TLVValues.ERROR_CODE].readUInt8(0)).toEqual(TLVErrorCode.AUTHENTICATION)
     })
 
@@ -294,7 +294,7 @@ describe('hAPServer', () => {
       expect(response.statusCode).toBe(HAPPairingHTTPCode.OK)
 
       const objects = tlv.decode(response.body)
-      expect(objects[TLVValues.STATE].readUInt8(0)).toEqual(PairingStates.M4)
+      expect(objects[TLVValues.STATE].readUInt8(0)).toEqual(PairingStates.M6) // an error in answer to M5 is an M6
       expect(objects[TLVValues.ERROR_CODE].readUInt8(0)).toEqual(TLVErrorCode.AUTHENTICATION)
     })
 
@@ -716,7 +716,7 @@ describe('hAPServer', () => {
       expect(response.statusCode).toBe(HAPPairingHTTPCode.OK)
 
       const objects = tlv.decode(response.body)
-      expect(objects[TLVValues.STATE].readUInt8(0)).toEqual(PairingStates.M4)
+      expect(objects[TLVValues.STATE].readUInt8(0)).toEqual(PairingStates.M6) // an error in answer to M5 is an M6
       expect(objects[TLVValues.ERROR_CODE].readUInt8(0)).toEqual(TLVErrorCode.UNKNOWN)
     })
 

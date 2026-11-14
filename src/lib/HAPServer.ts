@@ -630,7 +630,7 @@ export class HAPServer extends EventEmitter {
     if (!encryptedData || encryptedData.length < 16) {
       debug('[%s] M5: Encrypted data missing or too short', this.accessoryInfo.username)
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
-      response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M4, TLVValues.ERROR_CODE, TLVErrorCode.AUTHENTICATION))
+      response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M6, TLVValues.ERROR_CODE, TLVErrorCode.AUTHENTICATION))
       connection._pairSetupState = undefined
       return
     }
@@ -649,7 +649,7 @@ export class HAPServer extends EventEmitter {
     } catch (error) {
       debug('[%s] Error while decrypting and verifying M5 subTlv: %s', this.accessoryInfo.username, error)
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
-      response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M4, TLVValues.ERROR_CODE, TLVErrorCode.AUTHENTICATION))
+      response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M6, TLVValues.ERROR_CODE, TLVErrorCode.AUTHENTICATION))
       connection._pairSetupState = undefined
       return
     }
@@ -660,7 +660,7 @@ export class HAPServer extends EventEmitter {
     } catch (error) {
       debug('[%s] M5: Failed to decode decrypted TLV payload: %s', this.accessoryInfo.username, error.message)
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
-      response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M4, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
+      response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M6, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
       connection._pairSetupState = undefined
       return
     }
@@ -670,7 +670,7 @@ export class HAPServer extends EventEmitter {
     if (!clientUsername || !clientLTPK || !clientProof) {
       debug('[%s] M5: Missing required TLV fields in decrypted payload', this.accessoryInfo.username)
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
-      response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M4, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
+      response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M6, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
       connection._pairSetupState = undefined
       return
     }
