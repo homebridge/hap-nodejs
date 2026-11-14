@@ -35,15 +35,17 @@ export function isValid(UUID: string): boolean {
  * Parses the uuid as a string from the given Buffer.
  * The parser will use the first 16 bytes.
  *
+ * Throws a RangeError if the buffer holds fewer than 16 bytes.
+ *
  * @param buf - The buffer to read from.
- * @throws RangeError if the buffer holds fewer than 16 bytes.
  */
 export function unparse(buf: Buffer): string
 /**
  * Parses the uuid as a string from the 16 bytes of the given Buffer starting at the specified offset.
+ * Throws a RangeError if the buffer holds fewer than 16 bytes from the offset on.
+ *
  * @param buf - The buffer to read from.
  * @param offset - The offset in the buffer to start reading from.
- * @throws RangeError if the buffer holds fewer than 16 bytes from the offset on.
  */
 export function unparse(buf: Buffer, offset: number): string
 export function unparse(buf: Buffer, offset = 0): string {
