@@ -1440,6 +1440,7 @@ export class Accessory extends EventEmitter {
 
       this._accessoryInfo = undefined
       this._identifierCache = undefined
+      this.controllerStorage.cancelQueuedSave() // it would write the file again which was just removed
       this.controllerStorage = new ControllerStorage(this)
     }
     this.removeAllListeners()

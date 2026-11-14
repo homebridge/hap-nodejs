@@ -404,6 +404,19 @@ export class ControllerStorage {
     }
   }
 
+  /**
+   * Drops a save which is still queued. Called when the data of the accessory is removed from disk,
+   * as the queued save would write the removed file again.
+   *
+   * @private
+   */
+  cancelQueuedSave(): void {
+    if (this.queuedSaveTimeout) {
+      clearTimeout(this.queuedSaveTimeout)
+      this.queuedSaveTimeout = this.queuedSaveTime = undefined
+    }
+  }
+
   static persistKey(username: MacAddress): string {
     return util.format('ControllerStorage.%s.json', username.replace(/:/g, '').toUpperCase())
   }

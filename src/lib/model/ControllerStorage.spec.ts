@@ -7,6 +7,7 @@ import { AdaptiveLightingController } from '../controller/AdaptiveLightingContro
 import { ControllerIdentifier, ControllerServiceMap, SerializableController, StateChangeDelegate } from '../controller/index.js'
 import { Service } from '../Service.js'
 import * as uuid from '../util/uuid.js'
+import { AccessoryInfo } from './AccessoryInfo.js'
 import { ControllerStorage } from './ControllerStorage.js'
 import { HAPStorage } from './HAPStorage.js'
 
@@ -150,6 +151,29 @@ describe('controllerStorage', () => {
       expect(controller.isAdaptiveLightingActive()).toBe(false)
       // @ts-expect-error: private access
       expect(storage.controllerData[controller.controllerId()]).toBeUndefined()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('a save which is still queued does not bring back the data of a destroyed accessory', async () => {
+    vi.useFakeTimers()
+    try {
+      const username = 'AA:BB:CC:00:00:08'
+      const accessory = new Accessory('Test', uuid.generate('controller-storage-destroyed'))
+      const controller = new SteppedController()
+      accessory.controllerStorage.trackController(controller)
+      accessory.controllerStorage.load(username)
+      accessory._accessoryInfo = AccessoryInfo.create(username)
+
+      controller.state = { first: 'a', second: 'b' }
+      // @ts-expect-error: private access
+      accessory.controllerStorage.handleStateChange(controller) // queues a save
+
+      await accessory.destroy()
+      vi.advanceTimersByTime(1000)
+
+      expect(HAPStorage.storage().getItem(ControllerStorage.persistKey(username))).toBeUndefined()
     } finally {
       vi.useRealTimers()
     }
