@@ -20,7 +20,6 @@ const debug = createDebug('HAP-NodeJS:Advertiser')
  *
  * @group Advertiser
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum StatusFlag {
   NOT_PAIRED = 0x01,
   NOT_JOINED_WIFI = 0x02,
@@ -33,7 +32,6 @@ export const enum StatusFlag {
  *
  * @group Advertiser
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum PairingFeatureFlag {
   SUPPORTS_HARDWARE_AUTHENTICATION = 0x01,
   SUPPORTS_SOFTWARE_AUTHENTICATION = 0x02,
@@ -42,7 +40,6 @@ export const enum PairingFeatureFlag {
 /**
  * @group Advertiser
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum AdvertiserEvent {
   /**
    * Emitted if the underlying mDNS advertisers signals, that the service name
@@ -408,7 +405,6 @@ function systemBus(): MessageBus {
  *
  * @group Advertiser
  */
-// eslint-disable-next-line no-restricted-syntax
 const enum AvahiServerState {
   // noinspection JSUnusedGlobalSymbols
   INVALID = 0,

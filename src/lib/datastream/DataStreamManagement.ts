@@ -19,31 +19,26 @@ import {
 
 const debug = createDebug('HAP-NodeJS:DataStream:Management')
 
-// eslint-disable-next-line no-restricted-syntax
 const enum TransferTransportConfigurationTypes {
   TRANSFER_TRANSPORT_CONFIGURATION = 1,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum TransportTypeTypes {
   TRANSPORT_TYPE = 1,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SetupDataStreamSessionTypes {
   SESSION_COMMAND_TYPE = 1,
   TRANSPORT_TYPE = 2,
   CONTROLLER_KEY_SALT = 3,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SetupDataStreamWriteResponseTypes {
   STATUS = 1,
   TRANSPORT_TYPE_SESSION_PARAMETERS = 2,
   ACCESSORY_KEY_SALT = 3,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum TransportSessionConfiguration {
   TCP_LISTENING_PORT = 1,
 }
@@ -59,7 +54,6 @@ enum SessionCommandType {
 /**
  * @group HomeKit Data Streams (HDS)
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum DataStreamStatus {
   SUCCESS = 0,
   GENERIC_ERROR = 1,

@@ -22,12 +22,10 @@ import RTPProxy from './RTPProxy.js'
 const debug = createDebug('HAP-NodeJS:Camera:RTPStreamManagement')
 // ---------------------------------- TLV DEFINITIONS START ----------------------------------
 
-// eslint-disable-next-line no-restricted-syntax
 const enum StreamingStatusTypes {
   STATUS = 0x01,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum StreamingStatus {
   AVAILABLE = 0x00,
   IN_USE = 0x01, // Session is marked IN_USE after the first setup request
@@ -36,19 +34,16 @@ const enum StreamingStatus {
 
 // ----------
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SupportedVideoStreamConfigurationTypes {
   VIDEO_CODEC_CONFIGURATION = 0x01,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum VideoCodecConfigurationTypes {
   CODEC_TYPE = 0x01,
   CODEC_PARAMETERS = 0x02,
   ATTRIBUTES = 0x03,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum VideoCodecParametersTypes {
   PROFILE_ID = 0x01,
   LEVEL = 0x02,
@@ -57,7 +52,6 @@ const enum VideoCodecParametersTypes {
   CVO_ID = 0x05, // ID for CVO RTP extension, value in range from 1 to 14
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum VideoAttributesTypes {
   IMAGE_WIDTH = 0x01,
   IMAGE_HEIGHT = 0x02,
@@ -67,7 +61,6 @@ const enum VideoAttributesTypes {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum VideoCodecType {
   H264 = 0x00,
   // while the namespace is already reserved for H265 it isn't currently supported.
@@ -77,7 +70,6 @@ export const enum VideoCodecType {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum H264Profile {
   BASELINE = 0x00,
   MAIN = 0x01,
@@ -87,7 +79,6 @@ export const enum H264Profile {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum H264Level {
   LEVEL3_1 = 0x00,
   LEVEL3_2 = 0x01,
@@ -97,12 +88,10 @@ export const enum H264Level {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum VideoCodecPacketizationMode {
   NON_INTERLEAVED = 0x00,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum VideoCodecCVO { // Coordination of Video Orientation
   UNSUPPORTED = 0x00,
   SUPPORTED = 0x01,
@@ -110,19 +99,16 @@ const enum VideoCodecCVO { // Coordination of Video Orientation
 
 // ----------
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SupportedAudioStreamConfigurationTypes {
   AUDIO_CODEC_CONFIGURATION = 0x01,
   COMFORT_NOISE_SUPPORT = 0x02,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum AudioCodecConfigurationTypes {
   CODEC_TYPE = 0x01,
   CODEC_PARAMETERS = 0x02,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum AudioCodecTypes { // only really by HAP supported codecs are AAC-ELD and OPUS
   PCMU = 0x00,
   PCMA = 0x01,
@@ -133,7 +119,6 @@ const enum AudioCodecTypes { // only really by HAP supported codecs are AAC-ELD 
   AMR_WB = 0x06,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum AudioCodecParametersTypes {
   CHANNEL = 0x01,
   BIT_RATE = 0x02,
@@ -144,7 +129,6 @@ const enum AudioCodecParametersTypes {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum AudioBitrate {
   VARIABLE = 0x00,
   CONSTANT = 0x01,
@@ -153,7 +137,6 @@ export const enum AudioBitrate {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum AudioSamplerate {
   KHZ_8 = 0x00,
   KHZ_16 = 0x01,
@@ -164,7 +147,6 @@ export const enum AudioSamplerate {
 
 // ----------
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SupportedRTPConfigurationTypes {
   SRTP_CRYPTO_SUITE = 0x02,
 }
@@ -172,7 +154,6 @@ const enum SupportedRTPConfigurationTypes {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum SRTPCryptoSuites { // public API
   AES_CM_128_HMAC_SHA1_80 = 0x00,
   AES_CM_256_HMAC_SHA1_80 = 0x01,
@@ -181,7 +162,6 @@ export const enum SRTPCryptoSuites { // public API
 
 // ----------
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SetupEndpointsTypes {
   SESSION_ID = 0x01,
   CONTROLLER_ADDRESS = 0x03,
@@ -189,7 +169,6 @@ const enum SetupEndpointsTypes {
   AUDIO_SRTP_PARAMETERS = 0x05,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum AddressTypes {
   ADDRESS_VERSION = 0x01,
   ADDRESS = 0x02,
@@ -197,20 +176,17 @@ const enum AddressTypes {
   AUDIO_RTP_PORT = 0x04,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum IPAddressVersion {
   IPV4 = 0x00,
   IPV6 = 0x01,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SRTPParametersTypes {
   SRTP_CRYPTO_SUITE = 0x01,
   MASTER_KEY = 0x02, // 16 bytes for AES_CM_128_HMAC_SHA1_80; 32 bytes for AES_256_CM_HMAC_SHA1_80
   MASTER_SALT = 0x03, // 14 bytes
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SetupEndpointsResponseTypes {
   SESSION_ID = 0x01,
   STATUS = 0x02,
@@ -221,7 +197,6 @@ const enum SetupEndpointsResponseTypes {
   AUDIO_SSRC = 0x07,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SetupEndpointsStatus {
   SUCCESS = 0x00,
   BUSY = 0x01,
@@ -230,14 +205,12 @@ const enum SetupEndpointsStatus {
 
 // ----------
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SelectedRTPStreamConfigurationTypes {
   SESSION_CONTROL = 0x01,
   SELECTED_VIDEO_PARAMETERS = 0x02,
   SELECTED_AUDIO_PARAMETERS = 0x03,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SessionControlTypes {
   SESSION_IDENTIFIER = 0x01, // uuid, 16 bytes
   COMMAND = 0x02,
@@ -251,7 +224,6 @@ enum SessionControlCommand {
   RECONFIGURE_SESSION = 0x04,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SelectedVideoParametersTypes {
   CODEC_TYPE = 0x01,
   CODEC_PARAMETERS = 0x02,
@@ -259,7 +231,6 @@ const enum SelectedVideoParametersTypes {
   RTP_PARAMETERS = 0x04,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum VideoRTPParametersTypes {
   PAYLOAD_TYPE = 0x01,
   SYNCHRONIZATION_SOURCE = 0x02,
@@ -268,7 +239,6 @@ const enum VideoRTPParametersTypes {
   MAX_MTU = 0x05, // only there if value is not default value; default values: ipv4 1378; ipv6 1228 bytes
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SelectedAudioParametersTypes {
   CODEC_TYPE = 0x01,
   CODEC_PARAMETERS = 0x02,
@@ -276,7 +246,6 @@ const enum SelectedAudioParametersTypes {
   COMFORT_NOISE = 0x04,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum AudioRTPParametersTypes {
   PAYLOAD_TYPE = 0x01,
   SYNCHRONIZATION_SOURCE = 0x02,
@@ -369,7 +338,6 @@ export interface AudioStreamingCodec {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum AudioStreamingCodecType { // codecs as defined by the HAP spec; only AAC-ELD and OPUS seem to work
   PCMU = 'PCMU',
   PCMA = 'PCMA',
@@ -383,7 +351,6 @@ export const enum AudioStreamingCodecType { // codecs as defined by the HAP spec
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum AudioStreamingSamplerate {
   KHZ_8 = 8,
   KHZ_16 = 16,
@@ -475,7 +442,6 @@ export interface ProxiedSourceResponse {
 /**
  * @group Camera
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum StreamRequestTypes {
   RECONFIGURE = 'reconfigure',
   START = 'start',

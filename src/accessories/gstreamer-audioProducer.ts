@@ -18,13 +18,11 @@ import {
 
 const debug = createDebug('HAP-NodeJS:Remote:GStreamer')
 
-// eslint-disable-next-line no-restricted-syntax
 const enum AudioType {
   GENERIC = 2049,
   VOICE = 2048,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum Bandwidth {
   NARROW_BAND = 1101,
   MEDIUM_BAND = 1102,
@@ -34,7 +32,6 @@ const enum Bandwidth {
   AUTO = -1000,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum BitrateType {
   CONSTANT = 0,
   VARIABLE = 1,

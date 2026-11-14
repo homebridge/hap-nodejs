@@ -42,40 +42,33 @@ const debug = createDebug('HAP-NodeJS:Controller:TransitionControl')
 // lower bound for the update timer, an update interval of zero sent by the controller would otherwise result in a busy loop
 const MINIMUM_UPDATE_INTERVAL = 1000
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SupportedCharacteristicValueTransitionConfigurationsTypes {
   SUPPORTED_TRANSITION_CONFIGURATION = 0x01,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum SupportedValueTransitionConfigurationTypes {
   CHARACTERISTIC_IID = 0x01,
   TRANSITION_TYPE = 0x02, // assumption
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum TransitionType {
   BRIGHTNESS = 0x01, // uncertain
   COLOR_TEMPERATURE = 0x02,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum TransitionControlTypes {
   READ_CURRENT_VALUE_TRANSITION_CONFIGURATION = 0x01, // could probably a list of ValueTransitionConfigurationTypes
   UPDATE_VALUE_TRANSITION_CONFIGURATION = 0x02,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum ReadValueTransitionConfiguration {
   CHARACTERISTIC_IID = 0x01,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum UpdateValueTransitionConfigurationsTypes {
   VALUE_TRANSITION_CONFIGURATION = 0x01, // this type could be a tlv8 list
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum ValueTransitionConfigurationTypes {
   // noinspection JSUnusedGlobalSymbols
   CHARACTERISTIC_IID = 0x01, // 1 byte
@@ -88,21 +81,18 @@ const enum ValueTransitionConfigurationTypes {
   NOTIFY_INTERVAL_THRESHOLD = 0x08, // 32 bit uint
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum ValueTransitionParametersTypes {
   TRANSITION_ID = 0x01, // 16 bytes
   START_TIME = 0x02, // 8 bytes the start time for the provided schedule, millis since 2001/01/01 00:00:000
   UNKNOWN_3 = 0x03, // 8 bytes, id or something (same for multiple writes)
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum TransitionCurveConfigurationTypes {
   TRANSITION_ENTRY = 0x01,
   ADJUSTMENT_CHARACTERISTIC_IID = 0x02,
   ADJUSTMENT_MULTIPLIER_RANGE = 0x03,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum TransitionEntryTypes {
   ADJUSTMENT_FACTOR = 0x01,
   VALUE = 0x02,
@@ -110,18 +100,15 @@ const enum TransitionEntryTypes {
   DURATION = 0x04, // optional, default 0, sets how long the previous value will stay the same (non interpolation time section)
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum TransitionAdjustmentMultiplierRange {
   MINIMUM_ADJUSTMENT_MULTIPLIER = 0x01, // brightness 10
   MAXIMUM_ADJUSTMENT_MULTIPLIER = 0x02, // brightness 100
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum ValueTransitionConfigurationResponseTypes { // read format for control point
   VALUE_CONFIGURATION_STATUS = 0x01,
 }
 
-// eslint-disable-next-line no-restricted-syntax
 const enum ValueTransitionConfigurationStatusTypes {
   CHARACTERISTIC_IID = 0x01,
   TRANSITION_PARAMETERS = 0x02,
@@ -302,7 +289,6 @@ export interface AdaptiveLightingOptions {
  * Defines in which mode the {@link AdaptiveLightingController} will operate in.
  * @group Adaptive Lighting
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum AdaptiveLightingControllerMode {
   /**
    * In automatic mode pretty much everything from setup to transition scheduling is done by the controller.
@@ -318,7 +304,6 @@ export const enum AdaptiveLightingControllerMode {
 /**
  * @group Adaptive Lighting
  */
-// eslint-disable-next-line no-restricted-syntax
 export const enum AdaptiveLightingControllerEvents {
   /**
    * This event is called once a HomeKit controller enables Adaptive Lighting

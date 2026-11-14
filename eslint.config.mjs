@@ -14,6 +14,8 @@ export default antfu(
       'new-cap': 'off',
       // HAP-NodeJS has no logger of its own; the console is where its warnings are meant to go
       'no-console': 'off',
+      // the default also forbids `const enum`. They are used on purpose here (see `preserveConstEnums` in tsconfig.json).
+      'no-restricted-syntax': ['error', 'TSExportAssignment'],
       'no-undef': 'error',
       'perfectionist/sort-exports': 'error',
       'perfectionist/sort-imports': [
