@@ -22,6 +22,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): free a recording stream whose open response can not be sent instead of crashing
 - fix(datastream): report an error of the data stream tcp server instead of crashing
 - fix(datastream): decode the integer 39 instead of dropping the message
+- fix(characteristic): accept the maximum of a float characteristic whose step does not divide evenly
 
 ### Homebridge Dependencies
 
