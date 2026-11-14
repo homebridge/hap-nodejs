@@ -425,9 +425,9 @@ export function describePerms(perms: unknown): string {
  * @group Characteristic
  */
 export interface CharacteristicProps {
-  format: Formats | string
+  format: Formats | (string & {}) // written this way, not as "| string", so that editors still suggest the known formats
   perms: Perms[]
-  unit?: Units | string
+  unit?: Units | (string & {})
   description?: string
   /**
    * Defines the minimum value for a numeric characteristic
