@@ -53,6 +53,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(remote): ignore a siri audio message without a stream id while a session is starting
 - fix(camera): turn the recording state off on a factory reset
 - fix(camera): signal the end of a recording whose last packet has no data
+- fix(camera): ignore a recording acknowledgment for another stream
 
 ### Homebridge Dependencies
 

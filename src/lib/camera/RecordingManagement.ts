@@ -1178,8 +1178,12 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
   }
 
   private handleDataSendAck(message: Record<any, any>) {
-    const streamId: string = message.streamId
+    const streamId: number = message.streamId
     const endOfStream: boolean = message.endOfStream
+
+    if (streamId !== this.streamId) {
+      return // an acknowledgment for another stream, like handleDataSendClose checks
+    }
 
     // The HomeKit Controller will send a DATA_SEND ACK if we set the `endOfStream` flag in the last packet
     // of our DATA_SEND DATA packet.
