@@ -149,6 +149,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(controller): turn the const enums of the controllers and access control into normal enums
 - refactor(types): turn the const enums in types.ts and internal-types.ts into normal enums
 - refactor(definitions): turn the last const enums into normal enums and drop three ts-expect-error
+- test: check that every module loads on its own now that no const enum is left
 
 ### Homebridge Dependencies
 
