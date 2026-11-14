@@ -6,7 +6,7 @@ import { EventEmitter } from 'node:events'
 import ciao, { CiaoService, MDNSServerOptions, Responder, ServiceEvent, ServiceTxt, ServiceType } from '@homebridge/ciao'
 import { InterfaceName, IPAddress } from '@homebridge/ciao/lib/NetworkManager.js'
 import bonjour, { Advertisement, Bonjour } from 'bonjour-hap'
-import dbus, { DBusInterface, MessageBus, variantValue } from 'dbus-native'
+import dbus, { DBusInterface, Message, MessageBus, variantValue } from 'dbus-native'
 import createDebug from 'debug'
 
 import { AccessoryInfo } from './model/AccessoryInfo.js'
@@ -330,13 +330,23 @@ function messageBusConnectionResult(bus: MessageBus): Promise<void> {
   })
 }
 
+/** The part of an error thrown by dbus-native which `DBusInvokeError` reads. */
+interface DBusErrorObject {
+  name: string
+  message: string | string[]
+  dbusName?: string
+}
+
+/** The arguments of a D-Bus method call: the values, and the signature which describes their types. */
+type DBusCallArguments = Pick<Message, 'signature' | 'body'>
+
 /**
  * @group Advertiser
  */
 export class DBusInvokeError extends Error {
   readonly errorName: string
 
-  constructor(errorObject: { name: string, message: any, dbusName?: string }) {
+  constructor(errorObject: DBusErrorObject) {
     super()
 
     Object.setPrototypeOf(this, DBusInvokeError.prototype)
@@ -355,12 +365,12 @@ export class DBusInvokeError extends Error {
 }
 
 /** Tells whether a value thrown by dbus-native has the shape `DBusInvokeError` reads. */
-function isDBusErrorObject(error: unknown): error is { name: string, message: any, dbusName?: string } {
+function isDBusErrorObject(error: unknown): error is DBusErrorObject {
   return typeof error === 'object' && error !== null && 'message' in error
 }
 
-async function dbusInvoke(bus: MessageBus, destination: string, path: string, dbusInterface: string, member: string, others?: any): Promise<any> {
-  const command = {
+async function dbusInvoke<T = unknown>(bus: MessageBus, destination: string, path: string, dbusInterface: string, member: string, others?: DBusCallArguments): Promise<T> {
+  const command: Message = {
     destination,
     path,
     interface: dbusInterface,
@@ -369,7 +379,7 @@ async function dbusInvoke(bus: MessageBus, destination: string, path: string, db
   }
 
   try {
-    return await bus.invoke(command)
+    return await bus.invoke<T>(command)
   } catch (error) {
     throw new DBusInvokeError(isDBusErrorObject(error)
       ? error
@@ -486,7 +496,7 @@ export class AvahiAdvertiser extends EventEmitter implements Advertiser {
     // After a real restart it is gone, and freeing it just fails.
     await this.freeEntryGroup(bus)
 
-    const path = await AvahiAdvertiser.avahiInvoke(bus, '/', 'Server', 'EntryGroupNew') as string
+    const path = await AvahiAdvertiser.avahiInvoke<string>(bus, '/', 'Server', 'EntryGroupNew')
     try {
       await AvahiAdvertiser.avahiInvoke(bus, path, 'EntryGroup', 'AddService', {
         body: [
@@ -624,8 +634,8 @@ export class AvahiAdvertiser extends EventEmitter implements Advertiser {
     }
   }
 
-  private static avahiInvoke(bus: MessageBus, path: string, dbusInterface: string, member: string, others?: any): Promise<any> {
-    return dbusInvoke(
+  private static avahiInvoke<T = unknown>(bus: MessageBus, path: string, dbusInterface: string, member: string, others?: DBusCallArguments): Promise<T> {
+    return dbusInvoke<T>(
       bus,
       'org.freedesktop.Avahi',
       path,
@@ -726,7 +736,7 @@ export class ResolvedAdvertiser extends EventEmitter implements Advertiser {
     }
 
     try {
-      this.path = await ResolvedAdvertiser.managerInvoke(this.bus, 'RegisterService', {
+      this.path = await ResolvedAdvertiser.managerInvoke<string>(this.bus, 'RegisterService', {
         body: [
           // id: only a local identifier, and it must be a valid file name, which a display name with a "/" is not
           this.accessoryInfo.username.replace(/:/g, '_'),
@@ -854,8 +864,8 @@ export class ResolvedAdvertiser extends EventEmitter implements Advertiser {
     }
   }
 
-  private static resolvedInvoke(bus: MessageBus, dbusInterface: string, member: string, others?: any): Promise<any> {
-    return dbusInvoke(
+  private static resolvedInvoke<T = unknown>(bus: MessageBus, dbusInterface: string, member: string, others?: DBusCallArguments): Promise<T> {
+    return dbusInvoke<T>(
       bus,
       'org.freedesktop.resolve1',
       '/org/freedesktop/resolve1',
@@ -865,7 +875,7 @@ export class ResolvedAdvertiser extends EventEmitter implements Advertiser {
     )
   }
 
-  private static managerInvoke(bus: MessageBus, member: string, others?: any): Promise<any> {
-    return this.resolvedInvoke(bus, 'org.freedesktop.resolve1.Manager', member, others)
+  private static managerInvoke<T = unknown>(bus: MessageBus, member: string, others?: DBusCallArguments): Promise<T> {
+    return this.resolvedInvoke<T>(bus, 'org.freedesktop.resolve1.Manager', member, others)
   }
 }
