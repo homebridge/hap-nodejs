@@ -19,7 +19,7 @@ export type TLVEncodable = Buffer | number | string
  * @group TLV8
  */
 
-export function encode(type: number, data: TLVEncodable | TLVEncodable[], ...args: any[]): Buffer {
+export function encode(type: number, data: TLVEncodable | TLVEncodable[], ...args: (number | TLVEncodable | TLVEncodable[])[]): Buffer {
   const encodedTLVBuffers: Buffer[] = []
 
   // coerce data to Buffer if needed
@@ -74,6 +74,9 @@ export function encode(type: number, data: TLVEncodable | TLVEncodable[], ...arg
   if (args.length >= 2) {
     // chop off the first two arguments which we already processed, and process the rest recursively
     const [nextType, nextData, ...nextArgs] = args
+    if (typeof nextType !== 'number') {
+      throw new TypeError(`A TLV type must be a number, got ${typeof nextType}`)
+    }
     const remainingTLVBuffer = encode(nextType, nextData, ...nextArgs)
 
     // append the remaining encoded arguments directly to the buffer

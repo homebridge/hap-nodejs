@@ -893,7 +893,7 @@ describe('hAPServer', () => {
         TLVValues.STATE,
         PairingStates.M1,
         TLVValues.PUBLIC_KEY,
-        hapCrypto.generateCurve25519KeyPair().publicKey,
+        Buffer.from(hapCrypto.generateCurve25519KeyPair().publicKey),
       ), { contentType: HAPMimeTypes.PAIRING_TLV8 })
       expect(response.statusCode).toBe(HAPPairingHTTPCode.BAD_REQUEST)
       const objects = tlv.decode(response.body)
