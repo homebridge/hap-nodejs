@@ -717,6 +717,9 @@ export class CameraController extends EventEmitter implements SerializableContro
           // it could be the case that we previously had a manually supplied motion service
           // at this point we can't remove the iid from the list of linked services from the recording management!
           this.motionService = new Service.MotionSensor('', '')
+
+          serviceMap.motionService = this.motionService // or the new service is never added to the accessory
+          modifiedServiceMap = true
         }
       } else {
         this.motionService = this.sensorOptions.motion
@@ -748,6 +751,9 @@ export class CameraController extends EventEmitter implements SerializableContro
           // it could be the case that we previously had a manually supplied occupancy service
           // at this point we can't remove the iid from the list of linked services from the recording management!
           this.occupancyService = new Service.OccupancySensor('', '')
+
+          serviceMap.occupancyService = this.occupancyService // or the new service is never added to the accessory
+          modifiedServiceMap = true
         }
       } else {
         this.occupancyService = this.sensorOptions.occupancy

@@ -22,6 +22,7 @@ import {
 } from '../camera/index.js'
 import { Characteristic } from '../Characteristic.js'
 import { HAPStatus } from '../HAPServer.js'
+import { Service } from '../Service.js'
 import {
   CameraController,
   CameraControllerOptions,
@@ -185,6 +186,30 @@ describe('cameraController', () => {
     expect(controller.occupancyService?.testCharacteristic(Characteristic.StatusActive)).toBeTruthy()
     expect(controller.occupancyService!.getCharacteristic(Characteristic.StatusActive).value)
       .toEqual(true)
+  })
+
+  describe('initWithServices', () => {
+    it('should add a motion and occupancy sensor which were enabled for a saved camera', () => {
+      const withoutSensors = createCameraControllerOptions()
+      withoutSensors.sensors = undefined
+      const savedServices = new CameraController(withoutSensors).constructServices()
+      expect(savedServices.motionService).toBeUndefined()
+      expect(savedServices.occupancyService).toBeUndefined()
+
+      const restored = new CameraController(createCameraControllerOptions())
+      const updated = restored.initWithServices(savedServices)
+
+      expect(updated?.motionService).toBe(restored.motionService)
+      expect(updated?.occupancyService).toBe(restored.occupancyService)
+      expect(updated?.motionService).toBeInstanceOf(Service.MotionSensor)
+      expect(updated?.occupancyService).toBeInstanceOf(Service.OccupancySensor)
+    })
+
+    it('should not report a change when the saved camera already has its sensors', () => {
+      const savedServices = new CameraController(createCameraControllerOptions()).constructServices()
+
+      expect(new CameraController(createCameraControllerOptions()).initWithServices(savedServices)).toBeUndefined()
+    })
   })
 
   describe('retrieveEventTriggerOptions', () => {
