@@ -2293,6 +2293,20 @@ describe('characteristic', () => {
       expect(listenerCallback).toHaveBeenCalledTimes(0)
     })
 
+    it.each([0, 4])('should pass a write response of %d to the setValue callback', async (response) => {
+      const characteristic = createCharacteristicWithProps({
+        format: Formats.UINT8,
+        perms: [Perms.PAIRED_READ, Perms.PAIRED_WRITE, Perms.WRITE_RESPONSE],
+      })
+      characteristic.onSet(() => response)
+
+      const callback = vi.fn()
+      characteristic.setValue(5, callback)
+      await vi.waitFor(() => expect(callback).toHaveBeenCalled())
+
+      expect(callback).toHaveBeenCalledExactlyOnceWith(null, response)
+    })
+
     it('should handle SET event errors gracefully when using onSet handler', async () => {
       const characteristic = createCharacteristic(Formats.STRING)
 

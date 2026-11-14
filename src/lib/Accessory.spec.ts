@@ -1862,6 +1862,27 @@ describe('accessory', () => {
           })
         })
 
+      it('should return a write response of false', async () => {
+        onCharacteristic.props.perms.push(Perms.WRITE_RESPONSE)
+        onCharacteristic.onSet(() => false)
+
+        await testRequestResponse({
+          characteristics: [
+            {
+              aid,
+              iid: iids.on,
+              value: true,
+              r: true,
+            },
+          ],
+        }, {
+          aid,
+          iid: iids.on,
+          status: HAPStatus.SUCCESS,
+          value: 0,
+        })
+      })
+
       it('requesting write-response on non-write-response characteristic', async () => {
         onCharacteristic.onSet(() => {
           return true // write response

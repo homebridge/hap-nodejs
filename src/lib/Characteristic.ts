@@ -2256,7 +2256,7 @@ export class Characteristic extends EventEmitter {
 
     this.handleSetRequest(value, undefined, context).then((value) => {
       if (callback) {
-        if (value) { // possible write response
+        if (value != null) { // possible write response, which may well be 0, false or an empty string
           callback(null, value)
         } else {
           callback(null)
