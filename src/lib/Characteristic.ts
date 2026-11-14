@@ -270,6 +270,7 @@ import { CharacteristicWarningType } from './Accessory.js'
 import { HAPStatus } from './HAPServer.js'
 import { IdentifierCache } from './model/IdentifierCache.js'
 import { clone } from './util/clone.js'
+import { errorMessage, errorStack } from './util/errors.js'
 import { HAPConnection } from './util/eventedhttp.js'
 import { HapStatusError } from './util/hapStatusError.js'
 import { once } from './util/once.js'
@@ -2253,9 +2254,11 @@ export class Characteristic extends EventEmitter {
     try {
       value = this.validateUserInput(value)!
     } catch (error) {
-      this.characteristicWarning(error?.message || 'Unknown error', CharacteristicWarningType.ERROR_MESSAGE, error?.stack)
+      this.characteristicWarning((error instanceof Error && error.message) || 'Unknown error', CharacteristicWarningType.ERROR_MESSAGE, errorStack(error))
       if (callback) {
-        callback(error)
+        callback(error instanceof Error
+          ? error
+          : new Error(String(error)))
       }
       return this
     }
@@ -2341,7 +2344,7 @@ export class Characteristic extends EventEmitter {
     try {
       value = this.validateUserInput(value)
     } catch (error) {
-      this.characteristicWarning(error?.message || 'Unknown error', CharacteristicWarningType.ERROR_MESSAGE, error?.stack)
+      this.characteristicWarning((error instanceof Error && error.message) || 'Unknown error', CharacteristicWarningType.ERROR_MESSAGE, errorStack(error))
       if (callback) {
         callback()
       }
@@ -2424,8 +2427,8 @@ export class Characteristic extends EventEmitter {
         try {
           value = this.validateUserInput(value)
         } catch (error) {
-          this.characteristicWarning(`An illegal value was supplied by the read handler for characteristic: ${error?.message}`,
-            CharacteristicWarningType.WARN_MESSAGE, error?.stack)
+          this.characteristicWarning(`An illegal value was supplied by the read handler for characteristic: ${errorMessage(error)}`,
+            CharacteristicWarningType.WARN_MESSAGE, errorStack(error))
           this.statusCode = HAPStatus.SERVICE_COMMUNICATION_FAILURE
           return Promise.reject(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
         }
@@ -2454,8 +2457,8 @@ export class Characteristic extends EventEmitter {
         } else if (error instanceof HapStatusError) {
           this.statusCode = error.hapStatus
         } else {
-          this.characteristicWarning(`Unhandled error thrown inside read handler for characteristic: ${error?.message}`,
-            CharacteristicWarningType.ERROR_MESSAGE, error?.stack)
+          this.characteristicWarning(`Unhandled error thrown inside read handler for characteristic: ${errorMessage(error)}`,
+            CharacteristicWarningType.ERROR_MESSAGE, errorStack(error))
           this.statusCode = HAPStatus.SERVICE_COMMUNICATION_FAILURE
         }
         throw this.statusCode
@@ -2470,8 +2473,8 @@ export class Characteristic extends EventEmitter {
       try {
         return this.validateUserInput(this.value)
       } catch (error) {
-        this.characteristicWarning(`An illegal value was supplied by setting \`value\` for characteristic: ${error?.message}`,
-          CharacteristicWarningType.WARN_MESSAGE, error?.stack)
+        this.characteristicWarning(`An illegal value was supplied by setting \`value\` for characteristic: ${errorMessage(error)}`,
+          CharacteristicWarningType.WARN_MESSAGE, errorStack(error))
         return Promise.reject(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
       }
     }
@@ -2499,8 +2502,8 @@ export class Characteristic extends EventEmitter {
             value = this.validateUserInput(value)
           } catch (error) {
             // this runs inside the plugin's callback; a throw would land in the plugin and leave the request unanswered
-            this.characteristicWarning(`An illegal value was supplied by the read handler for characteristic: ${error?.message}`,
-              CharacteristicWarningType.WARN_MESSAGE, error?.stack)
+            this.characteristicWarning(`An illegal value was supplied by the read handler for characteristic: ${errorMessage(error)}`,
+              CharacteristicWarningType.WARN_MESSAGE, errorStack(error))
             this.statusCode = HAPStatus.SERVICE_COMMUNICATION_FAILURE
             reject(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
             return
@@ -2524,8 +2527,8 @@ export class Characteristic extends EventEmitter {
           }
         }), context, connection)
       } catch (error) {
-        this.characteristicWarning(`Unhandled error thrown inside read handler for characteristic: ${error?.message}`,
-          CharacteristicWarningType.ERROR_MESSAGE, error?.stack)
+        this.characteristicWarning(`Unhandled error thrown inside read handler for characteristic: ${errorMessage(error)}`,
+          CharacteristicWarningType.ERROR_MESSAGE, errorStack(error))
         this.statusCode = HAPStatus.SERVICE_COMMUNICATION_FAILURE
         reject(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
       }
@@ -2550,7 +2553,7 @@ export class Characteristic extends EventEmitter {
       try {
         value = this.validateClientSuppliedValue(value)
       } catch (e) {
-        debug(`[${this.displayName}]`, e.message)
+        debug(`[${this.displayName}]`, errorMessage(e))
         return Promise.reject(HAPStatus.INVALID_VALUE_IN_REQUEST)
       }
     }
@@ -2598,8 +2601,8 @@ export class Characteristic extends EventEmitter {
         } else if (error instanceof HapStatusError) {
           this.statusCode = error.hapStatus
         } else {
-          this.characteristicWarning(`Unhandled error thrown inside write handler for characteristic: ${error?.message}`,
-            CharacteristicWarningType.ERROR_MESSAGE, error?.stack)
+          this.characteristicWarning(`Unhandled error thrown inside write handler for characteristic: ${errorMessage(error)}`,
+            CharacteristicWarningType.ERROR_MESSAGE, errorStack(error))
           this.statusCode = HAPStatus.SERVICE_COMMUNICATION_FAILURE
         }
         throw this.statusCode
@@ -2642,8 +2645,8 @@ export class Characteristic extends EventEmitter {
                 this.value = this.validateUserInput(writeResponse)
               } catch (error) {
                 // this runs inside the plugin's callback; a throw would land in the plugin and leave the request unanswered
-                this.characteristicWarning(`An illegal write response value was supplied by the write handler for characteristic: ${error?.message}`,
-                  CharacteristicWarningType.WARN_MESSAGE, error?.stack)
+                this.characteristicWarning(`An illegal write response value was supplied by the write handler for characteristic: ${errorMessage(error)}`,
+                  CharacteristicWarningType.WARN_MESSAGE, errorStack(error))
                 this.statusCode = HAPStatus.SERVICE_COMMUNICATION_FAILURE
                 reject(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
                 return
@@ -2670,8 +2673,8 @@ export class Characteristic extends EventEmitter {
             }
           }), context, connection)
         } catch (error) {
-          this.characteristicWarning(`Unhandled error thrown inside write handler for characteristic: ${error?.message}`,
-            CharacteristicWarningType.ERROR_MESSAGE, error?.stack)
+          this.characteristicWarning(`Unhandled error thrown inside write handler for characteristic: ${errorMessage(error)}`,
+            CharacteristicWarningType.ERROR_MESSAGE, errorStack(error))
           this.statusCode = HAPStatus.SERVICE_COMMUNICATION_FAILURE
           reject(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
         }
