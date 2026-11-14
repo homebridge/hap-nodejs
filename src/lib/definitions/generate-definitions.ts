@@ -185,7 +185,7 @@ if (plistData.SchemaVersion !== 1) {
   console.warn(`Detected unsupported schema version ${plistData.SchemaVersion}!`)
 }
 if (plistData.PlistDictionary.SchemaVersion !== 1) {
-  console.warn(`Detect unsupported PlistDictionary schema version ${plistData.PlistDictionary.SchemaVersion}!`)
+  console.warn(`Detected unsupported PlistDictionary schema version ${plistData.PlistDictionary.SchemaVersion}!`)
 }
 
 console.log(`Parsing version ${plistData.Version}...`)
@@ -195,7 +195,7 @@ const shouldParseServices = checkWrittenVersion('./ServiceDefinitions.ts', plist
 
 if (!options.force && (!shouldParseCharacteristics || !shouldParseServices)) {
   console.log(`Parsed schema version ${plistData.Version} is older than what's already generated. `
-    + 'User --force option to generate and overwrite nonetheless!')
+    + 'Use --force option to generate and overwrite nonetheless!')
   process.exit(1)
 }
 
@@ -626,7 +626,7 @@ function characteristicUnit(unit: string): string {
     }
   }
 
-  throw new Error(`Unknown characteristic format '${unit}'`)
+  throw new Error(`Unknown characteristic unit '${unit}'`)
 }
 
 function characteristicAccess(access: number): string {

@@ -998,7 +998,7 @@ export class CameraController extends EventEmitter implements SerializableContro
           debug('[%s] Rejecting snapshot as reason is required due to disabled event snapshots.', accessoryName)
           return Promise.reject(HAPStatus.INSUFFICIENT_PRIVILEGES)
         } else if (reason === ResourceRequestReason.EVENT) {
-          debug('[%s] Rejecting snapshot as even snapshots are disabled.', accessoryName)
+          debug('[%s] Rejecting snapshot as event snapshots are disabled.', accessoryName)
           return Promise.reject(HAPStatus.NOT_ALLOWED_IN_CURRENT_STATE)
         }
       }

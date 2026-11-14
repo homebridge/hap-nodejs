@@ -12,7 +12,7 @@ import {
 } from '../index.js'
 
 /**
- * This example light gives an example how a light with AdaptiveLighting (in AUTOMATIC mode) support
+ * This example light shows what a light with AdaptiveLighting (in AUTOMATIC mode) support
  * can look like.
  * This example not only exposes the ColorTemperature characteristic but also shows how
  * ColorTemperature and Hue/Saturation characteristics can be combined on a Lightbulb service.
@@ -48,7 +48,7 @@ lightbulbService.getCharacteristic(Characteristic.On)
     return on
   })
   .onSet((value) => {
-    console.log(`Light power was turn to ${on}`)
+    console.log(`Light power was turned to ${on}`)
     on = value as boolean
   })
 

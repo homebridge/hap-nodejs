@@ -156,6 +156,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - docs(camera): fix spelling mistakes in comments and messages
 - docs(datastream): fix spelling mistakes in comments and messages
 - docs(controller): fix spelling mistakes in comments and messages
+- docs: fix spelling mistakes in the remaining comments and messages
 
 ### Homebridge Dependencies
 
