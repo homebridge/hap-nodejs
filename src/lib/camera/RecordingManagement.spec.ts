@@ -62,6 +62,26 @@ describe('recordingManagement', () => {
     expect(configuration!.parsed).toEqual(expected)
   })
 
+  it('should tell the delegate when recording is turned on again after a factory reset', async () => {
+    const delegate = new MockDelegate()
+    const updateRecordingActive = vi.spyOn(delegate, 'updateRecordingActive')
+    const management = new RecordingManagement(
+      mockRecordingOptions,
+      delegate,
+      new Set([EventTriggerOption.MOTION, EventTriggerOption.DOORBELL]),
+    )
+    const active = management.recordingManagementService.getCharacteristic(Characteristic.Active)
+
+    await active.handleSetRequest(1)
+    management.handleFactoryReset()
+    expect(management.serialize()?.recordingActive).toBeFalsy()
+
+    updateRecordingActive.mockClear()
+    await active.handleSetRequest(1)
+
+    expect(updateRecordingActive).toHaveBeenCalledExactlyOnceWith(true)
+  })
+
   describe('dataSend open', () => {
     function managementReadyToRecord(): RecordingManagement {
       const management = new RecordingManagement(
