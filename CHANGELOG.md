@@ -162,6 +162,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - docs(camera): fix two comments which name a wrong sample rate and a wrong method
 - docs(datastream): fix a comment which says encryption where it means decryption
 - docs(controller): fix comments and docs which no longer match the code
+- docs(examples): fix three comments which name the wrong value in the light example
 
 ### Homebridge Dependencies
 
