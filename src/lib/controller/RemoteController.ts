@@ -1569,6 +1569,7 @@ export class SiriAudioSession extends EventEmitter {
           this.sendDataSendCloseEvent(HDSProtocolSpecificErrorReason.CANCELLED)
         } else {
           debug('Successfully setup siri audio stream with streamId %d', this.streamId)
+          this.sendQueuedAudioFrames() // the frames which were produced while the stream was being opened
         }
       }
     })
@@ -1643,6 +1644,14 @@ export class SiriAudioSession extends EventEmitter {
       return
     }
 
+    this.sendQueuedAudioFrames()
+  }
+
+  /**
+   * Sends the queued frames in packets of 5. Once the stream has ended, everything left in the queue is sent,
+   * and only the last packet is marked with `endOfStream`.
+   */
+  private sendQueuedAudioFrames(): void {
     let queued
     // eslint-disable-next-line no-cond-assign
     while ((queued = this.popSome()) !== null) { // send packets
@@ -1658,10 +1667,11 @@ export class SiriAudioSession extends EventEmitter {
         packets.push(packetData)
       })
 
+      const lastPacket = this.endOfStream && this.audioFrameQueue.length === 0
       const message: DataSendMessageData = {
         packets,
         streamId: new Int64(this.streamId!),
-        endOfStream: this.endOfStream,
+        endOfStream: lastPacket,
       }
 
       try {
@@ -1673,8 +1683,8 @@ export class SiriAudioSession extends EventEmitter {
         this.closed()
       }
 
-      if (this.endOfStream) {
-        break // popSome() returns empty list if endOfStream=true
+      if (lastPacket) {
+        break // popSome() returns an empty list from now on
       }
     }
   }

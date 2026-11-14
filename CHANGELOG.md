@@ -47,6 +47,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(controller-storage): remove stored data a restored controller has no use for
 - fix(remote): refuse a new target without a name or category before it is stored
 - fix(remote): create or remove the siri services when a saved remote is restored
+- fix(remote): send every queued siri audio frame when the stream opens and when it ends
 
 ### Homebridge Dependencies
 
