@@ -328,6 +328,18 @@ describe('d-Bus advertisers', () => {
     ])
   })
 
+  it('should register a name with a slash or a percent sign with systemd-resolved', async () => {
+    const info = AccessoryInfo.create('AA:BB:CC:DD:EE:FF')
+    info.displayName = 'TV/AVR 50% Light'
+    const advertiser = new ResolvedAdvertiser(info)
+    advertiser.initPort(51826)
+    await advertiser.startAdvertising()
+
+    const body = buses[0].invoke.mock.calls[0][0].body
+    expect(body[0]).toEqual('AA_BB_CC_DD_EE_FF') // the id has to be a valid file name
+    expect(body[1]).toEqual('TV/AVR 50%% Light') // "%" starts a specifier in the name template
+  })
+
   it('should point at the mDNS wiki when systemd-resolved refuses permission', async () => {
     invokeHandler = () => {
       throw dbusError('org.freedesktop.DBus.Error.AccessDenied', 'Access denied')
