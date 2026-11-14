@@ -54,6 +54,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): turn the recording state off on a factory reset
 - fix(camera): signal the end of a recording whose last packet has no data
 - fix(camera): ignore a recording acknowledgment for another stream
+- fix(camera): add a motion or occupancy sensor which was enabled for a saved camera
 
 ### Homebridge Dependencies
 
