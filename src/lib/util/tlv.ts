@@ -8,7 +8,7 @@ import * as hapCrypto from '../util/hapCrypto.js'
  * https://en.wikipedia.org/wiki/Type-length-value
  */
 
-const EMPTY_TLV_TYPE = 0x00 // and empty tlv with id 0 is usually used as delimiter for tlv lists
+const EMPTY_TLV_TYPE = 0x00 // an empty tlv with id 0 is usually used as delimiter for tlv lists
 
 /**
  * @group TLV8
@@ -88,7 +88,7 @@ export function encode(type: number, data: TLVEncodable | TLVEncodable[], ...arg
 
 /**
  * This method is the legacy way of decoding tlv data.
- * It will not properly decode multiple list of the same id.
+ * It will not properly decode multiple lists of the same id.
  * Should the decoder encounter multiple instances of the same id, it will just concatenate the buffer data.
  *
  * @param buffer - TLV8 data
@@ -208,7 +208,7 @@ export function decodeWithLists(buffer: Buffer): Record<number, Buffer | Buffer[
  * This method can be used to parse a TLV8 encoded list that was concatenated.
  *
  * If you are thinking about using this method, try to refactor the code to use {@link decodeWithLists} instead of {@link decode}.
- * The single reason of this method's existence are the shortcomings {@link decode}, as it concatenates multiple tlv8 list entries
+ * The single reason of this method's existence are the shortcomings of {@link decode}, as it concatenates multiple tlv8 list entries
  * into a single Buffer.
  * This method can be used to undo that, by specifying the concatenated buffer and the tlv id of the element that should
  * mark the beginning of a new tlv8 list entry.
@@ -271,7 +271,7 @@ export function decodeList(data: Buffer, entryStartId: number): Record<number, B
  */
 export function readUInt64LE(buffer: Buffer, offset = 0): number {
   const low = buffer.readUInt32LE(offset)
-  // javascript doesn't allow to shift by 32(?), therefore we multiply here
+  // javascript doesn't allow shifting by 32(?), therefore we multiply here
   return buffer.readUInt32LE(offset + 4) * 0x100000000 + low
 }
 

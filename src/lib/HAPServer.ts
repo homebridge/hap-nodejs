@@ -41,7 +41,7 @@ export enum TLVErrorCode {
   INVALID_REQUEST = 0x02,
   // eslint-disable-next-line ts/no-duplicate-enum-values
   AUTHENTICATION = 0x02, // setup code or signature verification failed
-  BACKOFF = 0x03, // // client must look at retry delay tlv item
+  BACKOFF = 0x03, // client must look at retry delay tlv item
   MAX_PEERS = 0x04, // server cannot accept any more pairings
   MAX_TRIES = 0x05, // server reached maximum number of authentication attempts
   UNAVAILABLE = 0x06, // server pairing method is unavailable
@@ -125,7 +125,7 @@ export function IsKnownHAPStatusError(status: HAPStatus): boolean {
 }
 
 /**
- * Those status codes are the one listed as appropriate for the HAP spec!
+ * Those status codes are the ones listed as appropriate for the HAP spec!
  *
  * When the response is a client error 4xx or server error 5xx, the response
  * must include a status {@link HAPStatus} property.
@@ -143,7 +143,7 @@ export enum HAPHTTPCode {
   // client error
   BAD_REQUEST = 400, // e.g. malformed request
   NOT_FOUND = 404,
-  UNPROCESSABLE_ENTITY = 422, // for well-formed requests tha contain invalid http parameters (semantics are wrong and not syntax)
+  UNPROCESSABLE_ENTITY = 422, // for well-formed requests that contain invalid http parameters (semantics are wrong and not syntax)
 
   // server error
   INTERNAL_SERVER_ERROR = 500,
@@ -393,14 +393,14 @@ export class HAPServer extends EventEmitter {
   }
 
   /**
-   * Send an even notification for given characteristic and changed value to all connected clients.
+   * Send an event notification for the given characteristic and changed value to all connected clients.
    * If `originator` is specified, the given {@link HAPConnection} will be excluded from the broadcast.
    *
    * @param aid - The accessory id of the updated characteristic.
    * @param iid - The instance id of the updated characteristic.
    * @param value - The newly set value of the characteristic.
    * @param originator - If specified, the connection will not get an event message.
-   * @param immediateDelivery - The HAP spec requires some characteristics to be delivery immediately.
+   * @param immediateDelivery - The HAP spec requires some characteristics to be delivered immediately.
    * Namely, for the {@link Characteristic.ButtonEvent} and the {@link Characteristic.ProgrammableSwitchEvent} characteristics.
    */
   public sendEventNotifications(aid: number, iid: number, value: Nullable<CharacteristicValue>, originator?: HAPConnection, immediateDelivery?: boolean): void {
@@ -602,7 +602,7 @@ export class HAPServer extends EventEmitter {
       if (!A || !M1) {
         throw new Error('the public key or the proof is missing')
       }
-      srpServer.setA(A) // throws for a key the SRP exchange can not use, like one of only zero bytes
+      srpServer.setA(A) // throws for a key the SRP exchange cannot use, like one of only zero bytes
     } catch (err) {
       debug('[%s] M3: Invalid request: %s', this.accessoryInfo.username, errorMessage(err))
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
@@ -909,7 +909,7 @@ export class HAPServer extends EventEmitter {
   }
 
   private handlePairings(connection: HAPConnection, url: URL, request: IncomingMessage, data: Buffer, response: ServerResponse): void {
-    // Only accept /pairing request if there is a secure session
+    // Only accept a /pairings request if there is a secure session
     if (!this.allowInsecureRequest && !connection.isAuthenticated()) {
       response.writeHead(HAPPairingHTTPCode.CONNECTION_AUTHORIZATION_REQUIRED, { 'Content-Type': HAPMimeTypes.HAP_JSON })
       response.end(JSON.stringify({ status: HAPStatus.INSUFFICIENT_PRIVILEGES }))

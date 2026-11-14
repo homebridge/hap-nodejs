@@ -175,7 +175,7 @@ export function writeUInt64LE(number: number, buffer: Buffer, offset = 0): void 
  * @group Cryptography
  */
 export function chacha20_poly1305_decryptAndVerify(key: Buffer, nonce: Buffer, aad: Buffer | null, ciphertext: Buffer, authTag: Buffer): Buffer {
-  if (nonce.length < 12) { // openssl 3.x.x requires 98 bits nonce length
+  if (nonce.length < 12) { // openssl 3.x.x requires 96 bits nonce length
     nonce = Buffer.concat([
       Buffer.alloc(12 - nonce.length, 0),
       nonce,
@@ -205,7 +205,7 @@ export interface EncryptedData {
  * @group Cryptography
  */
 export function chacha20_poly1305_encryptAndSeal(key: Buffer, nonce: Buffer, aad: Buffer | null, plaintext: Buffer): EncryptedData {
-  if (nonce.length < 12) { // openssl 3.x.x requires 98 bits nonce length
+  if (nonce.length < 12) { // openssl 3.x.x requires 96 bits nonce length
     nonce = Buffer.concat([
       Buffer.alloc(12 - nonce.length, 0),
       nonce,

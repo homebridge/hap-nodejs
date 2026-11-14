@@ -118,7 +118,7 @@ export function numericUpperBound(format: Formats | string): number {
     // eslint-disable-next-line no-loss-of-precision
       return 18446744073709551615 // don't get fooled, javascript uses 18446744073709552000 here
     default:
-      throw new Error(`Unable to determine numeric lower bound for ${format}`)
+      throw new Error(`Unable to determine numeric upper bound for ${format}`)
   }
 }
 
