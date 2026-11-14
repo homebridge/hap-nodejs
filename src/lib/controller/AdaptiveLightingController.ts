@@ -25,6 +25,7 @@ import {
 } from '../definitions/index.js'
 import { HAPStatus } from '../HAPServer.js'
 import { ColorUtils } from '../util/color-utils.js'
+import { errorMessage, errorStack } from '../util/errors.js'
 import { HapStatusError } from '../util/hapStatusError.js'
 import { epochMillisFromMillisSince2001_01_01Buffer } from '../util/time.js'
 import * as tlv from '../util/tlv.js'
@@ -1001,7 +1002,7 @@ export class AdaptiveLightingController
           }
 
           debug('[%s] Failed CharacteristicValueTransitionControl write: \'%s\'', this.lightbulb.displayName, value)
-          console.warn(`[${this.lightbulb.displayName}] Encountered error on CharacteristicValueTransitionControl characteristic: ${error.stack}`)
+          console.warn(`[${this.lightbulb.displayName}] Encountered error on CharacteristicValueTransitionControl characteristic: ${errorStack(error) ?? errorMessage(error)}`)
           this.handleAdaptiveLightingDisabled() // also tells a plugin in MANUAL mode, which runs the transition itself
           throw new HapStatusError(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
         }

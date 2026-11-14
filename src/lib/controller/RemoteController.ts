@@ -38,6 +38,7 @@ import {
 } from '../datastream/index.js'
 import { HAPStatus } from '../HAPServer.js'
 import { Service } from '../Service.js'
+import { errorMessage } from '../util/errors.js'
 import { HAPConnection, HAPConnectionEvent } from '../util/eventedhttp.js'
 import * as tlv from '../util/tlv.js'
 import {
@@ -579,7 +580,7 @@ export class RemoteController extends EventEmitter
         this.releaseButton(button)
       } catch (error) {
         // e.g. the remote was set inactive in the meantime; throwing inside the timer would crash the process
-        debug('Failed to release button %d: %s', button, error.message)
+        debug('Failed to release button %d: %s', button, errorMessage(error))
       }
     }, time)
   }
@@ -1671,7 +1672,7 @@ export class SiriAudioSession extends EventEmitter {
       try {
         this.connection.sendEvent(Protocols.DATA_SEND, Topics.DATA, message)
       } catch (error) {
-        debug('Error occurred when trying to send audio frame of hds connection: %s', error.message)
+        debug('Error occurred when trying to send audio frame of hds connection: %s', errorMessage(error))
 
         if (this.producerRunning) {
           this.stopAudioProducer()
