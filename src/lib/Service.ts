@@ -129,7 +129,7 @@ export type ServiceCharacteristicChange = CharacteristicChange & { characteristi
 /**
  * @group Service
  */
-export const enum ServiceEventTypes {
+export enum ServiceEventTypes {
   CHARACTERISTIC_CHANGE = 'characteristic-change',
   SERVICE_CONFIGURATION_CHANGE = 'service-configurationChange',
   CHARACTERISTIC_WARNING = 'characteristic-warning',

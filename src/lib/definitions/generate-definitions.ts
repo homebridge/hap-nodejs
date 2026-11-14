@@ -610,7 +610,6 @@ function checkDefined<T>(input: T): T {
 }
 
 function characteristicFormat(format: string): string {
-  // @ts-expect-error: forceConsistentCasingInFileNames compiler option
   for (const [key, value] of Object.entries(Formats)) {
     if (value === format) {
       return key
@@ -621,7 +620,6 @@ function characteristicFormat(format: string): string {
 }
 
 function characteristicUnit(unit: string): string {
-  // @ts-expect-error: forceConsistentCasingInFileNames compiler option
   for (const [key, value] of Object.entries(Units)) {
     if (value === unit) {
       return key
@@ -632,7 +630,6 @@ function characteristicUnit(unit: string): string {
 }
 
 function characteristicAccess(access: number): string {
-  // @ts-expect-error: forceConsistentCasingInFileNames compiler option
   for (const [key, value] of Object.entries(Access)) {
     if (value === access) {
       return key

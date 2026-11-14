@@ -290,7 +290,7 @@ const debug = createDebug('HAP-NodeJS:Characteristic')
 /**
  * @group Characteristic
  */
-export const enum Formats {
+export enum Formats {
   BOOL = 'bool',
   /**
    * Signed 32-bit integer
@@ -333,7 +333,7 @@ export const enum Formats {
 /**
  * @group Characteristic
  */
-export const enum Units {
+export enum Units {
   /**
    * Celsius is the only temperature unit in the HomeKit Accessory Protocol.
    * Unit conversion is always done on the client side e.g. on the iPhone in the Home App depending on
@@ -349,7 +349,7 @@ export const enum Units {
 /**
  * @group Characteristic
  */
-export const enum Perms {
+export enum Perms {
   PAIRED_READ = 'pr',
   PAIRED_WRITE = 'pw',
   NOTIFY = 'ev',
@@ -362,9 +362,8 @@ export const enum Perms {
 }
 
 /**
- * The wire values of {@link Perms}, as a runtime lookup. A const enum is erased during compilation and cannot be enumerated, so this set is the enum's
- * runtime mirror and lives beside it: a permission added to the enum above must be added here as well. The members are referenced rather than retyped,
- * so the compiler inlines the same string literals the enum declares. `EVENTS` is an alias of `NOTIFY` and shares its value, hence is not listed.
+ * The wire values of {@link Perms}, as a runtime lookup. It lives beside the enum: a permission added to the enum above must be added here as well.
+ * `EVENTS` is an alias of `NOTIFY` and shares its value, hence is not listed.
  */
 const VALID_PERMS: ReadonlySet<string> = new Set<string>([
   Perms.PAIRED_READ,
@@ -468,7 +467,7 @@ export interface CharacteristicProps {
  *
  * @group Characteristic
  */
-export const enum Access {
+export enum Access {
   READ = 0x00,
   WRITE = 0x01,
   NOTIFY = 0x02,
@@ -488,7 +487,7 @@ export interface CharacteristicChange {
 /**
  * @group Characteristic
  */
-export const enum ChangeReason {
+export enum ChangeReason {
   /**
    * Reason used when HomeKit writes a value or the API user calls {@link Characteristic.setValue}.
    */
@@ -539,7 +538,7 @@ export interface SerializedCharacteristic {
 /**
  * @group Characteristic
  */
-export const enum CharacteristicEventTypes {
+export enum CharacteristicEventTypes {
   /**
    * This event is thrown when a HomeKit controller wants to read the current value of the characteristic.
    * The event handler should call the supplied callback as fast as possible.
