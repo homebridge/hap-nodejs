@@ -4,16 +4,13 @@
     "lib": ["ES2023"],
     "rootDir": "./src",
     "module": "NodeNext",
-    "moduleResolution": "node16",
+    "moduleResolution": "NodeNext",
     "strict": true,
     "declaration": true,
     "declarationMap": true,
     "importHelpers": true,
     "outDir": "./dist",
-    "sourceMap": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "sourceMap": true
   },
   "include": [
     "src/"
