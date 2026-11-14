@@ -167,6 +167,20 @@ describe('adaptiveLightingController', () => {
     expect(controller.listenerCount(AdaptiveLightingControllerEvents.DISABLED)).toBe(1)
   })
 
+  it('should accept a curve of a single entry', async () => {
+    const { lightbulb, controller } = createController()
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    try {
+      await expect(writeTransitionControl(lightbulb, buildUpdateTransition(lightbulb, Date.now(), curve(1))))
+        .resolves
+        .toEqual(expect.any(String))
+      expect(warn).not.toHaveBeenCalled()
+    } finally {
+      warn.mockRestore()
+      controller.disableAdaptiveLighting()
+    }
+  })
+
   describe('a time before the first point of the curve', () => {
     it('should stay active and readable when the clock is set back', async () => {
       const { lightbulb, controller } = createController()
