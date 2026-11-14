@@ -351,8 +351,9 @@ export class ControllerStorage {
       this.linkedAccessories.forEach(accessory => accessories[accessory.accessoryUUID] = accessory.controllerData)
     }
 
-    // TODO removed accessories won't ever be deleted?
-    const accessoryData: Record<string, StoredControllerData[]> = this.restoredAccessories || {}
+    // A copy: what is written here must not end up in the restored data, or an entry that is cleared later comes back
+    // with every save. The restored data only holds the accessories which were not seen (again) yet.
+    const accessoryData: Record<string, StoredControllerData[]> = { ...this.restoredAccessories }
     Object.entries(accessories).forEach(([uuid, controllerData]) => {
       const entries = Object.entries(controllerData)
 
