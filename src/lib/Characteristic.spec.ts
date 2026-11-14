@@ -2535,6 +2535,37 @@ describe('characteristic', () => {
   })
 
   describe('#deserialize', () => {
+    it('should restore a custom class named like a definition with its own UUID', () => {
+      const customUUID = 'E863F10A-079E-48FF-8F27-9C2605A29F52'
+      class Version extends Characteristic {
+        constructor() {
+          super('Version', customUUID, {
+            format: Formats.STRING,
+            perms: [Perms.PAIRED_READ],
+          })
+        }
+      }
+      const json = JSON.parse(JSON.stringify(Characteristic.serialize(new Version())))
+      expect(json.constructorName).toEqual('Version')
+
+      const restored = Characteristic.deserialize(json)
+
+      expect(restored.UUID).toEqual(customUUID)
+      expect(restored).not.toBeInstanceOf(Characteristic.Version)
+    })
+
+    it('should restore a definition as its own class, and ignore names which are no definition', () => {
+      const json = JSON.parse(JSON.stringify(Characteristic.serialize(new Characteristic.Version())))
+
+      expect(Characteristic.deserialize(json)).toBeInstanceOf(Characteristic.Version)
+
+      // inherited from EventEmitter and from Function: neither is a characteristic class
+      for (const constructorName of ['EventEmitter', 'Formats', 'Bind']) {
+        const restored = Characteristic.deserialize({ ...json, constructorName })
+        expect(restored.UUID).toEqual(Characteristic.Version.UUID)
+      }
+    })
+
     it('should deserialize legacy json from homebridge', () => {
       const json = JSON.parse('{"displayName": "On", "UUID": "00000025-0000-1000-8000-0026BB765291", '
         + '"props": {"format": "int", "unit": "seconds", "minValue": 4, "maxValue": 6, "minStep": 0.1, "perms": ["pr", "pw", "ev"]}, '

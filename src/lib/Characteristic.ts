@@ -3200,9 +3200,13 @@ export class Characteristic extends EventEmitter {
   static deserialize(json: SerializedCharacteristic): Characteristic {
     let characteristic: Characteristic
 
-    if (json.constructorName && json.constructorName.charAt(0).toUpperCase() === json.constructorName.charAt(0)
-      && Characteristic[json.constructorName as keyof (typeof Characteristic)]) { // MUST start with uppercase character and must exist on Characteristic object
-      const constructor = Characteristic[json.constructorName as keyof (typeof Characteristic)] as { new(): Characteristic }
+    // The saved name must be one of the characteristic definitions, and it must be the SAME characteristic:
+    // a plugin's own class may share its name with a definition (e.g. "Version") while having its own UUID.
+    const constructor = json.constructorName && Object.hasOwn(Characteristic, json.constructorName)
+      ? Characteristic[json.constructorName as keyof (typeof Characteristic)] as { new(): Characteristic, UUID?: string }
+      : undefined
+
+    if (typeof constructor === 'function' && constructor.UUID === json.UUID) {
       characteristic = new constructor()
       characteristic.displayName = json.displayName
       characteristic.setProps(json.props)
