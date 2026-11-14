@@ -272,6 +272,27 @@ describe('d-Bus advertisers', () => {
     await expect(ResolvedAdvertiser.isAvailable()).resolves.toBe(false)
   })
 
+  it('should log a failed systemd-resolved update instead of rejecting', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    try {
+      invokeHandler = () => '/org/freedesktop/resolve1/dnssd/1'
+      const advertiser = new ResolvedAdvertiser(AccessoryInfo.create('AA:BB:CC:DD:EE:FF'))
+      advertiser.initPort(51826)
+      await advertiser.startAdvertising()
+
+      // systemd-resolved went away, as it does while it restarts
+      invokeHandler = () => {
+        throw dbusError('org.freedesktop.DBus.Error.ServiceUnknown', 'The name is not activatable')
+      }
+
+      await expect(advertiser.updateAdvertisement()).resolves.toBeUndefined()
+      expect(error).toHaveBeenCalledWith(expect.stringContaining('Failed to update systemd-resolved advertisement'))
+      expect(error).toHaveBeenCalledWith(expect.stringContaining('The name is not activatable'))
+    } finally {
+      error.mockRestore()
+    }
+  })
+
   it('should point at the mDNS wiki when systemd-resolved refuses permission', async () => {
     invokeHandler = () => {
       throw dbusError('org.freedesktop.DBus.Error.AccessDenied', 'Access denied')
