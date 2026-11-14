@@ -248,4 +248,40 @@ describe('controllerStorage', () => {
 
     expect(HAPStorage.storage().getItem(ControllerStorage.persistKey(username))).toBeUndefined()
   })
+
+  it('controller data cleared after it was saved once is not saved again', () => {
+    const username = 'AA:BB:CC:00:00:06'
+    const accessoryUUID = uuid.generate('controller-storage-saved-then-cleared-child')
+    HAPStorage.storage().setItemSync(ControllerStorage.persistKey(username), {
+      accessories: {
+        [accessoryUUID]: [
+          {
+            type: 'stepped',
+            controllerData: {
+              data: { first: 'a', second: 'b' },
+            },
+          },
+        ],
+      },
+    })
+
+    const bridge = new Bridge('Bridge', uuid.generate('controller-storage-saved-then-cleared-bridge'))
+    bridge.controllerStorage.purgeUnidentifiedAccessoryData = false
+    bridge.controllerStorage.load(username)
+
+    const accessory = new Accessory('Child', accessoryUUID)
+    const controller = new SteppedController()
+    accessory.controllerStorage.trackController(controller)
+    bridge.addBridgedAccessory(accessory)
+
+    bridge.controllerStorage.save() // a save while the controller still has data
+    expect(HAPStorage.storage().getItem(ControllerStorage.persistKey(username)).accessories[accessoryUUID]).toBeDefined()
+
+    accessory.controllerStorage.purgeControllerData(controller)
+    // @ts-expect-error: private access
+    clearTimeout(bridge.controllerStorage.queuedSaveTimeout)
+    bridge.controllerStorage.save()
+
+    expect(HAPStorage.storage().getItem(ControllerStorage.persistKey(username))).toBeUndefined()
+  })
 })
