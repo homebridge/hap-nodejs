@@ -148,8 +148,6 @@ export class AccessControlManagement extends EventEmitter {
   }
 
   private setupServiceHandlers(enabledPasswordCharacteristics?: boolean) {
-    // perms: [Perms.NOTIFY, Perms.PAIRED_READ, Perms.PAIRED_WRITE],
-
     this.accessControlService.getCharacteristic(Characteristic.AccessControlLevel)
       .onSet(value => this.handleAccessLevelChange(value as number))
       .updateValue(0)

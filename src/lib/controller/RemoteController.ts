@@ -34,7 +34,6 @@ import {
   HDSStatus,
   Int64,
   Protocols,
-  RequestHandler,
   Topics,
 } from '../datastream/index.js'
 import { HAPStatus } from '../HAPServer.js'
@@ -449,11 +448,6 @@ export class RemoteController<O = unknown> extends EventEmitter
    * @private
    */
   eventHandler?: Record<string, EventHandler>
-  /**
-   * @private
-   */
-  requestHandler?: Record<string, RequestHandler>
-
   /**
    * Creates a new RemoteController.
    * If siri voice input is supported the constructor of a SiriAudioStreamProducer needs to be supplied.
@@ -1437,7 +1431,6 @@ export class RemoteController<O = unknown> extends EventEmitter
     this.audioStreamManagementService = undefined
 
     this.eventHandler = undefined
-    this.requestHandler = undefined
 
     this.dataStreamManagement?.destroy()
     this.dataStreamManagement = undefined
