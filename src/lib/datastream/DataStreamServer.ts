@@ -1232,6 +1232,26 @@ export class DataStreamConnection extends EventEmitter {
       clearTimeout(this.socketEndTimer)
       this.socketEndTimer = undefined
     }
+    if (this.helloTimer) {
+      clearTimeout(this.helloTimer)
+      this.helloTimer = undefined
+    }
+
+    // no response will arrive anymore: answer the waiting requests now instead of when their timeout runs out
+    const pendingHandlers = Object.values(this.responseHandlers)
+    for (const timer of Object.values(this.responseTimers)) {
+      clearTimeout(timer)
+    }
+    this.responseHandlers = {}
+    this.responseTimers = {}
+    for (const handler of pendingHandlers) {
+      try {
+        handler(new HDSConnectionError('The connection was closed', HDSConnectionErrorType.CLOSED_SOCKET), undefined, {})
+      } catch (error) {
+        debug('[%s] Response handler failed for a request which was cancelled as the connection closed: %s', this.remoteAddress, error)
+      }
+    }
+
     this.emit(DataStreamConnectionEvent.CLOSED)
 
     this.connection?.removeListener(HAPConnectionEvent.CLOSED, this.hapConnectionClosedListener)

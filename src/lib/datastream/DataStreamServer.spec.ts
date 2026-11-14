@@ -277,6 +277,33 @@ describe('dataStreamServer', () => {
       return session
     }
 
+    it('should answer a waiting request once, and at once, when the socket closes', () => {
+      const session = identifiedSession()
+      // @ts-expect-error: the session was set up without the tcp server, which is closed with its last connection
+      session.server.tcpServer = {
+        close: vi.fn(),
+      }
+      const callback = vi.fn()
+      session.connection.sendRequest('dataSend', 'open', {}, callback)
+
+      session.socket.emit('close')
+
+      expect(callback).toHaveBeenCalledTimes(1)
+      expect(callback.mock.calls[0][0]).toBeInstanceOf(Error)
+      vi.advanceTimersByTime(11000)
+      expect(callback).toHaveBeenCalledTimes(1)
+      expect(vi.getTimerCount()).toBe(0)
+    })
+
+    it('should stop waiting for the hello message when the socket closes', () => {
+      const session = setupSession()
+      expect(vi.getTimerCount()).toBeGreaterThan(0)
+
+      session.socket.emit('close')
+
+      expect(vi.getTimerCount()).toBe(0)
+    })
+
     it('should only throw, and not time out later, for a request on a closing connection', () => {
       const session = identifiedSession()
       session.connection.close()
