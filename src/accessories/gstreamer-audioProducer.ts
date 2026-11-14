@@ -18,12 +18,12 @@ import {
 
 const debug = createDebug('HAP-NodeJS:Remote:GStreamer')
 
-const enum AudioType {
+enum AudioType {
   GENERIC = 2049,
   VOICE = 2048,
 }
 
-const enum Bandwidth {
+enum Bandwidth {
   NARROW_BAND = 1101,
   MEDIUM_BAND = 1102,
   WIDE_BAND = 1103,
@@ -32,7 +32,7 @@ const enum Bandwidth {
   AUTO = -1000,
 }
 
-const enum BitrateType {
+enum BitrateType {
   CONSTANT = 0,
   VARIABLE = 1,
 }
