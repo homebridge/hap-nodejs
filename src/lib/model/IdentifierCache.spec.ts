@@ -1,4 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import crypto from 'node:crypto'
+
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { HAPStorage } from './HAPStorage.js'
 import { IdentifierCache } from './IdentifierCache.js'
@@ -120,6 +122,80 @@ describe('identifierCache', () => {
       expect(saved).toEqual({
         cache: { foo: 1 },
       })
+    })
+  })
+
+  describe('#save() without a change', () => {
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    function spyOnSaveWork() {
+      return {
+        setItemSync: vi.spyOn(HAPStorage.storage(), 'setItemSync'),
+        stringify: vi.spyOn(JSON, 'stringify'),
+        createHash: vi.spyOn(crypto, 'createHash'),
+      }
+    }
+
+    it('does not look at the whole cache again when nothing changed', () => {
+      const identifierCache = createIdentifierCache('unchanged')
+      identifierCache.getAID('accessory')
+      identifierCache.save()
+
+      const spies = spyOnSaveWork()
+      // a pass which hands out the ids it handed out before
+      identifierCache.startTrackingUsage()
+      identifierCache.getAID('accessory')
+      identifierCache.setCache('accessory', identifierCache.getCache('accessory'))
+      identifierCache.stopTrackingUsageAndExpireUnused()
+      identifierCache.save()
+
+      expect(spies.setItemSync).not.toHaveBeenCalled()
+      expect(spies.stringify).not.toHaveBeenCalled()
+      expect(spies.createHash).not.toHaveBeenCalled()
+    })
+
+    it('does not write a cache again which was just loaded', () => {
+      const identifierCache = createIdentifierCache('loaded')
+      identifierCache.getAID('accessory')
+      identifierCache.save()
+      const loaded = IdentifierCache.load('loaded')!
+
+      const spies = spyOnSaveWork()
+      loaded.save()
+
+      expect(spies.setItemSync).not.toHaveBeenCalled()
+      expect(spies.stringify).not.toHaveBeenCalled()
+    })
+
+    it('still saves after a new id was handed out', () => {
+      const identifierCache = createIdentifierCache('changed')
+      identifierCache.getAID('accessory')
+      identifierCache.save()
+
+      const spies = spyOnSaveWork()
+      identifierCache.getAID('other accessory')
+      identifierCache.save()
+
+      expect(spies.setItemSync).toHaveBeenCalledTimes(1)
+      expect(IdentifierCache.load('changed')!._cache).toEqual({ 'accessory': 2, 'other accessory': 3, '|nextAID': 4 })
+    })
+
+    it('still saves after an unused id expired', () => {
+      const identifierCache = createIdentifierCache('expired')
+      identifierCache.getAID('accessory')
+      identifierCache.getAID('other accessory')
+      identifierCache.save()
+
+      const spies = spyOnSaveWork()
+      identifierCache.startTrackingUsage()
+      identifierCache.getAID('accessory')
+      identifierCache.stopTrackingUsageAndExpireUnused()
+      identifierCache.save()
+
+      expect(spies.setItemSync).toHaveBeenCalledTimes(1)
+      expect(IdentifierCache.load('expired')!._cache).toEqual({ 'accessory': 2, '|nextAID': 4 })
     })
   })
 
