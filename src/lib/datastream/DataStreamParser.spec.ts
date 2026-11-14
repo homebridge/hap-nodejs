@@ -46,6 +46,15 @@ describe('dataStreamParser', () => {
       expect(DataStreamParser.decode(reader)).toBe(-2147483648)
     })
 
+    it.each([0, 1, 38, 39])('should encode %d in a single byte and decode it again', (value) => {
+      const writer = new DataStreamWriter()
+      writer.writeNumber(value)
+      const data = writer.getData()
+
+      expect(data).toEqual(Buffer.from([0x08 + value]))
+      expect(DataStreamParser.decode(new DataStreamReader(data))).toBe(value)
+    })
+
     it.each([
       4294967295,
       4294967296,

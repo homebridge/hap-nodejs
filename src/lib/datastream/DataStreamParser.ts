@@ -91,7 +91,7 @@ export const enum DataFormatTags {
 
   INTEGER_MINUS_ONE = 0x07,
   INTEGER_RANGE_START_0 = 0x08,
-  INTEGER_RANGE_STOP_39 = 0x2E,
+  INTEGER_RANGE_STOP_39 = 0x2F,
   INT8 = 0x30,
   INT16LE = 0x31,
   INT32LE = 0x32,
