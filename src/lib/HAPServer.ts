@@ -1109,13 +1109,12 @@ export class HAPServer extends EventEmitter {
           return
         }
       }
-      if (data.length === 0) {
+      const writeRequest = parseJsonObject<CharacteristicsWriteRequest>(data)
+      if (!writeRequest || !Array.isArray(writeRequest.characteristics)) {
         response.writeHead(HAPHTTPCode.BAD_REQUEST, { 'Content-Type': HAPMimeTypes.HAP_JSON })
         response.end(JSON.stringify({ status: HAPStatus.INVALID_VALUE_IN_REQUEST }))
         return
       }
-
-      const writeRequest = JSON.parse(data.toString('utf8')) as CharacteristicsWriteRequest
 
       this.emit(
         HAPServerEventTypes.SET_CHARACTERISTICS,
@@ -1164,13 +1163,12 @@ export class HAPServer extends EventEmitter {
     }
 
     if (request.method === 'PUT') {
-      if (data.length === 0) {
+      const prepareRequest = parseJsonObject<PrepareWriteRequest>(data)
+      if (!prepareRequest) {
         response.writeHead(HAPHTTPCode.BAD_REQUEST, { 'Content-Type': HAPMimeTypes.HAP_JSON })
         response.end(JSON.stringify({ status: HAPStatus.INVALID_VALUE_IN_REQUEST }))
         return
       }
-
-      const prepareRequest = JSON.parse(data.toString()) as PrepareWriteRequest
 
       const ttl = prepareRequest.ttl
       if (prepareRequest.pid && typeof ttl === 'number' && ttl > 0 && ttl <= HAPServer.MAX_TIMED_WRITE_TTL) {
@@ -1216,13 +1214,12 @@ export class HAPServer extends EventEmitter {
       }
     }
     if (request.method === 'POST') {
-      if (data.length === 0) {
+      const resourceRequest = parseJsonObject<ResourceRequest>(data)
+      if (!resourceRequest) {
         response.writeHead(HAPHTTPCode.BAD_REQUEST, { 'Content-Type': HAPMimeTypes.HAP_JSON })
         response.end(JSON.stringify({ status: HAPStatus.INVALID_VALUE_IN_REQUEST }))
         return
       }
-
-      const resourceRequest = JSON.parse(data.toString()) as ResourceRequest
       // call out to listeners to retrieve the resource, snapshot only right now
       this.emit(HAPServerEventTypes.REQUEST_RESOURCE, resourceRequest, once((error, resource) => {
         if (error) {
@@ -1237,5 +1234,21 @@ export class HAPServer extends EventEmitter {
       response.writeHead(HAPHTTPCode.BAD_REQUEST, { 'Content-Type': HAPMimeTypes.HAP_JSON }) // method not allowed
       response.end(JSON.stringify({ status: HAPStatus.INVALID_VALUE_IN_REQUEST }))
     }
+  }
+}
+
+/**
+ * Parses a request body which must be a JSON object.
+ *
+ * @returns undefined for an empty body, for malformed JSON and for JSON that is not an object (e.g. `null` or an array).
+ */
+function parseJsonObject<T extends object>(data: Buffer): T | undefined {
+  try {
+    const parsed: unknown = JSON.parse(data.toString('utf8'))
+    return typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)
+      ? parsed as T
+      : undefined
+  } catch {
+    return undefined
   }
 }
