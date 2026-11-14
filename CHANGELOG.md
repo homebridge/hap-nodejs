@@ -93,6 +93,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): reject a selected recording configuration which is not a string as an invalid value
 - fix(remote): reject target control and audio configuration writes which are not a string
 - fix(datastream): reject a data stream setup write which is not a string as an invalid value
+- refactor(datastream): drop a ts-expect-error and a non-null assertion in the data stream management
 
 ### Homebridge Dependencies
 
