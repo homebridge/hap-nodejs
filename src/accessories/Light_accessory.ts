@@ -133,7 +133,7 @@ lightbulb.getCharacteristic(Characteristic.On)
     callback(null, LightController.getPower())
   })
 
-// To inform HomeKit about changes occurred outside of HomeKit (like user physically turn on the light)
+// To inform HomeKit about changes which occurred outside of HomeKit (like the user physically turning on the light)
 // Please use Characteristic.updateValue
 //
 // accessory

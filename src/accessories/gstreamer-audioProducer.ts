@@ -48,7 +48,7 @@ export interface GStreamerOptions {
  *
  * This producer requires some packages to be installed. It is advised to install the following (for example via apt-get):
  * gstreamer1.0-plugins-base, gstreamer1.0-x, gstreamer1.0-tools, libgstreamer1.0-dev, gstreamer1.0-doc,
- * gstreamer1.0-plugins-good, gstreamer1.0-plugins- ugly, gstreamer1.0-plugins-bad, gstreamer1.0-alsa
+ * gstreamer1.0-plugins-good, gstreamer1.0-plugins-ugly, gstreamer1.0-plugins-bad, gstreamer1.0-alsa
  *
  */
 export class GStreamerAudioProducer implements SiriAudioStreamProducer {

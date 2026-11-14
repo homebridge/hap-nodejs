@@ -255,14 +255,14 @@ export const CharacteristicOverriding: Map<string, (generated: GeneratedCharacte
     (generated) => {
     // the write permission on the configured name characteristic is actually optional and should only be supported
     // if a HomeKit controller should be able to change the name (e.g. for a TV Input).
-    // As of legacy compatibility we just add that permission and tackle that problem later in a TVController (or something).
+    // For legacy compatibility we just add that permission and tackle that problem later in a TVController (or something).
       generated.properties |= PropertyId.WRITE
     },
   ],
   [
     'is-configured',
     (generated) => {
-    // write permission on is configured is optional (out of history it was present with HAP-NodeJS)
+    // write permission on is configured is optional (for historical reasons it was present with HAP-NodeJS)
     // if the HomeKit controller is able to change the configured state, it can be set to write.
       generated.properties |= PropertyId.WRITE
     },
@@ -270,7 +270,7 @@ export const CharacteristicOverriding: Map<string, (generated: GeneratedCharacte
   [
     'display-order',
     (generated) => {
-    // write permission on display order is optional (out of history it was present with HAP-NodeJS)
+    // write permission on display order is optional (for historical reasons it was present with HAP-NodeJS)
     // if the HomeKit controller is able to change the configured state, it can be set to write.
       generated.properties |= PropertyId.WRITE
     },

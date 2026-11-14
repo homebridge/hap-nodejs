@@ -135,14 +135,14 @@ class ExampleCamera implements CameraStreamingDelegate, CameraRecordingDelegate 
     })
   }
 
-  // called when iOS request rtp setup
+  // called when iOS requests rtp setup
   prepareStream(request: PrepareStreamRequest, callback: PrepareStreamCallback): void {
     const sessionId: StreamSessionIdentifier = request.sessionID
     const targetAddress = request.targetAddress
 
     const video = request.video
 
-    const videoCryptoSuite = video.srtpCryptoSuite // could be used to support multiple crypto suite (or support no suite for debugging)
+    const videoCryptoSuite = video.srtpCryptoSuite // could be used to support multiple crypto suites (or support no suite for debugging)
     const videoSrtpKey = video.srtp_key
     const videoSrtpSalt = video.srtp_salt
 
@@ -657,7 +657,7 @@ const cameraController = new CameraController({
         [480, 360, 30],
         [480, 270, 30],
         [320, 240, 30],
-        [320, 240, 15], // Apple Watch requires this configuration (Apple Watch also seems to required OPUS @16K)
+        [320, 240, 15], // Apple Watch requires this configuration (Apple Watch also seems to require OPUS @16K)
         [320, 180, 30],
       ],
     },

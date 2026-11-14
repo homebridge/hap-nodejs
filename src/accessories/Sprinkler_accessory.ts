@@ -40,7 +40,7 @@ accessory.category = Categories.SPRINKLER
 // Add the actual Valve Service and listen for change events from iOS.
 const sprinklerService = accessory.addService(Service.Valve, 'Sprinkler')
 
-// Sprinkler Controll
+// Sprinkler Control
 function openVentile() {
   // Add your code here
 }

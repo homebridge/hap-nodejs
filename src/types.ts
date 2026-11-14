@@ -13,7 +13,7 @@ export type Nullable<T> = T | null
 export type WithUUID<T> = T & { UUID: string }
 
 /**
- * Like TypeScripts `Partial` but allowing null as a value.
+ * Like TypeScript's `Partial` but allowing null as a value.
  *
  * @group Utils
  */

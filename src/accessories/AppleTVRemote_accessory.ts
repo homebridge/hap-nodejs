@@ -23,7 +23,7 @@ const controller = siriSupport
 accessory.configureController(controller)
 
 /*
-    This example plugin exposes an simple http api to interact with the remote and play around.
+    This example plugin exposes a simple http api to interact with the remote and play around.
     The supported routes are listed below. The http server runs on port 8080 as default.
     This example should not be used except for testing as the http server is unsecured.
 
