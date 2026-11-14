@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs'
 
 import createDebug from 'debug'
 
-import * as Characteristics from './lib/definitions/CharacteristicDefinitions.js' // must be loaded before Characteristic and Service class
+// only used as types, for the documentation namespace at the end of this file. The definitions themselves are loaded by the import of definitions/index.js below
+import * as Characteristics from './lib/definitions/CharacteristicDefinitions.js'
 import * as Services from './lib/definitions/ServiceDefinitions.js'
 
 import 'source-map-support/register.js' // registering node-source-map-support for typescript stack traces
@@ -39,7 +40,7 @@ export * from './lib/util/tlv.js'
 export * as uuid from './lib/util/uuid.js'
 export * from './types.js'
 
-const debug = createDebug('HAP-NodeJS:Advertiser')
+const debug = createDebug('HAP-NodeJS:Init')
 
 let libraryVersion: string | undefined
 
