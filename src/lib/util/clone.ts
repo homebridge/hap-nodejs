@@ -4,7 +4,7 @@
  * @group Utils
  */
 export function clone<T extends object, U>(object: T, extend?: U): T & U {
-  const cloned = {} as Record<any, any>
+  const cloned: Record<string, unknown> = {}
 
   for (const [key, value] of Object.entries(object)) {
     cloned[key] = value
@@ -16,5 +16,5 @@ export function clone<T extends object, U>(object: T, extend?: U): T & U {
     }
   }
 
-  return cloned
+  return cloned as T & U
 }
