@@ -911,7 +911,7 @@ export class DataStreamConnection extends EventEmitter {
           this.connection.on(HAPConnectionEvent.CLOSED, this.hapConnectionClosedListener) // register close listener
 
           debug('[%s] Registering CLOSED handler to HAP connection. Connection currently has %d close handlers!',
-            this.remoteAddress, this.connection.listeners(HAPConnectionEvent.CLOSED).length)
+            this.remoteAddress, this.connection.listenerCount(HAPConnectionEvent.CLOSED))
         }
       })
 

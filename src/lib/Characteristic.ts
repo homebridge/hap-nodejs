@@ -2416,7 +2416,7 @@ export class Characteristic extends EventEmitter {
     }
 
     if (this.getHandler) {
-      if (this.listeners(CharacteristicEventTypes.GET).length > 0) {
+      if (this.listenerCount(CharacteristicEventTypes.GET) > 0) {
         this.characteristicWarning('Ignoring on(\'get\') handler as onGet handler was defined instead')
       }
 
@@ -2465,7 +2465,7 @@ export class Characteristic extends EventEmitter {
       }
     }
 
-    if (this.listeners(CharacteristicEventTypes.GET).length === 0) {
+    if (this.listenerCount(CharacteristicEventTypes.GET) === 0) {
       if (this.statusCode) {
         throw this.statusCode
       }
@@ -2564,7 +2564,7 @@ export class Characteristic extends EventEmitter {
     const oldValue = this.value
 
     if (this.setHandler) {
-      if (this.listeners(CharacteristicEventTypes.SET).length > 0) {
+      if (this.listenerCount(CharacteristicEventTypes.SET) > 0) {
         this.characteristicWarning('Ignoring on(\'set\') handler as onSet handler was defined instead')
       }
 
@@ -2609,7 +2609,7 @@ export class Characteristic extends EventEmitter {
       }
     }
 
-    if (this.listeners(CharacteristicEventTypes.SET).length === 0) {
+    if (this.listenerCount(CharacteristicEventTypes.SET) === 0) {
       this.value = value
       this.emit(CharacteristicEventTypes.CHANGE, {
         originator: connection,

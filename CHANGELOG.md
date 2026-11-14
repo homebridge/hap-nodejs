@@ -132,6 +132,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - perf(server): skip the stack trace for each listener change when its debug namespace is off
 - perf(accessory): skip hashing the whole identifier cache on a save when no id changed
 - perf(core): read the library version from package.json only once
+- refactor(characteristic): count listeners with listenerCount instead of copying the listener list
 
 ### Homebridge Dependencies
 
