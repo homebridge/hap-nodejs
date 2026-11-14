@@ -540,6 +540,30 @@ describe('hAPConnection', () => {
     })
   })
 
+  describe('listener registration debugging when the debug namespace is disabled', () => {
+    it.each([
+      'on',
+      'addListener',
+      'off',
+      'removeListener',
+    ] as const)('%s() should not capture a stack trace', (method) => {
+      const connection = Object.create(HAPConnection.prototype) as HAPConnection
+      EventEmitter.call(connection)
+
+      // V8 calls this hook the first time the stack of an error is read
+      const prepareStackTrace = Error.prepareStackTrace
+      const prepare = vi.fn(() => '')
+      Error.prepareStackTrace = prepare
+      try {
+        connection[method](HAPConnectionEvent.CLOSED, () => undefined)
+      } finally {
+        Error.prepareStackTrace = prepareStackTrace
+      }
+
+      expect(prepare).not.toHaveBeenCalled()
+    })
+  })
+
   describe('getLocalNetworkInterface', () => {
     it('should warn only once about a local address it cannot match to an interface', () => {
       // Node.js leaves out an interface that is up but has no link, like an unused docker0 bridge (#1131)

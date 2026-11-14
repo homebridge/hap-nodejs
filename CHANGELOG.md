@@ -129,6 +129,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): check the type of data stream message fields before the recording stream uses them
 - fix(remote): check the type of data stream message fields before the remote controller uses them
 - fix(datastream): type data stream message values as unknown and drop malformed messages
+- perf(server): skip the stack trace for each listener change when its debug namespace is off
 
 ### Homebridge Dependencies
 
