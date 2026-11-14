@@ -223,6 +223,7 @@ export class BonjourHAPAdvertiser extends EventEmitter implements Advertiser {
 
   private port?: number
   private destroyed = false
+  private destroyPromise?: Promise<void>
 
   constructor(accessoryInfo: AccessoryInfo, serviceOptions?: ServiceNetworkOptions) {
     super()
@@ -247,15 +248,23 @@ export class BonjourHAPAdvertiser extends EventEmitter implements Advertiser {
     debug(`Starting to advertise '${this.accessoryInfo.displayName}' using bonjour-hap backend!`)
 
     if (this.advertisement) {
-      this.destroy()
+      // the old advertisement must be gone before the new one is published under the same name
+      const port = this.port
+      return this.stopAdvertisement().then(() => this.publish(port))
     }
+
+    return this.publish(this.port)
+  }
+
+  private publish(port: number): Promise<void> {
+    assert(!this.destroyed, 'Can\'t advertise on a destroyed bonjour instance!')
 
     const hostname = `${this.accessoryInfo.username.replace(/:/g, '_')}.local`
 
     this.advertisement = this.bonjour.publish({
       name: this.accessoryInfo.displayName,
       type: 'hap',
-      port: this.port,
+      port,
       txt: CiaoAdvertiser.createTxt(this.accessoryInfo, this.setupHash),
       host: hostname,
       addUnsafeServiceEnumerationRecord: true,
@@ -263,6 +272,24 @@ export class BonjourHAPAdvertiser extends EventEmitter implements Advertiser {
     })
 
     return PromiseTimeout(1)
+  }
+
+  /**
+   * Sends the goodbye for the current advertisement (if any) and resolves once it is out.
+   */
+  private stopAdvertisement(): Promise<void> {
+    const advertisement = this.advertisement
+    if (!advertisement) {
+      return Promise.resolve()
+    }
+    this.advertisement = undefined
+
+    return new Promise((resolve) => {
+      advertisement.stop(() => {
+        advertisement.destroy()
+        resolve()
+      })
+    })
   }
 
   public updateAdvertisement(silent?: boolean): void {
@@ -274,16 +301,11 @@ export class BonjourHAPAdvertiser extends EventEmitter implements Advertiser {
     }
   }
 
-  public destroy(): void {
-    if (this.advertisement) {
-      this.advertisement.stop(() => {
-        this.advertisement!.destroy()
-        this.advertisement = undefined
-        this.bonjour.destroy()
-      })
-    } else {
-      this.bonjour.destroy()
-    }
+  public destroy(): Promise<void> {
+    this.destroyed = true
+    this.destroyPromise ??= this.stopAdvertisement()
+      .then(() => new Promise<void>(resolve => this.bonjour.destroy(() => resolve())))
+    return this.destroyPromise
   }
 }
 

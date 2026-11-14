@@ -5,7 +5,7 @@ import { EventEmitter } from 'node:events'
 import dbus, { DBusError, MessageBus } from 'dbus-native'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { AvahiAdvertiser, CiaoAdvertiser, DBusInvokeError, PairingFeatureFlag, ResolvedAdvertiser, StatusFlag } from './Advertiser.js'
+import { AvahiAdvertiser, BonjourHAPAdvertiser, CiaoAdvertiser, DBusInvokeError, PairingFeatureFlag, ResolvedAdvertiser, StatusFlag } from './Advertiser.js'
 import { AccessoryInfo } from './model/AccessoryInfo.js'
 
 type InvokeHandler = (msg: any) => unknown
@@ -107,6 +107,63 @@ describe('ciaoAdvertiser destroy', () => {
 
     expect(destroyService).toHaveBeenCalledTimes(1)
     expect(shutdown).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('bonjourHAPAdvertiser', () => {
+  function advertiser(): BonjourHAPAdvertiser {
+    const info = AccessoryInfo.create('AA:BB:CC:DD:EE:04')
+    info.displayName = 'Bonjour Test'
+    const result = new BonjourHAPAdvertiser(info)
+    result.initPort(51826)
+    return result
+  }
+
+  it('should keep the new advertisement when advertising is started a second time', async () => {
+    const instance = advertiser()
+    const bonjour = (instance as any).bonjour
+
+    await instance.startAdvertising()
+    const first = (instance as any).advertisement
+    await instance.startAdvertising()
+    const second = (instance as any).advertisement
+    await new Promise(resolve => setTimeout(resolve, 10)) // long enough for a late stop callback
+
+    expect(second).not.toBe(first)
+    expect(first.stop).toHaveBeenCalledTimes(1)
+    expect(first.destroy).toHaveBeenCalledTimes(1)
+    expect(second.stop).not.toHaveBeenCalled()
+    expect(second.destroy).not.toHaveBeenCalled()
+    expect(bonjour.destroy).not.toHaveBeenCalled()
+    expect((instance as any).advertisement).toBe(second)
+    // the old advertisement was stopped before the new one was published
+    expect(first.stop.mock.invocationCallOrder[0]).toBeLessThan(bonjour.publish.mock.invocationCallOrder[1])
+  })
+
+  it('should resolve destroy only after the goodbye was sent', async () => {
+    const instance = advertiser()
+    const bonjour = (instance as any).bonjour
+    await instance.startAdvertising()
+    const advertisement = (instance as any).advertisement
+
+    const destroyed = instance.destroy()
+    expect(destroyed).toBeInstanceOf(Promise)
+    expect(bonjour.destroy).not.toHaveBeenCalled() // the goodbye is still on its way
+
+    await destroyed
+    expect(advertisement.stop).toHaveBeenCalledTimes(1)
+    expect(advertisement.destroy).toHaveBeenCalledTimes(1)
+    expect(bonjour.destroy).toHaveBeenCalledTimes(1)
+
+    await instance.destroy()
+    expect(bonjour.destroy).toHaveBeenCalledTimes(1)
+  })
+
+  it('should refuse to advertise once it was destroyed', async () => {
+    const instance = advertiser()
+    await instance.destroy()
+
+    expect(() => instance.startAdvertising()).toThrow('destroyed bonjour instance')
   })
 })
 
