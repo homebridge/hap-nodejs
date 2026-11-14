@@ -67,10 +67,7 @@ export class GStreamerAudioProducer implements SiriAudioStreamProducer {
     this.errorHandler = errorHandler
 
     if (options) {
-      for (const [key, value] of Object.entries(options)) {
-        // @ts-expect-error: type mismatch
-        GStreamerAudioProducer.options[key] = value
-      }
+      Object.assign(this.options, options)
     }
   }
 
