@@ -160,6 +160,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - docs(server): fix comments which are wrong or name functions that no longer exist
 - docs(model): fix comments which are wrong or name things that no longer exist
 - docs(camera): fix two comments which name a wrong sample rate and a wrong method
+- docs(datastream): fix a comment which says encryption where it means decryption
 
 ### Homebridge Dependencies
 

@@ -1106,7 +1106,7 @@ export class DataStreamConnection extends EventEmitter {
     try {
       frame.plaintextPayload = hapCrypto.chacha20_poly1305_decryptAndVerify(key, this.controllerToAccessoryNonceBuffer,
         frame.header, frame.cipheredPayload, frame.authTag)
-      this.controllerToAccessoryNonce++ // we had a successful encryption, increment the nonce
+      this.controllerToAccessoryNonce++ // we had a successful decryption, increment the nonce
       return true
     } catch (error) {
       // frame decryption or authentication failed. Could happen when our guess for a PreparedDataStreamSession is wrong
