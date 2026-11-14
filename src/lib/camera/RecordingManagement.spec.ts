@@ -182,6 +182,40 @@ describe('recordingManagement', () => {
       ;(management as any).recordingStream?.close(0)
     })
 
+    it('should ignore an acknowledgment for another stream', async () => {
+      class WaitingDelegate extends MockDelegate {
+        acknowledgeStream = vi.fn()
+
+        async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
+          yield {
+            data: Buffer.alloc(10, 1),
+            isLast: false,
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000)) // still recording
+        }
+      }
+      const delegate = new WaitingDelegate()
+      const management = managementReadyToRecord(delegate)
+      const connection = fakeConnection(() => undefined)
+
+      ;(management as any).handleDataSendOpen(connection, 1, {
+        streamId: 5,
+        type: 'ipcamera.recording',
+        target: 'controller',
+        reason: 'record',
+      })
+      await new Promise(resolve => setTimeout(resolve, 10))
+      const stream = (management as any).recordingStream
+
+      stream.handleDataSendAck({ streamId: 999, endOfStream: true })
+      expect(delegate.acknowledgeStream).not.toHaveBeenCalled()
+      expect((management as any).recordingStream).toBe(stream)
+
+      stream.handleDataSendAck({ streamId: 5, endOfStream: true })
+      expect(delegate.acknowledgeStream).toHaveBeenCalledExactlyOnceWith(5)
+      expect((management as any).recordingStream).toBeUndefined()
+    })
+
     it('should reject an open without a numeric stream id', () => {
       const management = managementReadyToRecord()
       const connection = fakeConnection(() => undefined)
