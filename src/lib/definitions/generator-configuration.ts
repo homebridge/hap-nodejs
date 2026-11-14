@@ -3,7 +3,7 @@ import assert from 'node:assert'
 import { Access } from '../Characteristic.js'
 import { GeneratedCharacteristic, GeneratedService } from './generate-definitions.js'
 
-const enum PropertyId {
+enum PropertyId {
   NOTIFY = 0x01,
   READ = 0x02,
   WRITE = 0x04,
