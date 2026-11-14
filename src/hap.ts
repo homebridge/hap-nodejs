@@ -41,6 +41,8 @@ export * from './types.js'
 
 const debug = createDebug('HAP-NodeJS:Advertiser')
 
+let libraryVersion: string | undefined
+
 /**
  * This method can be used to retrieve the current running library version of the HAP-NodeJS framework.
  * @returns The SemVer version string.
@@ -48,9 +50,9 @@ const debug = createDebug('HAP-NodeJS:Advertiser')
  * @group Utils
  */
 export function HAPLibraryVersion(): string {
-  const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf-8'))
-  const { version } = packageJson
-  return version
+  // the version cannot change while the process runs, so the file is read only once
+  libraryVersion ??= JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf-8')).version as string
+  return libraryVersion
 }
 
 function printInit() {

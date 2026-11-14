@@ -1,5 +1,7 @@
 import { AssertionError } from 'node:assert'
 import { Buffer } from 'node:buffer'
+import fs from 'node:fs'
+import { syncBuiltinESMExports } from 'node:module'
 import { format } from 'node:util'
 
 import createDebug from 'debug'
@@ -13,6 +15,24 @@ import { AccessoryInfo, PermissionTypes } from './AccessoryInfo.js'
 import { HAPStorage } from './HAPStorage.js'
 
 describe('accessoryInfo', () => {
+  it('should not read package.json again for every firmware version check', () => {
+    const readFileSync = vi.spyOn(fs, 'readFileSync')
+    syncBuiltinESMExports() // makes the spy visible to the named import in AccessoryInfo.ts
+    try {
+      const info = AccessoryInfo.create('AA:BB:CC:DD:EE:11')
+      info.checkForCurrentConfigurationNumberIncrement([], true)
+      info.checkForCurrentConfigurationNumberIncrement([], true)
+
+      const reads = readFileSync.mock.calls.filter(([file]) => String(file).endsWith('package.json'))
+      expect(reads.length).toBeLessThanOrEqual(1) // none when an earlier test already asked for the version
+      // @ts-expect-error: private access
+      expect(info.lastFirmwareVersion).toMatch(/^\d+\.\d+\.\d+/)
+    } finally {
+      readFileSync.mockRestore()
+      syncBuiltinESMExports()
+    }
+  })
+
   it('should count an admin once when it is added twice, so removing it removes everybody', () => {
     const info = AccessoryInfo.create('AA:BB:CC:DD:EE:10')
     const key = Buffer.alloc(32, 1)
