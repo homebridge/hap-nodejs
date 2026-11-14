@@ -642,7 +642,12 @@ export class RemoteController extends EventEmitter
 
   // --------------------------------- TARGET CONTROL ----------------------------------
 
-  private handleTargetControlWrite(value: any, callback: CharacteristicSetCallback): void {
+  private handleTargetControlWrite(value: CharacteristicValue, callback: CharacteristicSetCallback): void {
+    if (typeof value !== 'string') {
+      callback(HAPStatus.INVALID_VALUE_IN_REQUEST)
+      return
+    }
+
     const data = Buffer.from(value, 'base64')
     const objects = tlv.decode(data)
 
@@ -1183,7 +1188,12 @@ export class RemoteController extends EventEmitter
 
   // ------------------------------- AUDIO CONFIGURATION -------------------------------
 
-  private handleSelectedAudioConfigurationWrite(value: any, callback: CharacteristicSetCallback): void {
+  private handleSelectedAudioConfigurationWrite(value: CharacteristicValue, callback: CharacteristicSetCallback): void {
+    if (typeof value !== 'string') {
+      callback(HAPStatus.INVALID_VALUE_IN_REQUEST)
+      return
+    }
+
     const data = Buffer.from(value, 'base64')
     const objects = tlv.decode(data)
 
