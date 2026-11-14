@@ -574,6 +574,14 @@ export class RecordingManagement {
     const target: string = message.target
     const reason: string = message.reason
 
+    if (typeof streamId !== 'number') {
+      debug('[HDS %s] Received data send without a numeric streamId: %o. Rejecting...', connection.remoteAddress, streamId)
+      connection.sendResponse(Protocols.DATA_SEND, Topics.OPEN, id, HDSStatus.PROTOCOL_SPECIFIC_ERROR, {
+        status: HDSProtocolSpecificErrorReason.UNEXPECTED_FAILURE,
+      })
+      return
+    }
+
     if (target !== 'controller' || type !== 'ipcamera.recording') {
       debug('[HDS %s] Received data send with unexpected target: %s or type: %d. Rejecting...',
         connection.remoteAddress, target, type)
@@ -1036,11 +1044,6 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
   }
 
   private async _startStreaming() {
-    debug('[HDS %s] Sending DATA_SEND OPEN response for streamId %d', this.connection.remoteAddress, this.streamId)
-    this.connection.sendResponse(Protocols.DATA_SEND, Topics.OPEN, this.hdsRequestId, HDSStatus.SUCCESS, {
-      status: HDSStatus.SUCCESS,
-    })
-
     // 256 KiB (1KiB to 900 KiB)
     const maxChunk = 0x40000
 
@@ -1052,6 +1055,13 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
     let lastFragmentWasMarkedLast = false
 
     try {
+      // Inside the try: nobody waits for this method, so an error thrown here (e.g. the connection is
+      // closing already) would be an unhandled rejection, and the stream would be left marked as recording.
+      debug('[HDS %s] Sending DATA_SEND OPEN response for streamId %d', this.connection.remoteAddress, this.streamId)
+      this.connection.sendResponse(Protocols.DATA_SEND, Topics.OPEN, this.hdsRequestId, HDSStatus.SUCCESS, {
+        status: HDSStatus.SUCCESS,
+      })
+
       this.abortController = new AbortController()
       this.generator = this.delegate.handleRecordingStreamRequest(this.streamId, this.abortController.signal)
 
