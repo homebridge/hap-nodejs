@@ -134,6 +134,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - perf(core): read the library version from package.json only once
 - refactor(characteristic): count listeners with listenerCount instead of copying the listener list
 - fix(core): let the process exit while a slow read, adaptive lighting, recording or idle timer waits
+- fix(datastream): store a decoded dictionary key named __proto__ instead of replacing the prototype
 
 ### Homebridge Dependencies
 

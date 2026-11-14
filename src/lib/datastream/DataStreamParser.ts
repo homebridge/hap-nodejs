@@ -227,7 +227,7 @@ export class DataStreamParser {
 
       for (let i = 0; i < length; i++) {
         const key = this.decode(buffer)
-        dictionary[String(key)] = this.decode(buffer) // a key is a string on the wire; anything else is named by its string form
+        this.setDictionaryEntry(dictionary, key, this.decode(buffer))
       }
 
       return dictionary
@@ -237,13 +237,27 @@ export class DataStreamParser {
       let key
       // eslint-disable-next-line no-cond-assign
       while ((key = this.decode(buffer)) !== Magics.TERMINATOR) {
-        dictionary[String(key)] = this.decode(buffer) // decode value
+        this.setDictionaryEntry(dictionary, key, this.decode(buffer))
       }
 
       return dictionary
     } else {
       throw new Error(`HDSDecoder: encountered unknown tag on index ${buffer.readerIndex}: ${tag.toString(16)}`)
     }
+  }
+
+  /**
+   * Stores a decoded entry as an own property of the dictionary.
+   * A key is a string on the wire, as the writer only writes strings; anything else is named by its string form.
+   */
+  private static setDictionaryEntry(dictionary: HDSMessage, key: unknown, value: unknown): void {
+    // a plain assignment to the key `__proto__` would replace the prototype of the dictionary instead of storing the value
+    Object.defineProperty(dictionary, String(key), {
+      value,
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    })
   }
 
   public static encode(data: unknown, buffer: DataStreamWriter): void {
