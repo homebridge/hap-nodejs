@@ -133,6 +133,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - perf(accessory): skip hashing the whole identifier cache on a save when no id changed
 - perf(core): read the library version from package.json only once
 - refactor(characteristic): count listeners with listenerCount instead of copying the listener list
+- fix(core): let the process exit while a slow read, adaptive lighting, recording or idle timer waits
 
 ### Homebridge Dependencies
 

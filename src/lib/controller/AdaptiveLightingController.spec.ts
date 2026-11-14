@@ -116,6 +116,18 @@ describe('adaptiveLightingController', () => {
     controller.disableAdaptiveLighting()
   })
 
+  it('should not keep the process alive with the timer for the next update', async () => {
+    const { lightbulb, controller } = createController()
+    await writeTransitionControl(lightbulb, buildUpdateTransition(lightbulb, Date.now(), curve(5)))
+
+    // @ts-expect-error: private access
+    expect(controller.updateTimeout.hasRef()).toBe(false)
+    vi.advanceTimersByTime(60000)
+    // @ts-expect-error: private access
+    expect(controller.updateTimeout.hasRef()).toBe(false)
+    controller.disableAdaptiveLighting()
+  })
+
   it.each(['my-plugin', 42, true])('should turn off after a manual color write with the context %j', async (context) => {
     const { lightbulb, controller } = createController()
     await writeTransitionControl(lightbulb, buildUpdateTransition(lightbulb, Date.now(), curve(5)))
@@ -284,6 +296,8 @@ describe('adaptiveLightingController', () => {
       lightbulb.getCharacteristic(Characteristic.Brightness).value = Number.NaN
       expect(() => vi.advanceTimersByTime(60000)).not.toThrow()
       expect(controller.isAdaptiveLightingActive()).toBeTruthy()
+      // @ts-expect-error: private access
+      expect(controller.updateTimeout.hasRef()).toBe(false)
 
       // the update loop keeps running once the brightness is a number again
       lightbulb.getCharacteristic(Characteristic.Brightness).value = 100

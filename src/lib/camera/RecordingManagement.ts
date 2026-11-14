@@ -1243,6 +1243,7 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
         console.error('[HDS %s] Recording download stream %d is still awaiting generator although stream was closed 10s ago! '
           + 'This is a programming mistake by the camera implementation which prevents freeing up resources.', this.connection.remoteAddress, this.streamId)
       }, 10000)
+      this.generatorTimeout.unref() // only reports a mistake, so it must not keep the process alive
     }
 
     try {
@@ -1290,5 +1291,6 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
       debug('[HDS %s] Recording stream %d took longer than expected to fully close. Force closing now!', this.connection.remoteAddress, this.streamId)
       this.close(HDSProtocolSpecificErrorReason.CANCELLED)
     }, 12000)
+    this.closingTimeout.unref()
   }
 }

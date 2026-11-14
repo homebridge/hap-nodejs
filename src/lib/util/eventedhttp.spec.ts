@@ -515,6 +515,8 @@ describe('eventedHTTPServer', () => {
         // @ts-expect-error: private access
         server.scheduleNextConnectionIdleTimeout()
         expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 60_000)
+        // @ts-expect-error: private access
+        expect(server.connectionIdleTimeout.hasRef()).toBe(false) // must not keep the process alive
       } finally {
         // @ts-expect-error: private access
         clearTimeout(server.connectionIdleTimeout)

@@ -232,6 +232,60 @@ describe('recordingManagement', () => {
       expect((management as any).recordingStream).toBeUndefined()
     })
 
+    it('should not keep the process alive while it waits for the home hub to close a finished stream', async () => {
+      class FinishedDelegate extends MockDelegate {
+        async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
+          yield {
+            data: Buffer.alloc(10, 1),
+            isLast: true,
+          }
+        }
+      }
+      const management = managementReadyToRecord(new FinishedDelegate())
+      const connection = fakeConnection(() => undefined)
+
+      ;(management as any).handleDataSendOpen(connection, 1, {
+        streamId: 5,
+        type: 'ipcamera.recording',
+        target: 'controller',
+        reason: 'record',
+      })
+      await new Promise(resolve => setTimeout(resolve, 10))
+      const stream = (management as any).recordingStream
+
+      expect(stream.closingTimeout.hasRef()).toBe(false)
+      stream.close(0)
+    })
+
+    it('should not keep the process alive while it waits for the generator of a closed stream', async () => {
+      let finish = (): void => undefined
+      class WaitingDelegate extends MockDelegate {
+        async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
+          yield {
+            data: Buffer.alloc(10, 1),
+            isLast: false,
+          }
+          await new Promise<void>(resolve => finish = resolve) // still recording
+        }
+      }
+      const management = managementReadyToRecord(new WaitingDelegate())
+      const connection = fakeConnection(() => undefined)
+
+      ;(management as any).handleDataSendOpen(connection, 1, {
+        streamId: 5,
+        type: 'ipcamera.recording',
+        target: 'controller',
+        reason: 'record',
+      })
+      await new Promise(resolve => setTimeout(resolve, 10))
+      const stream = (management as any).recordingStream
+
+      stream.close(0)
+      expect(stream.generatorTimeout.hasRef()).toBe(false)
+      finish()
+      await new Promise(resolve => setTimeout(resolve, 10))
+    })
+
     it('should hand a close reason which is not a number to the delegate as a missing reason', async () => {
       class WaitingDelegate extends MockDelegate {
         closeRecordingStream = vi.fn()
