@@ -1372,6 +1372,26 @@ describe('characteristic', () => {
     expect(message).not.toContain('[Model]')
   })
 
+  it('should not share its props with the characteristic it was replaced by', () => {
+    const original = createCharacteristicWithProps({
+      format: Formats.UINT8,
+      perms: [Perms.PAIRED_READ, Perms.NOTIFY],
+      maxValue: 100,
+      validValues: [1, 2, 3],
+    })
+    const replacement = createCharacteristic(Formats.UINT8)
+
+    replacement.replaceBy(original)
+    replacement.setProps({ maxValue: 5 })
+    replacement.props.perms.push(Perms.PAIRED_WRITE)
+    replacement.props.validValues?.push(4)
+
+    expect(replacement.props.maxValue).toBe(5)
+    expect(original.props.maxValue).toBe(100)
+    expect(original.props.perms).toEqual([Perms.PAIRED_READ, Perms.NOTIFY])
+    expect(original.props.validValues).toEqual([1, 2, 3])
+  })
+
   describe('a string characteristic which is given no string', () => {
     it.each([undefined, {}, true])('should stay empty, and not hold the text of %j, when it had no value', (value) => {
       const characteristic = new Characteristic('Text', uuid.generate('text without a value'), {
