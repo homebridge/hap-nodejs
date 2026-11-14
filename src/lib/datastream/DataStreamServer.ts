@@ -7,6 +7,7 @@ import net, { Socket } from 'node:net'
 
 import createDebug from 'debug'
 
+import { errorMessage, errorStack } from '../util/errors.js'
 import { HAPConnection, HAPConnectionEvent } from '../util/eventedhttp.js'
 import * as hapCrypto from '../util/hapCrypto.js'
 import { DataStreamParser, DataStreamReader, DataStreamWriter, Int64 } from './DataStreamParser.js'
@@ -491,7 +492,7 @@ export class DataStreamServer extends EventEmitter {
     } catch (error) {
       hadListeners = true
       debug('[%s] Error occurred while dispatching handler for HDS message: %o', connection.remoteAddress, message)
-      debug(error.stack)
+      debug(errorStack(error) ?? errorMessage(error))
     }
 
     if (!hadListeners) {
@@ -902,7 +903,7 @@ export class DataStreamConnection extends EventEmitter {
           responseHandler(undefined, message.status!, message.message)
         } catch (error) {
           debug('[%s] Error occurred while dispatching response handler for HDS message: %o', this.remoteAddress, message)
-          debug(error.stack)
+          debug(errorStack(error) ?? errorMessage(error))
         }
         delete this.responseHandlers[message.id!]
       } else {
@@ -929,7 +930,7 @@ export class DataStreamConnection extends EventEmitter {
             eventHandler(message.message)
           } catch (error) {
             debug('[%s] Error occurred while dispatching event handler for HDS message: %o', this.remoteAddress, message)
-            debug(error.stack)
+            debug(errorStack(error) ?? errorMessage(error))
           }
         } else if (message.type === MessageType.REQUEST) {
           let requestHandler: RequestHandler
@@ -944,7 +945,7 @@ export class DataStreamConnection extends EventEmitter {
             requestHandler(message.id!, message.message)
           } catch (error) {
             debug('[%s] Error occurred while dispatching request handler for HDS message: %o', this.remoteAddress, message)
-            debug(error.stack)
+            debug(errorStack(error) ?? errorMessage(error))
           }
         } else {
           debug('[%s] Encountered unknown message type with id %d', this.remoteAddress, message.type)
@@ -1023,7 +1024,7 @@ export class DataStreamConnection extends EventEmitter {
     try {
       this.sendResponse(message.protocol, message.topic, message.id, HDSStatus.MISSING_PROTOCOL)
     } catch (error) {
-      debug('[%s] Failed to answer the unhandled request: %s', this.remoteAddress, error.message)
+      debug('[%s] Failed to answer the unhandled request: %s', this.remoteAddress, errorMessage(error))
     }
   }
 
@@ -1075,7 +1076,7 @@ export class DataStreamConnection extends EventEmitter {
         headerDictionary = DataStreamParser.decode(headerPayload)
         headerPayload.finished()
       } catch (error) {
-        debug('[%s] Failed to decode header payload: %s', this.remoteAddress, error.message)
+        debug('[%s] Failed to decode header payload: %s', this.remoteAddress, errorMessage(error))
         return
       }
 
@@ -1083,7 +1084,7 @@ export class DataStreamConnection extends EventEmitter {
         messageDictionary = DataStreamParser.decode(messagePayload)
         messagePayload.finished()
       } catch (error) {
-        debug('[%s] Failed to decode message payload: %s (header: %o)', this.remoteAddress, error.message, headerDictionary)
+        debug('[%s] Failed to decode message payload: %s (header: %o)', this.remoteAddress, errorMessage(error), headerDictionary)
         return
       }
 
