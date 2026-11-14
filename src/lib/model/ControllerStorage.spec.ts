@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { Accessory } from '../Accessory.js'
 import { Bridge } from '../Bridge.js'
+import { Characteristic } from '../Characteristic.js'
+import { AdaptiveLightingController } from '../controller/AdaptiveLightingController.js'
 import { ControllerIdentifier, ControllerServiceMap, SerializableController, StateChangeDelegate } from '../controller/index.js'
+import { Service } from '../Service.js'
 import * as uuid from '../util/uuid.js'
 import { ControllerStorage } from './ControllerStorage.js'
 import { HAPStorage } from './HAPStorage.js'
@@ -101,6 +104,55 @@ describe('controllerStorage', () => {
     expect(storage.controllerData.stepped.data).toEqual({ first: 'a', second: 'c' })
     // @ts-expect-error: private access
     clearTimeout(storage.queuedSaveTimeout)
+  })
+
+  it('stored data which the restored controller has no use for is removed', () => {
+    vi.useFakeTimers()
+    try {
+      const lightbulb = new Service.Lightbulb('Light')
+      lightbulb.addCharacteristic(Characteristic.ColorTemperature)
+      lightbulb.getCharacteristic(Characteristic.Brightness).value = 50
+      const controller = new AdaptiveLightingController(lightbulb)
+      controller.configureServices()
+
+      const accessory = new Accessory('Test', uuid.generate('controller-storage-expired'))
+      const storage = new ControllerStorage(accessory)
+      storage.trackController(controller)
+
+      // a schedule of one hour which ran out two days ago, while the accessory was switched off
+      const start = Date.now() - 48 * 3600000
+      // @ts-expect-error: private access
+      storage.init([
+        {
+          type: controller.controllerId(),
+          controllerData: {
+            data: {
+              activeTransition: {
+                iid: 1,
+                transitionStartMillis: start,
+                timeMillisOffset: 0,
+                transitionId: '00000000-0000-0000-0000-000000000000',
+                controllerContext: '',
+                transitionCurve: [
+                  { temperature: 200, brightnessAdjustmentFactor: 0, transitionTime: 0 },
+                  { temperature: 300, brightnessAdjustmentFactor: 0, transitionTime: 3600000 },
+                ],
+                brightnessCharacteristicIID: 2,
+                brightnessAdjustmentRange: { minBrightnessValue: 10, maxBrightnessValue: 100 },
+                updateInterval: 60000,
+                notifyIntervalThreshold: 600000,
+              },
+            },
+          },
+        },
+      ])
+
+      expect(controller.isAdaptiveLightingActive()).toBe(false)
+      // @ts-expect-error: private access
+      expect(storage.controllerData[controller.controllerId()]).toBeUndefined()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('the reset after unreadable stored data is saved', () => {

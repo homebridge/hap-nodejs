@@ -44,6 +44,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(adaptive-lighting): emit disable in manual mode when a malformed request turns it off
 - fix(adaptive-lighting): keep the listeners of the plugin when the controller is removed
 - fix(adaptive-lighting): accept a transition curve of a single entry
+- fix(controller-storage): remove stored data a restored controller has no use for
 
 ### Homebridge Dependencies
 
