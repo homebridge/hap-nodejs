@@ -18,17 +18,18 @@ export function awaitEventOnce<Obj extends EventEmitter, Event extends string, T
  * @group Utils
  */
 export function awaitEventOnce<Obj extends EventEmitter, Event extends string>(element: Obj, event: Event, timeout?: number): Promise<void>
-export function awaitEventOnce<Object extends EventEmitter, Event extends string, T>(element: Object, event: Event, timeout = 5000): Promise<void | T> {
+export function awaitEventOnce<Obj extends EventEmitter, Event extends string, T>(element: Obj, event: Event, timeout = 5000): Promise<void | T> {
   return new Promise<void | T>((resolve, reject) => {
     let timeoutId: NodeJS.Timeout
 
-    const resolveListener = (...args: any) => {
+    const resolveListener = (...args: unknown[]) => {
       clearTimeout(timeoutId)
 
+      // the caller names the type of the event's payload: one argument resolves as itself, several as an array
       resolve(args.length
         ? (args.length === 1
             ? args[0]
-            : args)
+            : args) as T
         : undefined)
     }
 
