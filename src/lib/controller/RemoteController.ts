@@ -507,7 +507,7 @@ export class RemoteController extends EventEmitter
 
     debug('%d is now the active target', activeIdentifier)
     this.activeIdentifier = activeIdentifier
-    this.targetControlService!.getCharacteristic(Characteristic.ActiveIdentifier)!.updateValue(activeIdentifier)
+    this.targetControlService!.getCharacteristic(Characteristic.ActiveIdentifier).updateValue(activeIdentifier)
 
     if (this.activeAudioSession) {
       this.handleSiriAudioStop()
@@ -872,7 +872,7 @@ export class RemoteController extends EventEmitter
     this.activeConnection = undefined
     this.activeConnectionDisconnectListener = undefined
 
-    this.targetControlService!.getCharacteristic(Characteristic.Active)!.updateValue(false)
+    this.targetControlService!.getCharacteristic(Characteristic.Active).updateValue(false)
     debug('Remote was set to INACTIVE')
 
     setTimeout(() => this.emit(RemoteControllerEvents.ACTIVE_CHANGE, false), 0)
@@ -934,7 +934,7 @@ export class RemoteController extends EventEmitter
       timestampTlv,
       activeIdentifierTlv,
     ]).toString('base64')
-    this.targetControlService!.getCharacteristic(Characteristic.ButtonEvent)!.sendEventNotification(this.lastButtonEvent)
+    this.targetControlService!.getCharacteristic(Characteristic.ButtonEvent).sendEventNotification(this.lastButtonEvent)
   }
 
   private parseTargetConfigurationTLV(data: Buffer): TargetConfiguration {
@@ -1291,8 +1291,8 @@ export class RemoteController extends EventEmitter
 
       this.dataStreamManagement = new DataStreamManagement()
 
-      this.siriService.addLinkedService(this.dataStreamManagement!.getService())
-      this.siriService.addLinkedService(this.audioStreamManagementService!)
+      this.siriService.addLinkedService(this.dataStreamManagement.getService())
+      this.siriService.addLinkedService(this.audioStreamManagementService)
     }
 
     return {
@@ -1365,17 +1365,17 @@ export class RemoteController extends EventEmitter
       throw new Error('Unexpected state: Services not configured!') // playing it save
     }
 
-    this.targetControlManagementService.getCharacteristic(Characteristic.TargetControlList)!
+    this.targetControlManagementService.getCharacteristic(Characteristic.TargetControlList)
       .on(CharacteristicEventTypes.GET, (callback) => {
         callback(null, this.targetConfigurationsString)
       })
       .on(CharacteristicEventTypes.SET, this.handleTargetControlWrite.bind(this))
 
-    this.targetControlService.getCharacteristic(Characteristic.ActiveIdentifier)!
+    this.targetControlService.getCharacteristic(Characteristic.ActiveIdentifier)
       .on(CharacteristicEventTypes.GET, (callback) => {
         callback(undefined, this.activeIdentifier)
       })
-    this.targetControlService.getCharacteristic(Characteristic.Active)!
+    this.targetControlService.getCharacteristic(Characteristic.Active)
       .on(CharacteristicEventTypes.GET, (callback) => {
         callback(undefined, this.isActive())
       })
@@ -1387,13 +1387,13 @@ export class RemoteController extends EventEmitter
         }
         this.handleActiveWrite(value, callback, connection)
       })
-    this.targetControlService.getCharacteristic(Characteristic.ButtonEvent)!
+    this.targetControlService.getCharacteristic(Characteristic.ButtonEvent)
       .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         callback(undefined, this.lastButtonEvent)
       })
 
     if (this.audioSupported) {
-      this.audioStreamManagementService!.getCharacteristic(Characteristic.SelectedAudioStreamConfiguration)!
+      this.audioStreamManagementService!.getCharacteristic(Characteristic.SelectedAudioStreamConfiguration)
         .on(CharacteristicEventTypes.GET, (callback) => {
           callback(null, this.selectedAudioConfigurationString)
         })

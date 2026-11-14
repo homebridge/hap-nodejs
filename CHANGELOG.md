@@ -108,6 +108,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(camera): drop two needless non-null assertions in the stream management
 - refactor(controller): drop needless non-null assertions in the adaptive lighting controller
 - refactor(controller): drop needless non-null assertions in the camera controller
+- refactor(remote): drop needless non-null assertions in the remote controller
 
 ### Homebridge Dependencies
 
