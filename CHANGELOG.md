@@ -101,6 +101,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(utils): type the event arguments in awaitEventOnce as unknown instead of any
 - refactor(utils): build the cloned object without any
 - refactor(utils): drop the Node 18 numeric address family checks and their ts-expect-error
+- refactor(camera): type the legacy SRTP options check instead of using any
 
 ### Homebridge Dependencies
 

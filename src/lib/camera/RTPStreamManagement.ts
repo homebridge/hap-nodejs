@@ -291,7 +291,7 @@ export interface CameraStreamingOptionsSupportedCryptoSuites {
   supportedCryptoSuites: SRTPCryptoSuites[] // Suite NONE should only be used for testing and will probably be never selected by iOS!
 }
 
-function isLegacySRTPOptions(options: any): options is CameraStreamingOptionsLegacySRTP {
+function isLegacySRTPOptions(options: CameraStreamingOptions): options is CameraStreamingOptionsBase & CameraStreamingOptionsLegacySRTP {
   return 'srtp' in options
 }
 
