@@ -1148,23 +1148,31 @@ export class RemoteController extends EventEmitter
     const streamId = message.streamId
     const endOfStream = message.endOfStream
 
-    if (this.activeAudioSession && this.activeAudioSession.streamId === streamId) {
-      this.activeAudioSession.handleDataSendAckEvent(endOfStream)
-    } else if (this.nextAudioSession && this.nextAudioSession.streamId === streamId) {
-      this.nextAudioSession.handleDataSendAckEvent(endOfStream)
+    const session = this.audioSessionWithStreamId(streamId)
+    if (session) {
+      session.handleDataSendAckEvent(endOfStream)
     } else {
       debug('Received dataSend acknowledgment event for unknown streamId \'%s\'', streamId)
     }
+  }
+
+  /**
+   * A session which is still starting has no streamId yet, so a message without a (numeric) streamId is not for it.
+   */
+  private audioSessionWithStreamId(streamId: unknown): SiriAudioSession | undefined {
+    if (typeof streamId !== 'number') {
+      return undefined
+    }
+    return [this.activeAudioSession, this.nextAudioSession].find(session => session?.streamId === streamId)
   }
 
   private handleDataSendCloseEvent(message: Record<any, any>): void { // controller indicates he can't handle audio request currently
     const streamId = message.streamId
     const reason: HDSProtocolSpecificErrorReason = message.reason
 
-    if (this.activeAudioSession && this.activeAudioSession.streamId === streamId) {
-      this.activeAudioSession.handleDataSendCloseEvent(reason)
-    } else if (this.nextAudioSession && this.nextAudioSession.streamId === streamId) {
-      this.nextAudioSession.handleDataSendCloseEvent(reason)
+    const session = this.audioSessionWithStreamId(streamId)
+    if (session) {
+      session.handleDataSendCloseEvent(reason)
     } else {
       debug('Received dataSend close event for unknown streamId \'%s\'', streamId)
     }
@@ -1710,7 +1718,11 @@ export class SiriAudioSession extends EventEmitter {
   }
 
   handleDataSendAckEvent(endOfStream: boolean): void { // transfer was successful
-    assert.strictEqual(endOfStream, true)
+    if (endOfStream !== true || this.state < SiriAudioSessionState.SENDING || this.state > SiriAudioSessionState.CLOSING) {
+      // sent by the controller, so nothing to assert on: only the end of an open stream is acknowledged
+      debug('Ignoring acknowledgment for siri audio stream with streamId %s (endOfStream: %s)', this.streamId, endOfStream)
+      return
+    }
 
     debug('Received acknowledgment for siri audio stream with streamId %s, closing it now', this.streamId)
 
