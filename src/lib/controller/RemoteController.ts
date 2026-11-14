@@ -29,6 +29,7 @@ import {
   DataStreamServerEvent,
   EventHandler,
   Float32,
+  HDSMessage,
   HDSProtocolSpecificErrorReason,
   HDSStatus,
   Int64,
@@ -1074,7 +1075,7 @@ export class RemoteController extends EventEmitter
 
   // --------------------------------- SIRI/DATA STREAM --------------------------------
 
-  private handleTargetControlWhoAmI(connection: DataStreamConnection, message: Record<any, any>): void {
+  private handleTargetControlWhoAmI(connection: DataStreamConnection, message: HDSMessage): void {
     const targetIdentifier = message.identifier
     this.dataStreamConnections.set(targetIdentifier, connection)
     debug('Discovered HDS connection for targetIdentifier %s', targetIdentifier)
@@ -1133,7 +1134,7 @@ export class RemoteController extends EventEmitter
     debug('handleSiriAudioStop called although no audio session was started')
   }
 
-  private handleDataSendAckEvent(message: Record<any, any>): void { // transfer was successful
+  private handleDataSendAckEvent(message: HDSMessage): void { // transfer was successful
     const streamId = message.streamId
     const endOfStream = message.endOfStream
 
@@ -1155,7 +1156,7 @@ export class RemoteController extends EventEmitter
     return [this.activeAudioSession, this.nextAudioSession].find(session => session?.streamId === streamId)
   }
 
-  private handleDataSendCloseEvent(message: Record<any, any>): void { // controller indicates he can't handle audio request currently
+  private handleDataSendCloseEvent(message: HDSMessage): void { // controller indicates he can't handle audio request currently
     const streamId = message.streamId
     const reason: HDSProtocolSpecificErrorReason = message.reason
 
