@@ -848,6 +848,13 @@ export class RemoteController extends EventEmitter
       return
     }
 
+    // checked first: a refused write must not leave the remote marked as active
+    const activeTarget = this.targetConfigurations.get(this.activeIdentifier)
+    if (!activeTarget) {
+      callback(HAPStatus.INVALID_VALUE_IN_REQUEST)
+      return
+    }
+
     if (this.activeConnection) {
       this.activeConnection.removeListener(HAPConnectionEvent.CLOSED, this.activeConnectionDisconnectListener!)
       this.activeConnection = undefined
@@ -858,12 +865,6 @@ export class RemoteController extends EventEmitter
     if (this.activeConnection) { // register listener when hap connection disconnects
       this.activeConnectionDisconnectListener = this.handleActiveSessionDisconnected.bind(this, this.activeConnection)
       this.activeConnection.on(HAPConnectionEvent.CLOSED, this.activeConnectionDisconnectListener)
-    }
-
-    const activeTarget = this.targetConfigurations.get(this.activeIdentifier)
-    if (!activeTarget) {
-      callback(HAPStatus.INVALID_VALUE_IN_REQUEST)
-      return
     }
 
     debug('Remote with activeTarget \'%s\' (%d) was set to %s', activeTarget.targetName, this.activeIdentifier, value ? 'ACTIVE' : 'INACTIVE')
@@ -1465,6 +1466,9 @@ export class RemoteController extends EventEmitter
       map.set(identifier, value)
       return map
     }, new Map())
+    if (!this.targetConfigurations.has(this.activeIdentifier)) {
+      this.activeIdentifier = 0 // the saved active target is not among the saved targets
+    }
     this.updatedTargetConfiguration()
   }
 
