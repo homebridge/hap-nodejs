@@ -54,8 +54,6 @@ export default class RTPProxy {
   constructor(public options: RTPProxyOptions) {
     this.type = options.isIPV6 ? 'udp6' : 'udp4'
 
-    this.startingPort = 10000
-
     this.outgoingAddress = options.outgoingAddress
     this.outgoingPort = options.outgoingPort
     this.incomingPayloadType = 0

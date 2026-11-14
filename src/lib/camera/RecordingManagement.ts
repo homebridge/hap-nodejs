@@ -1061,11 +1061,6 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
           break
         }
 
-        if (lastFragmentWasMarkedLast) {
-          console.error(`[HDS ${this.connection.remoteAddress}] Delegate yielded fragment for stream ${this.streamId} after already signaling end of stream!`)
-          break
-        }
-
         const fragment = packet.data
         if (fragment.length === 0 && !packet.isLast) {
           continue // nothing to send, and no sequence number is used up
