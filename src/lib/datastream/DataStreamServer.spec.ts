@@ -68,7 +68,7 @@ function encryptedFrame(session: TestSession, payload: Buffer): Buffer {
   return Buffer.concat([header, encrypted.ciphertext, encrypted.authTag])
 }
 
-function messagePayload(header: Record<string, any>, message: Record<string, any> = {}): Buffer {
+function messagePayload(header: Record<string, unknown>, message: unknown = {}): Buffer {
   const headerWriter = new DataStreamWriter()
   const messageWriter = new DataStreamWriter()
   DataStreamParser.encode(header, headerWriter)
@@ -334,9 +334,116 @@ describe('dataStreamServer', () => {
     })
   })
 
+  describe('messages of an unexpected shape', () => {
+    function sessionWithHandlers() {
+      const session = setupSession()
+      session.socket.emit('data', encryptedFrame(session, messagePayload({ protocol: 'control', request: 'hello', id: 1 })))
+
+      const eventHandler = vi.fn()
+      const requestHandler = vi.fn()
+      session.connection.addProtocolHandler('test', {
+        eventHandler: { topic: eventHandler },
+        requestHandler: { topic: requestHandler },
+      })
+
+      return { session, eventHandler, requestHandler }
+    }
+
+    it.each([
+      ['null', null],
+      ['a number', 5],
+      ['a string', 'text'],
+      [
+        'a list',
+        [1],
+      ],
+      [
+        'data',
+        Buffer.from([1]),
+      ],
+    ])('should drop a message whose body is %s and not a dictionary', (_, body) => {
+      const { session, eventHandler, requestHandler } = sessionWithHandlers()
+
+      expect(() => {
+        session.socket.emit('data', encryptedFrame(session, messagePayload({ protocol: 'test', event: 'topic' }, body)))
+        session.socket.emit('data', encryptedFrame(session, messagePayload({ protocol: 'test', request: 'topic', id: 2 }, body)))
+      }).not.toThrow()
+
+      expect(eventHandler).not.toHaveBeenCalled()
+      expect(requestHandler).not.toHaveBeenCalled()
+      expect(session.socket.write).toHaveBeenCalledTimes(1) // only the hello response
+      expect(session.socket.end).not.toHaveBeenCalled()
+
+      // the connection still works
+      session.socket.emit('data', encryptedFrame(session, messagePayload({ protocol: 'test', event: 'topic' }, { value: 1 })))
+      session.socket.emit('data', encryptedFrame(session, messagePayload({ protocol: 'test', request: 'topic', id: 3 }, { value: 2 })))
+      expect(eventHandler).toHaveBeenCalledExactlyOnceWith({ value: 1 })
+      expect(requestHandler).toHaveBeenCalledExactlyOnceWith(3, { value: 2 })
+    })
+
+    it.each([
+      [
+        'a protocol which is not a string',
+        { protocol: 5, event: 'topic' },
+      ],
+      [
+        'an event name which is not a string',
+        { protocol: 'test', event: 5 },
+      ],
+      [
+        'a request name which is not a string',
+        { protocol: 'test', request: 5, id: 2 },
+      ],
+      [
+        'a request id which is not a number',
+        { protocol: 'test', request: 'topic', id: 'two' },
+      ],
+      [
+        'a request without an id',
+        { protocol: 'test', request: 'topic' },
+      ],
+    ])('should drop a message with %s', (_, header) => {
+      const { session, eventHandler, requestHandler } = sessionWithHandlers()
+      const globalHandler = vi.fn()
+      session.connection.on('handle-message-globally', globalHandler)
+
+      expect(() => session.socket.emit('data', encryptedFrame(session, messagePayload(header)))).not.toThrow()
+
+      expect(eventHandler).not.toHaveBeenCalled()
+      expect(requestHandler).not.toHaveBeenCalled()
+      expect(globalHandler).not.toHaveBeenCalled()
+      expect(session.socket.write).toHaveBeenCalledTimes(1) // only the hello response
+      expect(session.socket.end).not.toHaveBeenCalled()
+    })
+
+    it('should keep waiting when a response has a status which is not a number', () => {
+      const { session } = sessionWithHandlers()
+      const callback = vi.fn()
+      session.connection.sendRequest('test', 'topic', {}, callback)
+      // @ts-expect-error: private property access
+      const id = Number(Object.keys(session.connection.responseHandlers)[0])
+
+      session.socket.emit('data', encryptedFrame(session, messagePayload({
+        protocol: 'test',
+        response: 'topic',
+        id,
+        status: 'zero',
+      })))
+      expect(callback).not.toHaveBeenCalled()
+
+      session.socket.emit('data', encryptedFrame(session, messagePayload({
+        protocol: 'test',
+        response: 'topic',
+        id,
+        status: 0,
+      }, { value: 1 })))
+      expect(callback).toHaveBeenCalledExactlyOnceWith(undefined, 0, { value: 1 })
+    })
+  })
+
   describe('unhandled requests', () => {
     // decrypts the n-th frame the accessory wrote and returns its decoded header
-    function sentHeader(session: TestSession, index: number): Record<string, any> {
+    function sentHeader(session: TestSession, index: number): unknown {
       const frame: Buffer = session.socket.write.mock.calls[index][0]
       const header = frame.subarray(0, 4)
       const ciphertext = frame.subarray(4, frame.length - 16)

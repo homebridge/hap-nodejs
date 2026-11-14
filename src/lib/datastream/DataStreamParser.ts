@@ -133,7 +133,7 @@ export const enum DataFormatTags {
  * @group HomeKit Data Streams (HDS)
  */
 export class DataStreamParser {
-  public static decode(buffer: DataStreamReader): any {
+  public static decode(buffer: DataStreamReader): unknown {
     const tag = buffer.readTag()
 
     if (tag === DataFormatTags.INVALID) {
@@ -227,7 +227,7 @@ export class DataStreamParser {
 
       for (let i = 0; i < length; i++) {
         const key = this.decode(buffer)
-        dictionary[key] = this.decode(buffer)
+        dictionary[String(key)] = this.decode(buffer) // a key is a string on the wire; anything else is named by its string form
       }
 
       return dictionary
@@ -237,7 +237,7 @@ export class DataStreamParser {
       let key
       // eslint-disable-next-line no-cond-assign
       while ((key = this.decode(buffer)) !== Magics.TERMINATOR) {
-        dictionary[key] = this.decode(buffer) // decode value
+        dictionary[String(key)] = this.decode(buffer) // decode value
       }
 
       return dictionary
@@ -246,8 +246,7 @@ export class DataStreamParser {
     }
   }
 
-  // eslint-disable-next-line ts/explicit-module-boundary-types
-  public static encode(data: any, buffer: DataStreamWriter): void {
+  public static encode(data: unknown, buffer: DataStreamWriter): void {
     if (data === undefined) {
       throw new Error('HDSEncoder: cannot encode undefined')
     }
@@ -347,7 +346,7 @@ export class DataStreamReader {
   private readonly data: Buffer
   readerIndex: number
 
-  private trackedCompressedData: any[] = []
+  private trackedCompressedData: unknown[] = []
 
   constructor(data: Buffer) {
     this.data = data
@@ -361,7 +360,7 @@ export class DataStreamReader {
     }
   }
 
-  decompressData(index: number): any {
+  decompressData(index: number): unknown {
     if (index >= this.trackedCompressedData.length) {
       throw new Error(`HDSDecoder: Tried decompression of data for an index out of range (index ${index
       } and got ${this.trackedCompressedData.length} elements)`)
@@ -600,7 +599,7 @@ export class DataStreamReader {
 }
 
 class WrittenDataList { // wrapper class since javascript doesn't really have a way to override === operator
-  private writtenData: any[] = []
+  private writtenData: unknown[] = []
 
   push<T>(data: T) {
     this.writtenData.push(data)
