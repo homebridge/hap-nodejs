@@ -79,7 +79,7 @@ export class UUID extends ValueWrapper<string> {
 /**
  * @group HomeKit Data Streams (HDS)
  */
-export const enum DataFormatTags {
+export enum DataFormatTags {
   INVALID = 0x00,
 
   TRUE = 0x01,

@@ -88,7 +88,7 @@ export interface DataStreamProtocolHandler {
 /**
  * @group HomeKit Data Streams (HDS)
  */
-export const enum Protocols { // a collection of currently known protocols
+export enum Protocols { // a collection of currently known protocols
   CONTROL = 'control',
   TARGET_CONTROL = 'targetControl',
   DATA_SEND = 'dataSend',
@@ -97,7 +97,7 @@ export const enum Protocols { // a collection of currently known protocols
 /**
  * @group HomeKit Data Streams (HDS)
  */
-export const enum Topics { // a collection of currently known topics grouped by their protocol
+export enum Topics { // a collection of currently known topics grouped by their protocol
   // control
   HELLO = 'hello',
 
@@ -162,14 +162,14 @@ export class HDSProtocolError extends Error {
   }
 }
 
-const enum ServerState {
+enum ServerState {
   UNINITIALIZED, // server socket hasn't been created
   BINDING, // server is created and is currently trying to bind
   LISTENING, // server is created and currently listening for new connections
   CLOSING,
 }
 
-const enum ConnectionState {
+enum ConnectionState {
   UNIDENTIFIED,
   EXPECTING_HELLO,
   READY,
@@ -190,7 +190,7 @@ export interface HDSFrame {
 /**
  * @group HomeKit Data Streams (HDS)
  */
-export const enum MessageType {
+export enum MessageType {
   EVENT = 1,
   REQUEST = 2,
   RESPONSE = 3,
@@ -262,7 +262,7 @@ function parseHeader(header: HDSMessage): Omit<DataStreamMessage, 'message'> | u
 /**
  * @group HomeKit Data Streams (HDS)
  */
-export const enum DataStreamServerEvent {
+export enum DataStreamServerEvent {
   /**
    * This event is emitted when a new client socket is received. At this point we have no idea to what
    * hap session this connection will be matched.
@@ -624,7 +624,7 @@ export type IdentificationCallback = (identifiedSession?: PreparedDataStreamSess
 /**
  * @group HomeKit Data Streams (HDS)
  */
-export const enum DataStreamConnectionEvent {
+export enum DataStreamConnectionEvent {
   /**
    * This event is emitted when the first HDSFrame is received from a new connection.
    * The connection expects the handler to identify the connection by trying to match the decryption keys.
@@ -655,7 +655,7 @@ export declare interface DataStreamConnection {
 /**
  * @group HomeKit Data Streams (HDS)
  */
-export const enum HDSConnectionErrorType {
+export enum HDSConnectionErrorType {
   ILLEGAL_STATE = 1,
   CLOSED_SOCKET = 2,
   MAX_PAYLOAD_LENGTH = 3,

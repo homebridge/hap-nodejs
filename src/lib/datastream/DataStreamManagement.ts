@@ -20,27 +20,27 @@ import {
 
 const debug = createDebug('HAP-NodeJS:DataStream:Management')
 
-const enum TransferTransportConfigurationTypes {
+enum TransferTransportConfigurationTypes {
   TRANSFER_TRANSPORT_CONFIGURATION = 1,
 }
 
-const enum TransportTypeTypes {
+enum TransportTypeTypes {
   TRANSPORT_TYPE = 1,
 }
 
-const enum SetupDataStreamSessionTypes {
+enum SetupDataStreamSessionTypes {
   SESSION_COMMAND_TYPE = 1,
   TRANSPORT_TYPE = 2,
   CONTROLLER_KEY_SALT = 3,
 }
 
-const enum SetupDataStreamWriteResponseTypes {
+enum SetupDataStreamWriteResponseTypes {
   STATUS = 1,
   TRANSPORT_TYPE_SESSION_PARAMETERS = 2,
   ACCESSORY_KEY_SALT = 3,
 }
 
-const enum TransportSessionConfiguration {
+enum TransportSessionConfiguration {
   TCP_LISTENING_PORT = 1,
 }
 
@@ -55,7 +55,7 @@ enum SessionCommandType {
 /**
  * @group HomeKit Data Streams (HDS)
  */
-export const enum DataStreamStatus {
+export enum DataStreamStatus {
   SUCCESS = 0,
   GENERIC_ERROR = 1,
   BUSY = 2, // maximum numbers of sessions

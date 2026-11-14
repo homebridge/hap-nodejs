@@ -145,6 +145,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(model): turn the const enums of accessory, service and characteristic into normal enums
 - refactor(server): turn the const enums of the server, advertiser and connection into normal enums
 - refactor(camera): turn the const enums of the camera code into normal enums
+- refactor(datastream): turn the const enums of the data stream code into normal enums
 
 ### Homebridge Dependencies
 
