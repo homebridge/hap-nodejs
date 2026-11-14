@@ -194,7 +194,7 @@ enum AudioCodecConfigurationTypes {
 /**
  * @group Camera
  */
-export enum AudioCodecTypes { // only really by HAP supported codecs are AAC-ELD and OPUS
+export enum AudioCodecTypes { // the only codecs really supported by HAP are AAC-ELD and OPUS
   // noinspection JSUnusedGlobalSymbols
   PCMU = 0x00,
   PCMA = 0x01,
@@ -330,7 +330,7 @@ export enum TargetUpdates {
 export enum RemoteControllerEvents {
   /**
    * This event is emitted when the active state of the remote has changed.
-   * active = true indicates that there is currently an Apple TV listening of button presses and audio streams.
+   * active = true indicates that there is currently an Apple TV listening for button presses and audio streams.
    */
   ACTIVE_CHANGE = 'active-change',
   /**
@@ -456,7 +456,7 @@ export class RemoteController<O = unknown> extends EventEmitter
 
   /**
    * Creates a new RemoteController.
-   * If siri voice input is supported the constructor to an SiriAudioStreamProducer needs to be supplied.
+   * If siri voice input is supported the constructor of a SiriAudioStreamProducer needs to be supplied.
    * Otherwise, a remote without voice support will be created.
    *
    * For every audio session a new SiriAudioStreamProducer will be constructed.
@@ -544,7 +544,7 @@ export class RemoteController<O = unknown> extends EventEmitter
   }
 
   /**
-   * Returns the targetIdentifier for a give device name
+   * Returns the targetIdentifier for a given device name
    *
    * @param name - The name of the device.
    * @returns The targetIdentifier of the device or undefined if not existent.
@@ -1169,7 +1169,7 @@ export class RemoteController<O = unknown> extends EventEmitter
     return [this.activeAudioSession, this.nextAudioSession].find(session => session?.streamId === streamId)
   }
 
-  private handleDataSendCloseEvent(message: HDSMessage): void { // controller indicates he can't handle audio request currently
+  private handleDataSendCloseEvent(message: HDSMessage): void { // controller indicates it can't handle the audio request currently
     const streamId = message.streamId
     // a reason which is not a number is handled like a missing one
     const reason: HDSProtocolSpecificErrorReason | undefined = typeof message.reason === 'number'
@@ -1379,7 +1379,7 @@ export class RemoteController<O = unknown> extends EventEmitter
    */
   configureServices(): void {
     if (!this.targetControlManagementService || !this.targetControlService) {
-      throw new Error('Unexpected state: Services not configured!') // playing it save
+      throw new Error('Unexpected state: Services not configured!') // playing it safe
     }
 
     this.targetControlManagementService.getCharacteristic(Characteristic.TargetControlList)
@@ -1421,7 +1421,7 @@ export class RemoteController<O = unknown> extends EventEmitter
         .onEventMessage(Protocols.TARGET_CONTROL, Topics.WHOAMI, this.handleTargetControlWhoAmI.bind(this))
         .onServerEvent(DataStreamServerEvent.CONNECTION_CLOSED, this.handleDataStreamConnectionClosed.bind(this))
 
-      this.eventHandler = { // eventHandlers which gets subscribed to on open connections on whoami
+      this.eventHandler = { // eventHandlers which get subscribed to on open connections on whoami
         [Topics.ACK]: this.handleDataSendAckEvent.bind(this),
         [Topics.CLOSE]: this.handleDataSendCloseEvent.bind(this),
       }
@@ -1445,8 +1445,8 @@ export class RemoteController<O = unknown> extends EventEmitter
 
     // the call to dataStreamManagement.destroy will close any open data stream connection
     // which will result in a call to this.handleDataStreamConnectionClosed, cleaning up this.dataStreamConnections.
-    // It will also result in a call to SiriAudioSession.handleDataStreamConnectionClosed (if there are any open session)
-    // which again results in a call to this.handleSiriAudioSessionClosed,cleaning up this.activeAudioSession and this.nextAudioSession.
+    // It will also result in a call to SiriAudioSession.handleDataStreamConnectionClosed (if there are any open sessions)
+    // which again results in a call to this.handleSiriAudioSessionClosed, cleaning up this.activeAudioSession and this.nextAudioSession.
   }
 
   /**
@@ -1741,7 +1741,7 @@ export class SiriAudioSession<O = unknown> extends EventEmitter {
     this.sendDataSendCloseEvent(HDSProtocolSpecificErrorReason.NORMAL)
   }
 
-  handleDataSendCloseEvent(reason?: HDSProtocolSpecificErrorReason): void { // controller indicates he can't handle audio request currently
+  handleDataSendCloseEvent(reason?: HDSProtocolSpecificErrorReason): void { // controller indicates it can't handle the audio request currently
     debug('Received close event from controller with reason %s for stream with streamId %s',
       reason !== undefined
         ? HDSProtocolSpecificErrorReason[reason]

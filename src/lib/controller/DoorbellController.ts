@@ -13,14 +13,14 @@ import { ControllerServiceMap } from './Controller.js'
  */
 export interface DoorbellOptions {
   /**
-   * Name used to for the {@link Service.Doorbell} service.
+   * Name used for the {@link Service.Doorbell} service.
    */
   name?: string
 
   /**
    * This property may be used to supply an external {@link Service.Doorbell}.
    * This is particularly handy when one is migrating from an existing implementation
-   * to a `DoorbellController` and want to avoid loosing users automation by removing and deleting the service.
+   * to a `DoorbellController` and wants to avoid losing the user's automations by removing and deleting the service.
    *
    * NOTE: You are responsible for managing the service yourself (e.g. creation, restoring, adding to accessory, ...)
    */
@@ -132,7 +132,7 @@ export class DoorbellController extends CameraController {
     super.configureServices()
 
     this.doorbellService!.getCharacteristic(Characteristic.ProgrammableSwitchEvent)
-      .onGet(() => null) // a value of null represent nothing is pressed
+      .onGet(() => null) // a value of null represents nothing is pressed
 
     this.doorbellOptions = undefined
   }

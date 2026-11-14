@@ -50,7 +50,7 @@ export interface ControllerConstructor {
 }
 
 /**
- * A Controller represents a somewhat more complex arrangement of multiple services which together form a accessory
+ * A Controller represents a somewhat more complex arrangement of multiple services which together form an accessory
  * like for example cameras, remotes, tvs or routers.
  * Controllers implementing this interface are capable of being serialized and thus stored on and recreated from disk.
  * Meaning services, characteristic configurations and optionally additional controller states can be persistently saved.
@@ -59,12 +59,12 @@ export interface ControllerConstructor {
  *
  * The set of services can change though over the lifespan of the implementation (e.g. protocol changes imposed by HAP like
  * the addition of secure-video for cameras).
- * Such changes can be made using {@link initWithServices}. See below for more infos.
+ * Such changes can be made using {@link initWithServices}. See below for more info.
  *
  * The constructor of a Controller should only initialize controller specific configuration and states
  * and MUST NOT create any services or characteristics.
  * Additionally, it must implement all necessary methods as noted below. Those methods will get called
- * when the accessory gets added to an Accessory or a Accessory is restored from disk.
+ * when the accessory gets added to an Accessory or an Accessory is restored from disk.
  * @group Controller API
  */
 export interface Controller<M extends ControllerServiceMap = ControllerServiceMap> {
@@ -74,7 +74,7 @@ export interface Controller<M extends ControllerServiceMap = ControllerServiceMa
    * The returned identifier MUST NOT change over the lifetime of the Controller object.
    *
    * Note: The controller can choose to return the same identifier for all controllers of the same type.
-   * This will result in the user only being able to add ONE instance of an Controller to an accessory.
+   * This will result in the user only being able to add ONE instance of a Controller to an accessory.
    *
    * Some predefined identifiers can be found in {@link ControllerIdentifier}.
    */
@@ -92,7 +92,7 @@ export interface Controller<M extends ControllerServiceMap = ControllerServiceMa
    * A {@link ControllerServiceMap} basically maps a name to every service on the controller.
    * It is used to potentially recreate a controller for a given ServiceMap using {@link initWithServices}.
    *
-   * The set of services represented by the Controller MUST remain static and can only change over new version of
+   * The set of services represented by the Controller MUST remain static and can only change over new versions of
    * the Controller implementation (see {@link initWithServices})
    *
    * @returns a {@link ControllerServiceMap} representing all services of a controller indexed by a controller chosen name.
@@ -125,12 +125,12 @@ export interface Controller<M extends ControllerServiceMap = ControllerServiceMa
   /**
    * This method is called once the Controller is removed from the accessory.
    * The controller MUST reset everything to its initial state (just as it would have been constructed freshly)
-   * form the constructor.
+   * from the constructor.
    * Adding the Controller back to an accessory after it was removed MUST be supported!
    * If the controller is a {@link SerializableController} it MUST NOT call the {@link StateChangeDelegate}
    * as a result of a call to this method.
    *
-   * All service contained in the {@link ControllerServiceMap} returned by {@link constructServices}
+   * All services contained in the {@link ControllerServiceMap} returned by {@link constructServices}
    * will be automatically removed from the Accessory. The Controller MUST remove any references to those services.
    */
   handleControllerRemoved(): void

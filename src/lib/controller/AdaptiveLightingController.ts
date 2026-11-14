@@ -58,7 +58,7 @@ enum TransitionType {
 }
 
 enum TransitionControlTypes {
-  READ_CURRENT_VALUE_TRANSITION_CONFIGURATION = 0x01, // could probably a list of ValueTransitionConfigurationTypes
+  READ_CURRENT_VALUE_TRANSITION_CONFIGURATION = 0x01, // could probably be a list of ValueTransitionConfigurationTypes
   UPDATE_VALUE_TRANSITION_CONFIGURATION = 0x02,
 }
 
@@ -147,9 +147,9 @@ export interface ActiveAdaptiveLightingTransition {
   /**
    * It is not necessarily given, that we have the same time (or rather the correct time) as the HomeKit controller
    * who set up the transition schedule.
-   * Thus we record the delta between our current time and the the time sent with the setup request.
+   * Thus we record the delta between our current time and the time sent with the setup request.
    * <code>timeMillisOffset</code> is defined as <code>Date.now() - transitionStartMillis;</code>.
-   * So in the case were we actually have a correct local time, it most likely will be positive (due to network latency).
+   * So in the case where we actually have a correct local time, it most likely will be positive (due to network latency).
    * But of course it can also be negative.
    */
   timeMillisOffset: number
@@ -182,8 +182,8 @@ export interface ActiveAdaptiveLightingTransition {
    */
   updateInterval: number
   /**
-   * Defines the interval in milliseconds on how often the accessory may send even notifications
-   * to subscribed HomeKit controllers (aka call {@link Characteristic.updateValue}.
+   * Defines the interval in milliseconds on how often the accessory may send event notifications
+   * to subscribed HomeKit controllers (aka call {@link Characteristic.updateValue}).
    * Typically this is 600000 aka 600 seconds aka 10 minutes or 300000 aka 300 seconds aka 5 minutes.
    */
   notifyIntervalThreshold: number
@@ -229,7 +229,7 @@ export interface AdaptiveLightingTransitionCurveEntry {
    * Complete example:
    * ```js
    * const temperature = ...; // next transition value, the above property
-   * // below query the current brightness while staying the the min/max brightness range (typically between 10-100 percent)
+   * // below query the current brightness while staying in the min/max brightness range (typically between 10-100 percent)
    * const currentBrightness = Math.max(minBrightnessValue, Math.min(maxBrightnessValue, CHARACTERISTIC_BRIGHTNESS_VALUE));
    *
    * // as both temperature and brightnessAdjustmentFactor are floating point values it is advised to round to the next integer
@@ -239,7 +239,7 @@ export interface AdaptiveLightingTransitionCurveEntry {
   brightnessAdjustmentFactor: number
   /**
    * The duration in milliseconds this exact temperature value stays the same.
-   * When we transition to to the temperature value represented by this entry, it stays for the specified
+   * When we transition to the temperature value represented by this entry, it stays for the specified
    * duration on the exact same value (with respect to brightness adjustment) until we transition
    * to the next entry (see {@link transitionTime}).
    */
@@ -251,7 +251,7 @@ export interface AdaptiveLightingTransitionCurveEntry {
    * for the current time we are at temperature value 300. Then we need to transition smoothly
    * within the B.transitionTime to the B.temperature value.
    * If this is the first entry in the Curve (this value is probably zero) and is the offset to the transitionStartMillis
-   * (the Date/Time were this transition curve was set up).
+   * (the Date/Time where this transition curve was set up).
    */
   transitionTime: number
 }
@@ -287,7 +287,7 @@ export interface AdaptiveLightingOptions {
 }
 
 /**
- * Defines in which mode the {@link AdaptiveLightingController} will operate in.
+ * Defines in which mode the {@link AdaptiveLightingController} will operate.
  * @group Adaptive Lighting
  */
 export enum AdaptiveLightingControllerMode {
@@ -373,11 +373,11 @@ export interface SerializedAdaptiveLightingControllerState {
  *
  * How Adaptive Lighting works:
  *  When enabling AdaptiveLighting the iDevice will send a transition schedule for the next 24 hours.
- *  This schedule will be renewed all 24 hours by a HomeHub in your home
+ *  This schedule will be renewed every 24 hours by a HomeHub in your home
  *  (updating the schedule according to your current day/night situation).
  *  Once enabled the lightbulb will execute the provided transitions. The color temperature value set is always
  *  dependent on the current brightness value. Meaning brighter light will be colder and darker light will be warmer.
- *  HomeKit considers Adaptive Lighting to be disabled as soon a write happens to either the
+ *  HomeKit considers Adaptive Lighting to be disabled as soon as a write happens to either the
  *  Hue/Saturation or the ColorTemperature characteristics.
  *  The AdaptiveLighting state must persist across reboots.
  *
@@ -389,14 +389,14 @@ export interface SerializedAdaptiveLightingControllerState {
  *
  *
  *
- * Below is an overview what you need to or consider when enabling AdaptiveLighting (categorized by mode).
+ * Below is an overview of what you need to do or consider when enabling AdaptiveLighting (categorized by mode).
  * The {@link AdaptiveLightingControllerMode} can be defined with the second constructor argument.
  *
  * <b>AUTOMATIC (Default mode):</b>
  *
- *  This is the easiest mode to setup and needs less to no work form your side for AdaptiveLighting to work.
+ *  This is the easiest mode to setup and needs little to no work from your side for AdaptiveLighting to work.
  *  The AdaptiveLightingController will go through setup procedure with HomeKit and automatically update
- *  the color temperature characteristic base on the current transition schedule.
+ *  the color temperature characteristic based on the current transition schedule.
  *  It is also adjusting the color temperature when a write to the brightness characteristic happens.
  *  Additionally, it will also handle turning off AdaptiveLighting, when it detects a write happening to the
  *  ColorTemperature, Hue or Saturation characteristic (though it can only detect writes coming from HomeKit and
@@ -404,7 +404,7 @@ export interface SerializedAdaptiveLightingControllerState {
  *
  *  So what do you need to consider in automatic mode:
  *   - Brightness and ColorTemperature characteristics MUST be set up. Hue and Saturation may be added for color support.
- *   - Color temperature will be updated all 60 seconds by calling the SET handler of the ColorTemperature characteristic.
+ *   - Color temperature will be updated every 60 seconds by calling the SET handler of the ColorTemperature characteristic.
  *    So every transition behaves like a regular write to the ColorTemperature characteristic.
  *   - Every transition step is dependent on the current brightness value. Try to keep the internal cache updated
  *    as the controller won't call the GET handler every 60 seconds.
@@ -419,9 +419,9 @@ export interface SerializedAdaptiveLightingControllerState {
  *   - When using Hue/Saturation:
  *    When using Hue/Saturation in combination with the ColorTemperature characteristic you need to update the
  *    respective other in a particular way depending on if being in "color mode" or "color temperature mode".
- *    When a write happens to Hue/Saturation characteristic in is advised to set the internal value of the
+ *    When a write happens to Hue/Saturation characteristic it is advised to set the internal value of the
  *    ColorTemperature to the minimal (NOT RAISING an event).
- *    When a write happens to the ColorTemperature characteristic just MUST convert to a proper representation
+ *    When a write happens to the ColorTemperature characteristic you MUST convert to a proper representation
  *    in hue and saturation values, with RAISING an event.
  *    As noted above you MUST NOT call the {@link Characteristic.setValue} method for this, as this will be considered
  *    a write to the characteristic and will turn off AdaptiveLighting. Instead, you should use
@@ -432,17 +432,17 @@ export interface SerializedAdaptiveLightingControllerState {
  *
  * <b>MANUAL mode:</b>
  *
- *  Manual mode is recommended for any accessories which support transitions natively on the devices end.
+ *  Manual mode is recommended for any accessories which support transitions natively on the device's end.
  *  Like for example ZigBee lights which support sending transitions directly to the lightbulb which
  *  then get executed ON the lightbulb itself reducing unnecessary network traffic.
- *  Here is a quick overview what you have to consider to successfully implement AdaptiveLighting support.
+ *  Here is a quick overview of what you have to consider to successfully implement AdaptiveLighting support.
  *  The AdaptiveLightingController will also in manual mode do all the setup procedure.
  *  It will also save the transition schedule to disk to keep AdaptiveLighting enabled across reboots.
  *  The "only" thing you have to do yourself is handling the actual transitions, check that event notifications
  *  are only sent in the defined interval threshold, adjust the color temperature when brightness is changed
  *  and signal that Adaptive Lighting should be disabled if ColorTemperature, Hue or Saturation is changed manually.
  *
- *  First step is to setup up an event handler for the {@link AdaptiveLightingControllerEvents.UPDATE}, which is called
+ *  First step is to set up an event handler for the {@link AdaptiveLightingControllerEvents.UPDATE}, which is called
  *  when AdaptiveLighting is enabled, the HomeHub updates the schedule for the next 24 hours or AdaptiveLighting
  *  is restored from disk on startup.
  *  In the event handler you can get the current schedule via {@link AdaptiveLightingController.getAdaptiveLightingTransitionCurve},
@@ -452,11 +452,11 @@ export interface SerializedAdaptiveLightingControllerState {
  *  Additionally {@link AdaptiveLightingController.getAdaptiveLightingBrightnessMultiplierRange} can be used
  *  to get the valid range for the brightness value to calculate the brightness adjustment factor.
  *  The method {@link AdaptiveLightingController.isAdaptiveLightingActive} can be used to check if AdaptiveLighting is enabled.
- *  Besides, actually running the transition (see {@link AdaptiveLightingTransitionCurveEntry}) you must correctly update
+ *  Besides actually running the transition (see {@link AdaptiveLightingTransitionCurveEntry}) you must correctly update
  *  the color temperature when the brightness of the lightbulb changes (see {@link AdaptiveLightingTransitionCurveEntry.brightnessAdjustmentFactor}),
  *  and signal when AdaptiveLighting got disabled by calling {@link AdaptiveLightingController.disableAdaptiveLighting}
- *  when ColorTemperature, Hue or Saturation where changed manually.
- *  Lastly you should set up a event handler for the {@link AdaptiveLightingControllerEvents.DISABLED} event.
+ *  when ColorTemperature, Hue or Saturation were changed manually.
+ *  Lastly you should set up an event handler for the {@link AdaptiveLightingControllerEvents.DISABLED} event.
  *  In yet unknown circumstances HomeKit may also send a dedicated disable command via the control point characteristic.
  *  Be prepared to handle that.
  *
@@ -523,7 +523,7 @@ export class AdaptiveLightingController
   // ----------- PUBLIC API START -----------
 
   /**
-   * Returns if a Adaptive Lighting transition is currently active.
+   * Returns if an Adaptive Lighting transition is currently active.
    */
   public isAdaptiveLightingActive(): boolean {
     return !!this.activeTransition
@@ -573,7 +573,7 @@ export class AdaptiveLightingController
 
   /**
    * Returns the time where the current transition curve was started in epoch time millis.
-   * A transition curves is active for 24 hours typically and is renewed every 24 hours by a HomeHub.
+   * A transition curve is active for 24 hours typically and is renewed every 24 hours by a HomeHub.
    * Additionally see {@link getAdaptiveLightingTimeOffset}.
    */
   public getAdaptiveLightingStartTimeOfTransition(): number {
@@ -586,9 +586,9 @@ export class AdaptiveLightingController
   /**
    * It is not necessarily given, that we have the same time (or rather the correct time) as the HomeKit controller
    * who set up the transition schedule.
-   * Thus we record the delta between our current time and the the time send with the setup request.
+   * Thus we record the delta between our current time and the time sent with the setup request.
    * <code>timeOffset</code> is defined as <code>Date.now() - getAdaptiveLightingStartTimeOfTransition();</code>.
-   * So in the case were we actually have a correct local time, it most likely will be positive (due to network latency).
+   * So in the case where we actually have a correct local time, it most likely will be positive (due to network latency).
    * But of course it can also be negative.
    */
   public getAdaptiveLightingTimeOffset(): number {
@@ -614,8 +614,8 @@ export class AdaptiveLightingController
 
   /**
    * This method returns the interval (in milliseconds) in which the light should update its internal color temperature
-   * (aka changes it physical color).
-   * A lightbulb should ideally change this also when turned of in oder to have a smooth transition when turning the light on.
+   * (aka changes its physical color).
+   * A lightbulb should ideally change this also when turned off in order to have a smooth transition when turning the light on.
    *
    * Typically this evaluates to 60000 milliseconds (60 seconds).
    */
@@ -627,7 +627,7 @@ export class AdaptiveLightingController
   }
 
   /**
-   * Returns the minimum interval threshold (in milliseconds) a accessory may notify HomeKit controllers about a new
+   * Returns the minimum interval threshold (in milliseconds) an accessory may notify HomeKit controllers about a new
    * color temperature value via event notifications (what happens when you call {@link Characteristic.updateValue}).
    * Meaning the accessory should only send event notifications to subscribed HomeKit controllers at the specified interval.
    *
@@ -726,7 +726,7 @@ export class AdaptiveLightingController
       // It doesn't ensure that those race conditions do not happen anymore, but with a 1s delay it reduces the possibility by a bit
       setTimeout(() => {
         if (!this.activeTransition) {
-          return // was disabled in the mean time
+          return // was disabled in the meantime
         }
         this.scheduleNextUpdate(true)
       }, 1000).unref()
@@ -743,7 +743,7 @@ export class AdaptiveLightingController
    */
   private handleCharacteristicManualWritten(change: CharacteristicChange): void {
     if (change.reason === ChangeReason.WRITE && !(isAdaptiveLightingContext(change.context) && change.context.controller === this)) {
-      // we ignore write request which are the result of calls made to updateValue or sendEventNotification
+      // we ignore write requests which are the result of calls made to updateValue or sendEventNotification
       // or the result of a changed value returned by a read handler
       // or the change was done by the controller itself
 
@@ -904,11 +904,11 @@ export class AdaptiveLightingController
     /*
      * We set saturation and hue values BEFORE we call the ColorTemperature SET handler (via setValue).
      * First thought was so the API user could get the values in the SET handler of the color temperature characteristic.
-     * Do this is probably not really elegant cause this would only work when Adaptive Lighting is turned on
-     * an the accessory MUST in any case update the Hue/Saturation values on a ColorTemperature write
+     * Doing this is probably not really elegant because this would only work when Adaptive Lighting is turned on
+     * and the accessory MUST in any case update the Hue/Saturation values on a ColorTemperature write
      * (obviously only if Hue/Saturation characteristics are added to the service).
      *
-     * The clever thing about this though is that, that it prevents notifications from being sent for Hue and Saturation
+     * The clever thing about this though is that it prevents notifications from being sent for Hue and Saturation
      * outside the specified notifyIntervalThreshold (see below where notifications are manually sent).
      * As the dev will or must call something like updateValue to propagate the updated hue and saturation values
      * to all HomeKit clients (so that the color is reflected in the UI), HAP-NodeJS won't send notifications
@@ -924,11 +924,11 @@ export class AdaptiveLightingController
     }
 
     this.colorTemperatureCharacteristic?.handleSetRequest(temperature, undefined, context).catch((reason) => { // reason is HAPStatus code
-      debug('[%s] Failed to next adaptive lighting transition point: %d', this.lightbulb.displayName, reason)
+      debug('[%s] Failed to set the next adaptive lighting transition point: %d', this.lightbulb.displayName, reason)
     })
 
     if (!this.activeTransition) {
-      console.warn(`[${this.lightbulb.displayName}] Adaptive Lighting was probably disable my mistake by some call in `
+      console.warn(`[${this.lightbulb.displayName}] Adaptive Lighting was probably disabled by mistake by some call in `
         + 'the SET handler of the ColorTemperature characteristic! '
         + 'Please check that you don\'t call setValue/setCharacteristic on the Hue, Saturation or ColorTemperature characteristic!')
       return
