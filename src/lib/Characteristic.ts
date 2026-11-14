@@ -705,8 +705,15 @@ class ValidValuesIterable implements Iterable<number> {
         throw new Error(`Could not find valid iterator strategy for props: ${JSON.stringify(this.props)}`)
       }
 
-      for (let i = min; i <= max; i += stepValue) {
-        yield i
+      if (!(stepValue > 0)) {
+        stepValue = 1 // a step of zero or less would never reach the maximum
+      }
+
+      // Counted in whole steps, and rounded: adding 0.1 again and again drifts (0.30000000000000004, ...)
+      // and ends at 0.9999999999999999, one step short of a maximum of 1.
+      const steps = Math.floor(Number.parseFloat(((max - min) / stepValue).toFixed(9)))
+      for (let i = 0; i <= steps; i++) {
+        yield Number.parseFloat((min + i * stepValue).toFixed(9))
       }
     }
   }
@@ -2020,6 +2027,11 @@ export class Characteristic extends EventEmitter {
       } else if (!isNumericFormat(this.props.format)) {
         this.characteristicWarning(
           `Characteristic Property \`minStep\` can only be set for characteristics with numeric format, but not for ${this.props.format}`,
+          CharacteristicWarningType.ERROR_MESSAGE,
+        )
+      } else if (typeof props.minStep !== 'number' || !Number.isFinite(props.minStep) || props.minStep <= 0) {
+        this.characteristicWarning(
+          `Characteristic Property \`minStep\` must be a number above 0, but ${JSON.stringify(props.minStep)} was supplied. It is ignored.`,
           CharacteristicWarningType.ERROR_MESSAGE,
         )
       } else {

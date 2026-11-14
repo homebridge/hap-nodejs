@@ -668,6 +668,68 @@ describe('characteristic', () => {
       expect(result).toEqual([2, 4, 6, 8, 10])
     })
 
+    it('should iterate over a decimal minStep and end exactly on the maximum', () => {
+      const characteristic = createCharacteristicWithProps({
+        format: Formats.FLOAT,
+        perms: [Perms.PAIRED_READ],
+        minValue: 0,
+        maxValue: 1,
+        minStep: 0.1,
+      })
+
+      const result = Array.from(characteristic.validValuesIterator())
+      expect(result).toEqual([
+        0,
+        0.1,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1,
+      ])
+    })
+
+    it.each([0, -1, Number.NaN])('should come to an end when the props carry a minStep of %d', (minStep) => {
+      const characteristic = createCharacteristicWithProps({
+        format: Formats.FLOAT,
+        perms: [Perms.PAIRED_READ],
+        minValue: 0,
+        maxValue: 3,
+        minStep,
+      })
+
+      const result: number[] = []
+      for (const value of characteristic.validValuesIterator()) {
+        result.push(value)
+        if (result.length > 10) {
+          break // it never ended before
+        }
+      }
+      expect(result).toEqual([0, 1, 2, 3])
+    })
+
+    it.each([0, -1, Number.NaN, '2'])('should warn about and ignore a minStep of %j in setProps', (minStep) => {
+      const characteristic = createCharacteristicWithProps({
+        format: Formats.FLOAT,
+        perms: [Perms.PAIRED_READ],
+        minValue: 0,
+        maxValue: 3,
+        minStep: 0.5,
+      })
+      const warning = vi.fn()
+      characteristic.on(CharacteristicEventTypes.CHARACTERISTIC_WARNING, warning)
+
+      characteristic.setProps({ minStep: minStep as number })
+
+      expect(characteristic.props.minStep).toBe(0.5)
+      expect(warning).toHaveBeenCalledTimes(1)
+      expect(warning.mock.calls[0][1]).toContain('`minStep` must be a number above 0')
+    })
+
     it ('should iterate over validValues array definition', () => {
       const validValues = [1, 3, 4, 5, 8]
       const characteristic = createCharacteristicWithProps({
