@@ -60,7 +60,23 @@ describe('uuid', () => {
     const uuid = unparse(buffer, 5)
 
     const resultBuffer = Buffer.alloc(21, 'FF', 'hex')
-    write(uuid, resultBuffer, 5)
+    expect(write(uuid, resultBuffer, 5)).toBe(resultBuffer)
     expect(resultBuffer.toString('hex')).toBe(`ffffffffff${uuidBuffer.toString('hex')}`)
+  })
+
+  it('should refuse to read a uuid from a buffer which is too short', () => {
+    expect(() => unparse(uuidBuffer.subarray(0, 15)))
+      .toThrow(new RangeError('A UUID takes 16 bytes, but the buffer of 15 bytes has only 15 from offset 0 on'))
+    expect(() => unparse(uuidBuffer, 1))
+      .toThrow(new RangeError('A UUID takes 16 bytes, but the buffer of 16 bytes has only 15 from offset 1 on'))
+    expect(() => unparse(Buffer.alloc(2), 5))
+      .toThrow(new RangeError('A UUID takes 16 bytes, but the buffer of 2 bytes has only 0 from offset 5 on'))
+  })
+
+  it('should refuse to read a uuid from something which is not a buffer', () => {
+    // @ts-expect-error: only a Buffer is accepted
+    expect(() => unparse('cf47a128769a4563820311f307b1926d')).toThrow(new TypeError('A UUID can only be read from a Buffer'))
+    // @ts-expect-error: only a Buffer is accepted
+    expect(() => unparse(undefined)).toThrow(new TypeError('A UUID can only be read from a Buffer'))
   })
 })
