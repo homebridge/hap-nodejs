@@ -991,7 +991,7 @@ export class HAPServer extends EventEmitter {
           return
         }
 
-        const tlvList = [] as any[]
+        const tlvList: tlv.TLVEncodable[] = []
         data!.forEach((value: PairingInformation, index: number) => {
           if (index > 0) {
             tlvList.push(TLVValues.SEPARATOR, Buffer.alloc(0))

@@ -97,6 +97,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(accessory): replace any, ts-expect-error and needless non-null assertions with real types
 - refactor(service): drop three ts-expect-error and four needless non-null assertions
 - refactor(characteristic): drop a needless non-null assertion on the instance id
+- refactor(server): type the list of pairings sent to a controller instead of using any
 
 ### Homebridge Dependencies
 
