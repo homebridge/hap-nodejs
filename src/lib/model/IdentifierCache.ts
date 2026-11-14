@@ -1,4 +1,3 @@
-import crypto from 'node:crypto'
 import util from 'node:util'
 
 import { MacAddress } from '../../types.js'
@@ -16,7 +15,8 @@ import { HAPStorage } from './HAPStorage.js'
 export class IdentifierCache {
   _cache: Record<string, number> = {} // cache[key:string] = id:number
   _usedCache: Record<string, number> | null = null // for usage tracking and expiring old keys
-  _savedCacheHash = '' // for checking if new cache need to be saved
+  // true when the cache differs from the saved file, so save() does not have to compare the whole cache on every call
+  private dirty = true
 
   constructor(public username: MacAddress) {
   }
@@ -33,7 +33,13 @@ export class IdentifierCache {
     }
 
     // simply rotate in the new cache that was built during our normal getXYZ() calls.
-    this._cache = this._usedCache || this._cache
+    if (this._usedCache) {
+      // the new cache only holds keys of the old one, so a different number of keys means some of them expired
+      if (Object.keys(this._usedCache).length !== Object.keys(this._cache).length) {
+        this.dirty = true
+      }
+      this._cache = this._usedCache
+    }
     this._usedCache = null
   }
 
@@ -47,6 +53,9 @@ export class IdentifierCache {
   }
 
   setCache(key: string, value: number): number {
+    if (this._cache[key] !== value) {
+      this.dirty = true
+    }
     this._cache[key] = value
     // track this cache item if needed
     if (this._usedCache) {
@@ -91,15 +100,16 @@ export class IdentifierCache {
   }
 
   save(): void {
-    const newCacheHash = crypto.createHash('sha1').update(JSON.stringify(this._cache)).digest('hex') // calculate hash of new cache
-    if (newCacheHash !== this._savedCacheHash) { // check if cache need to be saved and proceed accordingly
-      const saved = {
-        cache: this._cache,
-      }
-      const key = IdentifierCache.persistKey(this.username)
-      HAPStorage.storage().setItemSync(key, saved)
-      this._savedCacheHash = newCacheHash // update hash of saved cache for future use
+    if (!this.dirty) {
+      return // called on every pass over the accessories, which rarely changes an id
     }
+
+    const saved = {
+      cache: this._cache,
+    }
+    const key = IdentifierCache.persistKey(this.username)
+    HAPStorage.storage().setItemSync(key, saved)
+    this.dirty = false
   }
 
   /**
@@ -116,8 +126,7 @@ export class IdentifierCache {
     if (saved) {
       const info = new IdentifierCache(username)
       info._cache = saved.cache
-      // calculate hash of the saved hash to decide in future if saving of new cache is needed
-      info._savedCacheHash = crypto.createHash('sha1').update(JSON.stringify(info._cache)).digest('hex')
+      info.dirty = false // the cache is what the file holds
       return info
     } else {
       return null
