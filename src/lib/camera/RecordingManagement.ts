@@ -5,6 +5,7 @@ import { EventEmitter } from 'node:events'
 
 import createDebug from 'debug'
 
+import { CharacteristicValue } from '../../types.js'
 import { Access, Characteristic, CharacteristicEventTypes } from '../Characteristic.js'
 import { CameraRecordingDelegate, StateChangeDelegate } from '../controller/index.js'
 import {
@@ -630,7 +631,11 @@ export class RecordingManagement {
     return this.selectedConfiguration.base64
   }
 
-  private handleSelectedCameraRecordingConfigurationWrite(value: any): void {
+  private handleSelectedCameraRecordingConfigurationWrite(value: CharacteristicValue): void {
+    if (typeof value !== 'string') {
+      throw new HapStatusError(HAPStatus.INVALID_VALUE_IN_REQUEST)
+    }
+
     const configuration = this.parseSelectedConfiguration(value)
 
     const changed = this.selectedConfiguration?.base64 !== value
@@ -638,9 +643,7 @@ export class RecordingManagement {
     hksvDebug('SelectedRecordingConfiguration write: changed=%s hasStateChangeDelegate=%s base64Len=%d',
       changed,
       !!this.stateChangeDelegate,
-      typeof value === 'string'
-        ? value.length
-        : -1)
+      value.length)
 
     this.selectedConfiguration = {
       parsed: configuration,
