@@ -4,6 +4,7 @@ import { Buffer } from 'node:buffer'
 
 import createDebug from 'debug'
 
+import { CharacteristicValue } from '../../types.js'
 import { Characteristic, CharacteristicEventTypes, CharacteristicSetCallback } from '../Characteristic.js'
 import { HAPStatus } from '../HAPServer.js'
 import { Service } from '../Service.js'
@@ -159,7 +160,12 @@ export class DataStreamManagement {
     return this
   }
 
-  private handleSetupDataStreamTransportWrite(value: any, callback: CharacteristicSetCallback, connection: HAPConnection) {
+  private handleSetupDataStreamTransportWrite(value: CharacteristicValue, callback: CharacteristicSetCallback, connection: HAPConnection) {
+    if (typeof value !== 'string') {
+      callback(HAPStatus.INVALID_VALUE_IN_REQUEST)
+      return
+    }
+
     const data = Buffer.from(value, 'base64')
     const objects = tlv.decode(data)
 
