@@ -129,7 +129,7 @@ function buildControllerOptions(streamingOptions: CameraStreamingOptions): Camer
   }
 }
 
-// matches the private const enums in RTPStreamManagement.ts
+// matches the private enums in RTPStreamManagement.ts
 const SetupEndpointsTypes = {
   SESSION_ID: 0x01,
   CONTROLLER_ADDRESS: 0x03,
