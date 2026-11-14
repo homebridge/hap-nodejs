@@ -64,7 +64,7 @@ export interface ControllerConstructor {
  * The constructor of a Controller should only initialize controller specific configuration and states
  * and MUST NOT create any services or characteristics.
  * Additionally, it must implement all necessary methods as noted below. Those methods will get called
- * when the accessory gets added to an Accessory or an Accessory is restored from disk.
+ * when the controller gets added to an Accessory or an Accessory is restored from disk.
  * @group Controller API
  */
 export interface Controller<M extends ControllerServiceMap = ControllerServiceMap> {
@@ -76,7 +76,7 @@ export interface Controller<M extends ControllerServiceMap = ControllerServiceMa
    * Note: The controller can choose to return the same identifier for all controllers of the same type.
    * This will result in the user only being able to add ONE instance of a Controller to an accessory.
    *
-   * Some predefined identifiers can be found in {@link ControllerIdentifier}.
+   * Some predefined identifiers can be found in {@link DefaultControllerType}.
    */
   controllerId(): ControllerIdentifier
 

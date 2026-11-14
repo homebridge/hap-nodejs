@@ -342,8 +342,8 @@ export enum RemoteControllerEvents {
   ACTIVE_IDENTIFIER_CHANGE = 'active-identifier-change',
 
   /**
-   * This event is emitted when a new target configuration is received. As we currently do not persistently store
-   * configured targets, this will be called at every startup for every Apple TV configured in the home.
+   * This event is emitted when a new target configuration is received.
+   * Configured targets are saved to disk, so it is not emitted again for them on startup.
    */
   TARGET_ADDED = 'target-add',
   /**
@@ -426,7 +426,7 @@ export class RemoteController<O = unknown> extends EventEmitter
   private audioStreamManagementService?: AudioStreamManagement
   private dataStreamManagement?: DataStreamManagement
 
-  private buttons: Record<number, number> = {} // internal mapping of buttonId to buttonType for supported buttons
+  private buttons: Record<number, number> = {} // internal mapping of buttonType to buttonId for supported buttons
   private readonly supportedConfiguration: string
   targetConfigurations: Map<number, TargetConfiguration> = new Map()
   private targetConfigurationsString = ''
@@ -930,8 +930,7 @@ export class RemoteController<O = unknown> extends EventEmitter
 
     const timestampTlv = tlv.encode(
       ButtonEvent.TIMESTAMP, tlv.writeVariableUIntLE(Date.now()),
-      // timestamp should be uint64. bigint though is only supported by node 10.4.0 and above
-      // thus we just interpret timestamp as a regular number
+      // timestamp should be uint64, but a regular number holds any millisecond timestamp exactly
     )
 
     const activeIdentifierTlv = tlv.encode(

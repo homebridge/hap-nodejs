@@ -66,7 +66,7 @@ export class AccessControlManagement extends EventEmitter {
   private accessLevel: AccessLevel = 0
 
   private passwordRequired = false
-  private password?: string // undefined if passwordRequired = false
+  private password?: string // kept when passwordRequired = false, but getPassword() does not return it then
 
   /**
    * Instantiates a new AccessControlManagement.

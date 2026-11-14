@@ -742,11 +742,10 @@ export class AdaptiveLightingController
    * @param change
    */
   private handleCharacteristicManualWritten(change: CharacteristicChange): void {
+    // we ignore changes which are the result of calls made to updateValue or sendEventNotification
+    // or the result of a changed value returned by a read handler
+    // or the change was done by the controller itself
     if (change.reason === ChangeReason.WRITE && !(isAdaptiveLightingContext(change.context) && change.context.controller === this)) {
-      // we ignore write requests which are the result of calls made to updateValue or sendEventNotification
-      // or the result of a changed value returned by a read handler
-      // or the change was done by the controller itself
-
       debug('[%s] Received a manual write to an characteristic (newValue: %d, oldValue: %d, reason: %s). Thus disabling adaptive lighting!',
         this.lightbulb.displayName, change.newValue, change.oldValue, change.reason)
       this.disableAdaptiveLighting()
