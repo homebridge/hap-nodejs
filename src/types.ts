@@ -155,26 +155,30 @@ export interface CharacteristicsReadRequest {
  * @group HAP Accessory Server
  */
 export interface PartialCharacteristicReadDataValue {
-  value: CharacteristicValue | null
+  'value': CharacteristicValue | null
 
-  status?: HAPStatus.SUCCESS
+  'status'?: HAPStatus.SUCCESS
 
   // type
-  type?: string // characteristics uuid
+  'type'?: string // characteristics uuid
 
   // metadata
-  format?: string
-  unit?: string
-  minValue?: number
-  maxValue?: number
-  minStep?: number
-  maxLen?: number
+  'format'?: string
+  'unit'?: string
+  'minValue'?: number
+  'maxValue'?: number
+  'minStep'?: number
+  'maxLen'?: number
+  'maxDataLen'?: number
+  'valid-values'?: number[]
+  'valid-values-range'?: [min: number, max: number]
+  'description'?: string
 
   // perms
-  perms?: Perms[]
+  'perms'?: Perms[]
 
   // event
-  ev?: boolean
+  'ev'?: boolean
 }
 
 /**

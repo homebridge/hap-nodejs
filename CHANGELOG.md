@@ -111,6 +111,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(remote): drop needless non-null assertions in the remote controller
 - refactor(datastream): drop needless non-null assertions in the data stream server
 - refactor(definitions): type the plist data in the generator and drop eleven ts-expect-error
+- refactor(types): add the missing optional metadata fields to PartialCharacteristicReadDataValue
 
 ### Homebridge Dependencies
 
