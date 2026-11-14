@@ -1309,9 +1309,49 @@ export class RemoteController extends EventEmitter
     this.targetControlManagementService = serviceMap.targetControlManagement
     this.targetControlService = serviceMap.targetControl
 
-    this.siriService = serviceMap.siri
-    this.audioStreamManagementService = serviceMap.audioStreamManagement
-    this.dataStreamManagement = new DataStreamManagement(serviceMap.dataStreamTransportManagement)
+    let modifiedServiceMap = false
+
+    if (this.audioSupported) { // the siri services should be present
+      this.siriService = serviceMap.siri
+      this.audioStreamManagementService = serviceMap.audioStreamManagement
+
+      if (!this.siriService) { // siri was enabled for a remote which was saved without it => create the service now
+        this.siriService = new Service.Siri('', '')
+        this.siriService.setCharacteristic(Characteristic.SiriInputType, Characteristic.SiriInputType.PUSH_BUTTON_TRIGGERED_APPLE_TV)
+
+        serviceMap.siri = this.siriService
+        modifiedServiceMap = true
+      }
+      if (!this.audioStreamManagementService) {
+        this.audioStreamManagementService = new Service.AudioStreamManagement('', '')
+        this.audioStreamManagementService.setCharacteristic(Characteristic.SupportedAudioStreamConfiguration, this.supportedAudioConfiguration)
+        this.audioStreamManagementService.setCharacteristic(Characteristic.SelectedAudioStreamConfiguration, this.selectedAudioConfigurationString)
+
+        serviceMap.audioStreamManagement = this.audioStreamManagementService
+        modifiedServiceMap = true
+      }
+
+      this.dataStreamManagement = new DataStreamManagement(serviceMap.dataStreamTransportManagement)
+      if (!serviceMap.dataStreamTransportManagement) {
+        serviceMap.dataStreamTransportManagement = this.dataStreamManagement.getService()
+        modifiedServiceMap = true
+      }
+
+      if (modifiedServiceMap) {
+        this.siriService.addLinkedService(this.dataStreamManagement.getService())
+        this.siriService.addLinkedService(this.audioStreamManagementService)
+      }
+    } else if (serviceMap.siri || serviceMap.audioStreamManagement || serviceMap.dataStreamTransportManagement) {
+      // the services were supplied, though siri isn't supported (anymore) => they need to be removed
+      delete serviceMap.siri
+      delete serviceMap.audioStreamManagement
+      delete serviceMap.dataStreamTransportManagement
+      modifiedServiceMap = true
+    }
+
+    if (modifiedServiceMap) { // serviceMap must only be returned if anything actually changed
+      return serviceMap
+    }
   }
 
   /**
