@@ -82,6 +82,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - chore(lint): allow typed event interfaces in the lint config instead of in 28 disable comments
 - refactor: add helpers to read the message and stack of a caught value
 - refactor(model): type caught errors as unknown in the accessory model
+- refactor(server): type caught errors as unknown in the server and the advertisers
 
 ### Homebridge Dependencies
 

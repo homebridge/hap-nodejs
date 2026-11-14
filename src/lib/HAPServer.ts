@@ -22,6 +22,7 @@ import {
   VoidCallback,
 } from '../types.js'
 import { AccessoryInfo, PairingInformation, PermissionTypes } from './model/AccessoryInfo.js'
+import { errorMessage, errorStack } from './util/errors.js'
 import { EventedHTTPServer, EventedHTTPServerEvent, HAPConnection, HAPEncryption, HAPUsername } from './util/eventedhttp.js'
 import * as hapCrypto from './util/hapCrypto.js'
 import { once } from './util/once.js'
@@ -406,7 +407,7 @@ export class HAPServer extends EventEmitter {
     try {
       this.httpServer.broadcastEvent(aid, iid, value, originator, immediateDelivery)
     } catch (error) {
-      console.warn(`[${this.accessoryInfo.username}] Error when sending event notifications: ${error.message}`)
+      console.warn(`[${this.accessoryInfo.username}] Error when sending event notifications: ${errorMessage(error)}`)
     }
   }
 
@@ -469,7 +470,7 @@ export class HAPServer extends EventEmitter {
         try {
           handler(connection, url, request, data, response)
         } catch (error) {
-          debug('[%s] Error executing route handler: %s', this.accessoryInfo.username, error.stack)
+          debug('[%s] Error executing route handler: %s', this.accessoryInfo.username, errorStack(error) ?? errorMessage(error))
           response.writeHead(HAPHTTPCode.INTERNAL_SERVER_ERROR, { 'Content-Type': HAPMimeTypes.HAP_JSON })
           response.end(JSON.stringify({ status: HAPStatus.RESOURCE_BUSY })) // resource busy try again, does somehow fit?
         }
@@ -546,7 +547,7 @@ export class HAPServer extends EventEmitter {
     try {
       tlvData = tlv.decode(data)
     } catch (error) {
-      debug('[%s] Pair-Setup: failed to decode TLV request: %s', this.accessoryInfo.username, error.message)
+      debug('[%s] Pair-Setup: failed to decode TLV request: %s', this.accessoryInfo.username, errorMessage(error))
       response.writeHead(HAPPairingHTTPCode.BAD_REQUEST, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.STATE, PairingStates.M2, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
       return
@@ -603,7 +604,7 @@ export class HAPServer extends EventEmitter {
       }
       srpServer.setA(A) // throws for a key the SRP exchange can not use, like one of only zero bytes
     } catch (err) {
-      debug('[%s] M3: Invalid request: %s', this.accessoryInfo.username, err.message)
+      debug('[%s] M3: Invalid request: %s', this.accessoryInfo.username, errorMessage(err))
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M4, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
       connection._pairSetupState = undefined
@@ -614,7 +615,7 @@ export class HAPServer extends EventEmitter {
     } catch (err) {
       // most likely the client supplied an incorrect pincode.
       this.unsuccessfulPairAttempts++
-      debug('[%s] Error while checking pincode: %s', this.accessoryInfo.username, err.message)
+      debug('[%s] Error while checking pincode: %s', this.accessoryInfo.username, errorMessage(err))
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M4, TLVValues.ERROR_CODE, TLVErrorCode.AUTHENTICATION))
       connection._pairSetupState = undefined
@@ -663,7 +664,7 @@ export class HAPServer extends EventEmitter {
     try {
       M5Packet = tlv.decode(plaintext)
     } catch (error) {
-      debug('[%s] M5: Failed to decode decrypted TLV payload: %s', this.accessoryInfo.username, error.message)
+      debug('[%s] M5: Failed to decode decrypted TLV payload: %s', this.accessoryInfo.username, errorMessage(error))
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M6, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
       connection._pairSetupState = undefined
@@ -752,7 +753,7 @@ export class HAPServer extends EventEmitter {
     try {
       tlvData = tlv.decode(data)
     } catch (error) {
-      debug('[%s] Pair-Verify: failed to decode TLV request: %s', this.accessoryInfo.username, error.message)
+      debug('[%s] Pair-Verify: failed to decode TLV request: %s', this.accessoryInfo.username, errorMessage(error))
       response.writeHead(HAPPairingHTTPCode.BAD_REQUEST, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.STATE, PairingStates.M2, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
       return
@@ -856,7 +857,7 @@ export class HAPServer extends EventEmitter {
     try {
       decoded = tlv.decode(plaintext)
     } catch (error) {
-      debug('[%s] M3: Failed to decode decrypted TLV payload: %s', this.accessoryInfo.username, error.message)
+      debug('[%s] M3: Failed to decode decrypted TLV payload: %s', this.accessoryInfo.username, errorMessage(error))
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.STATE, PairingStates.M4, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
       connection._pairVerifyState = undefined
@@ -919,7 +920,7 @@ export class HAPServer extends EventEmitter {
     try {
       objects = tlv.decode(data)
     } catch (error) {
-      debug('[%s] Pairings: failed to decode TLV request: %s', this.accessoryInfo.username, error.message)
+      debug('[%s] Pairings: failed to decode TLV request: %s', this.accessoryInfo.username, errorMessage(error))
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.STATE, PairingStates.M2, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
       return

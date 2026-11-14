@@ -12,6 +12,7 @@ import { SrpServer } from 'fast-srp-hap'
 
 import { CharacteristicEventNotification, EventNotification } from '../../internal-types.js'
 import { CharacteristicValue, Nullable, SessionIdentifier } from '../../types.js'
+import { errorMessage } from './errors.js'
 import * as hapCrypto from './hapCrypto.js'
 import { getOSLoopbackAddressIfAvailable } from './net-utils.js'
 import * as uuid from './uuid.js'
@@ -784,7 +785,7 @@ export class HAPConnection extends EventEmitter {
     try {
       data = this.decrypt(data)
     } catch (error) { // decryption and/or verification failed, disconnect the client
-      debugCon('[%s] Error occurred trying to decrypt incoming packet: %s', this.remoteAddress, error.message)
+      debugCon('[%s] Error occurred trying to decrypt incoming packet: %s', this.remoteAddress, errorMessage(error))
       this.close()
       return
     }
