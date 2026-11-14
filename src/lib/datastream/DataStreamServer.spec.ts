@@ -372,6 +372,24 @@ describe('dataStreamServer', () => {
       })
     })
 
+    it.each([
+      ['control', 'toString'],
+      ['control', 'constructor'],
+      ['toString', 'hello'],
+      ['__proto__', 'hello'],
+    ])('should answer the request %s/%s, named like an inherited property, as unhandled', (protocol, topic) => {
+      const session = identifiedSession()
+
+      session.socket.emit('data', encryptedFrame(session, messagePayload({ protocol, request: topic, id: 7 })))
+
+      expect(session.socket.write).toHaveBeenCalledTimes(2) // hello response + our answer
+      expect(sentHeader(session, 1)).toMatchObject({
+        response: topic,
+        id: 7,
+        status: HDSStatus.MISSING_PROTOCOL,
+      })
+    })
+
     it('should not answer an unhandled event or a request without an id', () => {
       const session = identifiedSession()
 

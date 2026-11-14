@@ -64,6 +64,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(datastream): leave no handler or timer behind for a request which could not be sent
 - fix(datastream): stop the timers and answer waiting requests when the socket closes
 - fix(camera): answer a snapshot request for a camera without streams instead of throwing
+- fix(datastream): answer a request named like an inherited object property as unhandled
 
 ### Homebridge Dependencies
 

@@ -918,7 +918,11 @@ export class DataStreamConnection extends EventEmitter {
         }
         delete this.responseHandlers[message.id!]
       } else {
-        const handler = this.protocolHandlers[message.protocol]
+        // Object.hasOwn(): the protocol and the topic are picked by the controller, and a name like "toString"
+        // or "constructor" must not find what every object inherits
+        const handler = Object.hasOwn(this.protocolHandlers, message.protocol)
+          ? this.protocolHandlers[message.protocol]
+          : undefined
         if (handler === undefined) {
           // send message to the server to check if there are some global handlers for it
           this.emit(DataStreamConnectionEvent.HANDLE_MESSAGE_GLOBALLY, message)
@@ -928,7 +932,7 @@ export class DataStreamConnection extends EventEmitter {
         if (message.type === MessageType.EVENT) {
           let eventHandler: EventHandler
           // eslint-disable-next-line no-cond-assign
-          if (!handler.eventHandler || !(eventHandler = handler.eventHandler[message.topic])) {
+          if (!handler.eventHandler || !Object.hasOwn(handler.eventHandler, message.topic) || !(eventHandler = handler.eventHandler[message.topic])) {
             debug('[%s] WARNING no event handler was found for message: %o', this.remoteAddress, message)
             return
           }
@@ -942,7 +946,7 @@ export class DataStreamConnection extends EventEmitter {
         } else if (message.type === MessageType.REQUEST) {
           let requestHandler: RequestHandler
           // eslint-disable-next-line no-cond-assign
-          if (!handler.requestHandler || !(requestHandler = handler.requestHandler[message.topic])) {
+          if (!handler.requestHandler || !Object.hasOwn(handler.requestHandler, message.topic) || !(requestHandler = handler.requestHandler[message.topic])) {
             debug('[%s] WARNING no request handler was found for message: %o', this.remoteAddress, message)
             this.respondToUnhandledRequest(message)
             return
