@@ -504,7 +504,7 @@ export class Accessory extends EventEmitter {
   private identificationRequest(paired: boolean, callback: IdentifyCallback) {
     debug('[%s] Identification request', this.displayName)
 
-    if (this.listeners(AccessoryEventTypes.IDENTIFY).length > 0) {
+    if (this.listenerCount(AccessoryEventTypes.IDENTIFY) > 0) {
       // allow implementors to identify this Accessory in whatever way is appropriate, and pass along
       // the standard callback for completion.
       this.emit(AccessoryEventTypes.IDENTIFY, paired, callback)
