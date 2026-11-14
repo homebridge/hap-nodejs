@@ -53,21 +53,21 @@ class LightControllerClass {
     return this.brightness
   }
 
-  setSaturation(saturation: CharacteristicValue) { // set brightness
+  setSaturation(saturation: CharacteristicValue) { // set saturation
     if (this.outputLogs) {
       console.log('Setting \'%s\' saturation to %s', this.name, saturation)
     }
     this.saturation = saturation
   }
 
-  getSaturation() { // get brightness
+  getSaturation() { // get saturation
     if (this.outputLogs) {
       console.log('\'%s\' saturation is %s', this.name, this.saturation)
     }
     return this.saturation
   }
 
-  setHue(hue: CharacteristicValue) { // set brightness
+  setHue(hue: CharacteristicValue) { // set hue
     if (this.outputLogs) {
       console.log('Setting \'%s\' hue to %s', this.name, hue)
     }
