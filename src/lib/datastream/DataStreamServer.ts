@@ -325,9 +325,8 @@ export class DataStreamServer extends EventEmitter {
       accessoryToControllerEncryptionKey,
       controllerToAccessoryEncryptionKey,
       accessoryKeySalt,
-      connectTimeout: setTimeout(() => this.timeoutPreparedSession(preparedSession), 10000),
+      connectTimeout: setTimeout(() => this.timeoutPreparedSession(preparedSession), 10000).unref(),
     }
-    preparedSession.connectTimeout!.unref()
     this.preparedSessions.push(preparedSession)
 
     this.checkTCPServerEstablished(preparedSession, (error) => {
@@ -461,7 +460,7 @@ export class DataStreamServer extends EventEmitter {
         this.preparedSessions.splice(index, 1)
       }
 
-      clearTimeout(identifiedSession.connectTimeout!)
+      clearTimeout(identifiedSession.connectTimeout)
       identifiedSession.connectTimeout = undefined
 
       // we have currently no experience with data stream connections, maybe it would be good to index active connections
@@ -482,7 +481,7 @@ export class DataStreamServer extends EventEmitter {
       separator = '-e-'
     } else if (message.type === MessageType.REQUEST) {
       separator = '-r-'
-      args.push(message.id!)
+      args.push(message.id)
     }
     args.push(message.message)
 
@@ -688,7 +687,7 @@ export class DataStreamConnection extends EventEmitter {
     // that hello is indeed the _first_ message received is verified in onSocketData(...)
     debug('[%s] Received hello message from client: %o', this.remoteAddress, message)
 
-    clearTimeout(this.helloTimer!)
+    clearTimeout(this.helloTimer)
     this.helloTimer = undefined
 
     this.state = ConnectionState.READY
@@ -900,7 +899,7 @@ export class DataStreamConnection extends EventEmitter {
         }
 
         try {
-          responseHandler(undefined, message.status!, message.message)
+          responseHandler(undefined, message.status, message.message)
         } catch (error) {
           debug('[%s] Error occurred while dispatching response handler for HDS message: %o', this.remoteAddress, message)
           debug(errorStack(error) ?? errorMessage(error))
