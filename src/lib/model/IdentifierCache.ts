@@ -26,6 +26,12 @@ export class IdentifierCache {
   }
 
   stopTrackingUsageAndExpireUnused(): void {
+    // The counter for the next accessory id is only touched when an id is handed out, so a pass without any bridged
+    // accessory would expire it, and an id HomeKit knows for a removed accessory would be given to a new one.
+    if (this._usedCache && this._cache['|nextAID'] !== undefined) {
+      this._usedCache['|nextAID'] = this._cache['|nextAID']
+    }
+
     // simply rotate in the new cache that was built during our normal getXYZ() calls.
     this._cache = this._usedCache || this._cache
     this._usedCache = null
