@@ -321,8 +321,9 @@ export enum AdaptiveLightingControllerEvents {
 }
 
 /**
+ * See {@link ActiveAdaptiveLightingTransition}.
+ *
  * @group Adaptive Lighting
- * see {@link ActiveAdaptiveLightingTransition}.
  */
 export interface AdaptiveLightingControllerUpdate {
   transitionStartMillis: number
