@@ -823,7 +823,7 @@ export class CameraController extends EventEmitter implements SerializableContro
    */
   configureServices(): void {
     if (this.microphoneService) {
-      this.microphoneService.getCharacteristic(Characteristic.Mute)!
+      this.microphoneService.getCharacteristic(Characteristic.Mute)
         .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
           callback(undefined, this.microphoneMuted)
         })
@@ -832,7 +832,7 @@ export class CameraController extends EventEmitter implements SerializableContro
           callback()
           this.emitMicrophoneChange()
         })
-      this.microphoneService.getCharacteristic(Characteristic.Volume)!
+      this.microphoneService.getCharacteristic(Characteristic.Volume)
         .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
           callback(undefined, this.microphoneVolume)
         })
@@ -844,7 +844,7 @@ export class CameraController extends EventEmitter implements SerializableContro
     }
 
     if (this.speakerService) {
-      this.speakerService.getCharacteristic(Characteristic.Mute)!
+      this.speakerService.getCharacteristic(Characteristic.Mute)
         .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
           callback(undefined, this.speakerMuted)
         })
@@ -853,7 +853,7 @@ export class CameraController extends EventEmitter implements SerializableContro
           callback()
           this.emitSpeakerChange()
         })
-      this.speakerService.getCharacteristic(Characteristic.Volume)!
+      this.speakerService.getCharacteristic(Characteristic.Volume)
         .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
           callback(undefined, this.speakerVolume)
         })
