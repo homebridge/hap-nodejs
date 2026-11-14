@@ -1,3 +1,5 @@
+import type { CharacteristicEventNotification, EventNotification, PairingStates } from '../../internal-types.js'
+
 /* global NodeJS */
 import assert from 'node:assert'
 import { Buffer } from 'node:buffer'
@@ -10,7 +12,6 @@ import { getNetAddress } from '@homebridge/ciao/lib/util/domain-formatter.js'
 import createDebug from 'debug'
 import { SrpServer } from 'fast-srp-hap'
 
-import { CharacteristicEventNotification, EventNotification } from '../../internal-types.js'
 import { CharacteristicValue, Nullable, SessionIdentifier } from '../../types.js'
 import { errorMessage } from './errors.js'
 import * as hapCrypto from './hapCrypto.js'
@@ -410,8 +411,8 @@ export class HAPConnection extends EventEmitter {
   username?: HAPUsername // username is unique to every user in the home, basically identifies an Apple ID
   encryption?: HAPEncryption // created in handlePairVerifyStepOne
   srpServer?: SrpServer
-  _pairSetupState?: number // TODO ensure those two states are always correctly reset?
-  _pairVerifyState?: number
+  _pairSetupState?: PairingStates
+  _pairVerifyState?: PairingStates
 
   private registeredEvents: Set<EventName> = new Set()
   private eventsTimer?: NodeJS.Timeout
