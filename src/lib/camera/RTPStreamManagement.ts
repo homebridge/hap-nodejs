@@ -1130,11 +1130,8 @@ export class RTPStreamManagement {
       '\nVideoPort: ', targetVideoPort,
       '\nAudioPort: ', targetAudioPort,
       '\nVideo Crypto: ', videoCryptoSuite,
-      '\nVideo Master Key: ', videoMasterKey,
-      '\nVideo Master Salt: ', videoMasterSalt,
       '\nAudio Crypto: ', audioCryptoSuite,
-      '\nAudio Master Key: ', audioMasterKey,
-      '\nAudio Master Salt: ', audioMasterSalt,
+      // the SRTP master keys and salts are left out on purpose: debug logs get posted in public
     )
 
     const prepareRequest: PrepareStreamRequest = {
