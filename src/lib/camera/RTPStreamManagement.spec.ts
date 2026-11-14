@@ -146,7 +146,7 @@ const SRTPParametersTypes = {
   MASTER_SALT: 0x03,
 } as const
 
-function buildSetupEndpointsTlv(withPorts = true): string {
+function buildSetupEndpointsTlv(withPorts = true, sessionId = '11111111-1111-1111-1111-111111111111'): string {
   const addressTlv = withPorts
     ? tlv.encode(
         AddressTypes.ADDRESS_VERSION, 0x00, // IPV4
@@ -164,7 +164,7 @@ function buildSetupEndpointsTlv(withPorts = true): string {
     SRTPParametersTypes.MASTER_SALT, Buffer.alloc(14),
   )
   const payload = tlv.encode(
-    SetupEndpointsTypes.SESSION_ID, uuid.write('11111111-1111-1111-1111-111111111111'),
+    SetupEndpointsTypes.SESSION_ID, uuid.write(sessionId),
     SetupEndpointsTypes.CONTROLLER_ADDRESS, addressTlv,
     SetupEndpointsTypes.VIDEO_SRTP_PARAMETERS, srtpTlv,
     SetupEndpointsTypes.AUDIO_SRTP_PARAMETERS, srtpTlv,
@@ -374,6 +374,59 @@ describe('rTPStreamManagement', () => {
     afterEach(() => {
       vi.restoreAllMocks()
       controller.handleFactoryReset()
+    })
+
+    it.each([
+      [
+        'an error',
+        (callback: PrepareStreamCallback) => callback(new Error('camera offline')),
+      ],
+      [
+        'a response',
+        (callback: PrepareStreamCallback) => callback(undefined, {
+          video: {
+            port: 5000,
+            ssrc: 1,
+            srtp_key: Buffer.alloc(16),
+            srtp_salt: Buffer.alloc(14),
+          },
+          audio: {
+            port: 5001,
+            ssrc: 2,
+            srtp_key: Buffer.alloc(16),
+            srtp_salt: Buffer.alloc(14),
+          },
+        }),
+      ],
+    ])('should ignore %s for a session which ended while it was prepared', async (_name, answer) => {
+      const rtp = controller.streamManagements[0] as RTPStreamManagement
+      const prepareCallbacks: PrepareStreamCallback[] = []
+      const prepareStream = (_request: unknown, callback: PrepareStreamCallback) => {
+        prepareCallbacks.push(callback)
+      }
+      vi.spyOn(MockDelegate.prototype, 'prepareStream').mockImplementation(prepareStream as () => void)
+      const sessionA = '11111111-1111-1111-1111-111111111111'
+      const sessionB = '22222222-2222-2222-2222-222222222222'
+      const callbackA = vi.fn()
+      const callbackB = vi.fn()
+
+      // @ts-expect-error: private method access
+      rtp.handleSetupEndpoints(buildSetupEndpointsTlv(true, sessionA), callbackA, buildMockConnection())
+      await vi.waitFor(() => expect(prepareCallbacks).toHaveLength(1))
+      // @ts-expect-error: private method access
+      rtp.handleSessionClosed() // e.g. the HAP connection closed while the delegate is still preparing
+      // @ts-expect-error: private method access
+      rtp.handleSetupEndpoints(buildSetupEndpointsTlv(true, sessionB), callbackB, buildMockConnection())
+      await vi.waitFor(() => expect(prepareCallbacks).toHaveLength(2))
+      const responseBefore = (rtp as any).setupEndpointsResponse
+
+      answer(prepareCallbacks[0]) // the late answer for the first session
+
+      expect(callbackA).toHaveBeenCalledExactlyOnceWith(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
+      expect(callbackB).not.toHaveBeenCalled()
+      expect(rtp.sessionIdentifier).toEqual(sessionB)
+      expect(rtp.streamStatus).toBe(1) // StreamingStatus.IN_USE
+      expect((rtp as any).setupEndpointsResponse).toBe(responseBefore)
     })
 
     it('should answer with an error when a delayed response is missing the audio info', async () => {

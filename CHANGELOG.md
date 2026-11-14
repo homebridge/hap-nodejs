@@ -56,6 +56,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): ignore a recording acknowledgment for another stream
 - fix(camera): add a motion or occupancy sensor which was enabled for a saved camera
 - fix(camera): leave the streaming options of the plugin unchanged
+- fix(camera): ignore a prepared stream which arrives after its session has ended
 
 ### Homebridge Dependencies
 
