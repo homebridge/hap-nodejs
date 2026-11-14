@@ -2793,6 +2793,10 @@ export class Characteristic extends EventEmitter {
           throw new TypeError(`Client supplied invalid type for ${this.props.format}: "${value}" (${typeof value})`)
         }
 
+        if (isIntegerNumericFormat(this.props.format) && !Number.isInteger(value)) {
+          throw new TypeError(`Client supplied a value of ${value}, which is not a whole number, for ${this.props.format}`)
+        }
+
         const numericMin = maxWithUndefined(this.props.minValue, numericLowerBound(this.props.format))
         const numericMax = minWithUndefined(this.props.maxValue, numericUpperBound(this.props.format))
 
