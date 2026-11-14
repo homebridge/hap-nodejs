@@ -1,7 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
-import { Characteristic } from './Characteristic.js'
+import { Characteristic, CharacteristicEventTypes } from './Characteristic.js'
 import { SerializedService, Service } from './Service.js'
+import { HAPConnection } from './util/eventedhttp.js'
 import * as uuid from './util/uuid.js'
 
 function createService() {
@@ -147,6 +148,37 @@ describe('service', () => {
       const service = Service.deserialize(json)
 
       expect(service instanceof Service.Speaker).toBeTruthy()
+    })
+  })
+
+  describe('#toHAP', () => {
+    it('should not keep the process alive while it waits for a slow read handler', async () => {
+      vi.useFakeTimers()
+      const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout')
+      try {
+        const service = new Service.Switch('Slow')
+        service.iid = 8
+        let iid = 9
+        for (const characteristic of service.characteristics) {
+          characteristic.iid = iid++
+        }
+        service.on('characteristic-warning', () => undefined)
+        service.getCharacteristic(Characteristic.On).on(CharacteristicEventTypes.GET, () => undefined) // never answers
+
+        const response = service.toHAP({} as HAPConnection)
+        expect(setTimeoutSpy).toHaveBeenCalledTimes(1)
+        expect(setTimeoutSpy.mock.results[0].value.hasRef()).toBe(false) // the slow warning
+
+        await vi.advanceTimersByTimeAsync(3000)
+        expect(setTimeoutSpy).toHaveBeenCalledTimes(2)
+        expect(setTimeoutSpy.mock.results[1].value.hasRef()).toBe(false) // the timeout
+
+        await vi.advanceTimersByTimeAsync(6000)
+        await expect(response).resolves.toMatchObject({ iid: 8 })
+      } finally {
+        setTimeoutSpy.mockRestore()
+        vi.useRealTimers()
+      }
     })
   })
 })

@@ -883,6 +883,7 @@ export class AdaptiveLightingController
         this.lightbulb.displayName, temperature, adjustmentMultiplier)
       if (!dryRun) {
         this.updateTimeout = setTimeout(this.scheduleNextUpdate.bind(this), Math.max(MINIMUM_UPDATE_INTERVAL, this.activeTransition.updateInterval))
+        this.updateTimeout.unref()
       }
       return
     }
@@ -958,6 +959,7 @@ export class AdaptiveLightingController
 
     if (!dryRun) {
       this.updateTimeout = setTimeout(this.scheduleNextUpdate.bind(this), Math.max(MINIMUM_UPDATE_INTERVAL, this.activeTransition.updateInterval))
+      this.updateTimeout.unref() // the next update must not keep the process alive
     }
   }
 

@@ -154,6 +154,7 @@ export class EventedHTTPServer extends EventEmitter {
     // without a connection left to time out, the next connection which reaches the limit starts the timer again
     if (this.connections.size >= EventedHTTPServer.CONNECTION_TIMEOUT_LIMIT && nextTimeout !== Infinity) {
       this.connectionIdleTimeout = setTimeout(this.scheduleNextConnectionIdleTimeout.bind(this), nextTimeout)
+      this.connectionIdleTimeout.unref() // the server socket keeps the process alive, this check must not
     }
   }
 

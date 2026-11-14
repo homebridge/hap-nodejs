@@ -890,7 +890,9 @@ export class Service extends EventEmitter {
           missingCharacteristics.clear()
           resolve(service)
         }, 6000)
+        timeout.unref()
       }, 3000)
+      timeout.unref() // a slow read handler must not keep the process alive
 
       for (const characteristic of this.characteristics) {
         missingCharacteristics.add(characteristic)
