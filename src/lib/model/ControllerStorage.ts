@@ -17,7 +17,7 @@ interface StorageLayout {
 }
 
 interface StoredControllerData {
-  type: ControllerIdentifier // this field is called type out of history
+  type: ControllerIdentifier // this field is called type for historical reasons
   controllerData: ControllerData
 }
 
@@ -244,7 +244,7 @@ export class ControllerStorage {
   }
 
   /**
-   * Called when this particular Storage object is feed with data loaded from disk.
+   * Called when this particular Storage object is fed with data loaded from disk.
    * This method is only called once.
    *
    * @param data - array of {@link StoredControllerData}. undefined if nothing was stored on disk for this particular storage object

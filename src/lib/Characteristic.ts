@@ -2031,7 +2031,7 @@ export class Characteristic extends EventEmitter {
       } else {
         if (props.minStep < 1 && isIntegerNumericFormat(this.props.format)) {
           this.characteristicWarning('Characteristic Property `minStep` was set to a value lower than 1, '
-            + `this will have no effect on format \`${this.props.format}`)
+            + `this will have no effect on format \`${this.props.format}\``)
         }
 
         this.props.minStep = props.minStep
@@ -2093,7 +2093,7 @@ export class Characteristic extends EventEmitter {
       if (this.props.minValue > this.props.maxValue) { // see https://github.com/homebridge/HAP-NodeJS/issues/690
         this.props.minValue = undefined
         this.props.maxValue = undefined
-        throw new Error(`Error setting CharacteristicsProps for '${this.displayName}': 'minValue' cannot be greater or equal the 'maxValue'!`)
+        throw new Error(`Error setting CharacteristicsProps for '${this.displayName}': 'minValue' cannot be greater than 'maxValue'!`)
       }
     }
 
@@ -2113,7 +2113,7 @@ export class Characteristic extends EventEmitter {
       // - If the characteristic is marked as erroneous the value is not considered valid anyway, and we must not remove the `statusCode`.
       // - Special case for `ProgrammableSwitchEvent` where every change in value is considered an event which would result in ghost button presses
 
-      // validateUserInput when called from setProps is intended to clamp value withing allowed range. It is why warnings should not be displayed.
+      // validateUserInput when called from setProps is intended to clamp the value within the allowed range. That is why warnings should not be displayed.
       const correctedValue = this.validateUserInput(this.value, CharacteristicWarningType.DEBUG_MESSAGE)
 
       if (correctedValue !== this.value) {
@@ -2135,7 +2135,7 @@ export class Characteristic extends EventEmitter {
    *    {@link CharacteristicProps.minStep})
    *  And lastly you can specify a range via {@link CharacteristicProps.validValueRanges}
    *  Implicitly a valid value range is predefined for characteristics with Format {@link Formats.UINT8}, {@link Formats.UINT16},
-   *    {@link Formats.UINT32} and {@link Formats.UINT64}: starting by zero to their respective maximum number
+   *    {@link Formats.UINT32} and {@link Formats.UINT64}: starting at zero up to their respective maximum number
    *
    * The method will automatically detect which type of valid values definition is used and provide
    * the correct Iterator for that case.
@@ -2398,7 +2398,7 @@ export class Characteristic extends EventEmitter {
   }
 
   /**
-   * Called when a HAP requests wants to know the current value of the characteristic.
+   * Called when a HAP request wants to know the current value of the characteristic.
    *
    * @param connection - The HAP connection from which the request originated from.
    * @param context - Deprecated parameter. There for backwards compatibility.
@@ -2535,7 +2535,7 @@ export class Characteristic extends EventEmitter {
   }
 
   /**
-   * Called when a HAP requests update the current value of the characteristic.
+   * Called when a HAP request updates the current value of the characteristic.
    *
    * @param value - The updated value
    * @param connection - The connection from which the request originated from
@@ -2693,7 +2693,7 @@ export class Characteristic extends EventEmitter {
   }
 
   /**
-   * Called once a HomeKit controller unsubscribe to events of this characteristic or a HomeKit controller
+   * Called once a HomeKit controller unsubscribes from events of this characteristic or a HomeKit controller
    * which was subscribed to this characteristic disconnects.
    * @private
    */
@@ -2880,11 +2880,11 @@ export class Characteristic extends EventEmitter {
        * A short disclaimer here.
        * null is actually a perfectly valid value for characteristics to have.
        * The Home app will show "no response" for some characteristics for which it can't handle null
-       * but ultimately its valid and the developers decision what the return.
-       * BUT: out of history hap-nodejs did replace null with the last known value and thus
-       * homebridge devs started to adopting this method as a way of not changing the value in a GET handler.
+       * but ultimately it's valid and the developer's decision what to return.
+       * BUT: for historical reasons hap-nodejs did replace null with the last known value and thus
+       * homebridge devs started adopting this method as a way of not changing the value in a GET handler.
        * As an intermediate step we kept the behavior but added a warning printed to the console.
-       * In a future update we will do the breaking change of return null below!
+       * In a future update we will do the breaking change of returning null below!
        */
 
       if (this.UUID.endsWith(BASE_UUID)) { // we have an apple defined characteristic (at least assuming nobody else uses the UUID namespace)

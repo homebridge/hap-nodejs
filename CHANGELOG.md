@@ -152,6 +152,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - test: check that every module loads on its own now that no const enum is left
 - build: forbid new const enums in the lint config and drop the preserveConstEnums option
 - docs(server): fix spelling mistakes in comments and messages
+- docs(model): fix spelling mistakes in comments and messages
 
 ### Homebridge Dependencies
 

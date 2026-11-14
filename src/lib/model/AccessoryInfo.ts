@@ -143,7 +143,7 @@ export class AccessoryInfo {
 
   /**
    * Remove a paired client from memory.
-   * @param connection - the session of the connection initiated the removal of the pairing
+   * @param connection - the session of the connection which initiated the removal of the pairing
    * @param {string} username
    */
   public removePairedClient(connection: HAPConnection, username: HAPUsername): void {
@@ -198,7 +198,7 @@ export class AccessoryInfo {
 
   /**
    * Checks based on the current accessory configuration if the current configuration number needs to be incremented.
-   * Additionally, if desired, it checks if the firmware version was incremented (aka the HAP-NodeJS) version did grow.
+   * Additionally, if desired, it checks if the firmware version was incremented (aka the HAP-NodeJS version did grow).
    *
    * @param configuration - The current accessory configuration.
    * @param checkFirmwareIncrement
