@@ -949,6 +949,7 @@ export class RecordingManagement {
   handleFactoryReset(): void {
     hksvDebug('handleFactoryReset: clearing selectedConfiguration and resetting recording state')
     this.selectedConfiguration = undefined
+    this.recordingActive = false // updateCharacteristic below does not run the set handler which keeps this in step
     this.recordingManagementService.updateCharacteristic(Characteristic.Active, false)
     this.recordingManagementService.updateCharacteristic(Characteristic.RecordingAudioActive, false)
 
