@@ -436,6 +436,7 @@ export class AvahiAdvertiser extends EventEmitter implements Advertiser {
   private bus?: MessageBus
   private avahiServerInterface?: DBusInterface
   private path?: string
+  private started = false
 
   private readonly stateChangeHandler: (state: AvahiServerState) => void
 
@@ -471,22 +472,37 @@ export class AvahiAdvertiser extends EventEmitter implements Advertiser {
 
     debug(`Starting to advertise '${this.accessoryInfo.displayName}' using Avahi backend!`)
 
-    this.path = await AvahiAdvertiser.avahiInvoke(this.bus, '/', 'Server', 'EntryGroupNew') as string
-    await AvahiAdvertiser.avahiInvoke(this.bus, this.path, 'EntryGroup', 'AddService', {
-      body: [
-        -1, // interface
-        -1, // protocol
-        0, // flags
-        this.accessoryInfo.displayName, // name
-        '_hap._tcp', // type
-        '', // domain
-        '', // host
-        this.port, // port
-        this.createTxt(), // txt
-      ],
-      signature: 'iiussssqaay',
-    })
-    await AvahiAdvertiser.avahiInvoke(this.bus, this.path, 'EntryGroup', 'Commit')
+    this.started = true
+    const bus = this.bus
+
+    // When Avahi reports "running" again without having been restarted, the old group still holds our name.
+    // After a real restart it is gone, and freeing it just fails.
+    await this.freeEntryGroup(bus)
+
+    const path = await AvahiAdvertiser.avahiInvoke(bus, '/', 'Server', 'EntryGroupNew') as string
+    try {
+      await AvahiAdvertiser.avahiInvoke(bus, path, 'EntryGroup', 'AddService', {
+        body: [
+          -1, // interface
+          -1, // protocol
+          0, // flags
+          this.accessoryInfo.displayName, // name
+          '_hap._tcp', // type
+          '', // domain
+          '', // host
+          this.port, // port
+          this.createTxt(), // txt
+        ],
+        signature: 'iiussssqaay',
+      })
+      await AvahiAdvertiser.avahiInvoke(bus, path, 'EntryGroup', 'Commit')
+    } catch (error) {
+      // don't keep a group which doesn't hold our service: later txt updates would go to it
+      await AvahiAdvertiser.avahiInvoke(bus, path, 'EntryGroup', 'Free')
+        .catch(reason => debug(`Freeing the unused Avahi entry group failed: ${reason}`))
+      throw error
+    }
+    this.path = path
 
     try {
       if (!this.avahiServerInterface) {
@@ -510,7 +526,7 @@ export class AvahiAdvertiser extends EventEmitter implements Advertiser {
    * @param state - The state the server changed into {@see AvahiServerState}.
    */
   private handleStateChangedEvent(state: AvahiServerState): void {
-    if (state === AvahiServerState.RUNNING && this.path) {
+    if (state === AvahiServerState.RUNNING && this.started) {
       debug('Found Avahi daemon to have restarted!')
       this.startAdvertising()
         .catch(reason => console.error(`Could not (re-)create mDNS advertisement. The HAP-Server won't be discoverable: ${reason}`))
@@ -546,20 +562,26 @@ export class AvahiAdvertiser extends EventEmitter implements Advertiser {
     }
   }
 
+  private async freeEntryGroup(bus: MessageBus): Promise<void> {
+    if (this.path) {
+      const path = this.path
+      this.path = undefined
+      try {
+        await AvahiAdvertiser.avahiInvoke(bus, path, 'EntryGroup', 'Free')
+      } catch (error) {
+        // Typically, this fails if e.g. avahi service was stopped in the meantime.
+        debug(`Destroying Avahi advertisement failed: ${error}`)
+      }
+    }
+  }
+
   public async destroy(): Promise<void> {
     if (!this.bus) {
       throw new Error('Tried to destroy Avahi advertisement on a destroyed advertiser!')
     }
 
-    if (this.path) {
-      try {
-        await AvahiAdvertiser.avahiInvoke(this.bus, this.path, 'EntryGroup', 'Free')
-      } catch (error) {
-        // Typically, this fails if e.g. avahi service was stopped in the meantime.
-        debug(`Destroying Avahi advertisement failed: ${error}`)
-      }
-      this.path = undefined
-    }
+    this.started = false
+    await this.freeEntryGroup(this.bus)
 
     if (this.avahiServerInterface) {
       this.avahiServerInterface.removeListener('StateChanged', this.stateChangeHandler)

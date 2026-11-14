@@ -15,6 +15,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(advertiser): log a failed systemd-resolved update instead of crashing the process
 - fix(advertiser): run systemd-resolved registrations one at a time so none is left behind
 - fix(advertiser): register names with a slash or percent sign with systemd-resolved
+- fix(advertiser): free the old avahi entry group before registering again
 
 ### Homebridge Dependencies
 
