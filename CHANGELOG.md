@@ -72,6 +72,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(hap-status-error): let it be subclassed and name it HapStatusError
 - fix(characteristic): word the too short model or serial number warning without the warning type
 - fix(characteristic): copy the props in replaceBy instead of sharing them
+- fix(characteristic): leave the object passed to setProps unchanged
 
 ### Homebridge Dependencies
 
