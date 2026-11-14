@@ -17,14 +17,25 @@
 HAP-NodeJS is an implementation of the HomeKit Accessory Server as specified in the HomeKit Accessory Protocol (HAP),
 which is defined by Apple as part of the HomeKit Framework.
 
-HAP-NodeJS is intended to be used as a library to easily create your own HomeKit Accessory on a Raspberry Pi,
-Intel Edison, or any other platform that can run Node.js :)  
+HAP-NodeJS is intended to be used as a library to easily create your own HomeKit Accessory on a Raspberry Pi
+or any other platform that can run Node.js :)  
 If you are searching for a pluggable HomeKit bridge with over a thousand community driven plugins to bring HomeKit
 support to devices which do not support HomeKit out of the box, you may want to look at the
 [homebridge][project-homebridge] project (which also uses HAP-NodeJS internally).
 
 The implementation tries to follow the HAP specification as close as it can, but may differ in some cases.
 HAP-NodeJS is not an Apple certified HAP implementation, as this is only available to members of the MFi program.
+
+## Installation
+
+```sh
+npm install @homebridge/hap-nodejs
+```
+
+HAP-NodeJS needs Node.js `^22.12.0 || ^24 || ^26`.
+
+The package is an ES module. Importing it works as usual, including `import hap from '@homebridge/hap-nodejs'`.
+CommonJS code can still `require('@homebridge/hap-nodejs')` on the Node.js versions above.
 
 ## Getting started
 
@@ -57,8 +68,6 @@ See the FAQ on how to enable [debug output][faq-debug] for HAP-NodeJS.
 Special thanks to [Alex Skalozub][link-alex-skalozub], who reverse-engineered the server side HAP.
 ~~You can find his research [here][link-homekit-research].~~
 (Sadly, on Nov 4 2014, Apple sent the [DMCA][link-apple-dmca] request to GitHub to remove the research.)
-
-[There](https://www.instagram.com/p/t4cPlcDksQ/) is a video demo running this project on Intel Edison.
 
 If you are interested in HAP over BTLE, you might want to check [this][link-hap-over-btle].
 
