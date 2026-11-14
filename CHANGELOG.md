@@ -175,6 +175,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - docs(typedoc): stop a text line after a group tag creating a second adaptive lighting group
 - docs(typedoc): drop the stale MulticastOptions entry from the typedoc config
 - fix(core): log the start of the library under the debug name HAP-NodeJS:Init, not Advertiser
+- build: set moduleResolution to NodeNext like module and drop three options which are defaults now
 
 ### Homebridge Dependencies
 
