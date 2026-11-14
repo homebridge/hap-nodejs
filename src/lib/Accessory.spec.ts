@@ -45,7 +45,7 @@ import { awaitEventOnce, PromiseTimeout } from './util/promise-utils.js'
 import * as uuid from './util/uuid.js'
 import { toShortForm } from './util/uuid.js'
 
-describe('accessory', () => {
+describe('Accessory', () => {
   const TEST_DISPLAY_NAME = 'Test Accessory'
   const TEST_UUID = uuid.generate('HAP-NODEJS-TEST-ACCESSORY!')
 
@@ -1731,7 +1731,7 @@ describe('accessory', () => {
       })
     })
 
-    describe('aid.iid format validation in handleHAPConnectionClosed (fix ec93c504)', () => {
+    describe('aid.iid format validation in handleHAPConnectionClosed', () => {
       it('should skip registered events without a dot separator', () => {
         const clearMock = vi.fn()
         const mockConnection = {
@@ -1758,7 +1758,7 @@ describe('accessory', () => {
       })
     })
 
-    describe('non-null assertions in accessory lookups (fix 03b49f9f)', () => {
+    describe('non-null assertions in accessory lookups', () => {
       it('slow read / timeout warning should not crash for unknown aid.iid in request', async () => {
         vi.useFakeTimers()
 

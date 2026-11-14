@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { HAPStatus } from '../HAPServer.js'
 import { HapStatusError } from './hapStatusError.js'
 
-describe('hapStatusError', () => {
+describe('HapStatusError', () => {
   beforeEach(() => {
     vi.resetAllMocks()
   })

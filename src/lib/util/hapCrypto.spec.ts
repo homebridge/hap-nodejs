@@ -57,7 +57,7 @@ describe('hapCrypto', () => {
     })
   })
 
-  describe('hKDF', () => {
+  describe('HKDF', () => {
     it('should calculate test vector correctly', () => {
       const ikm = fromHex('0b0b0b0b 0b0b0b0b 0b0b0b0b 0b0b0b0b 0b0b0b0b 0b0b')
       const salt = fromHex('00010203 04050607 08090a0b 0c')

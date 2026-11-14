@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { HAPStatus } from '../HAPServer.js'
 import { DataStreamManagement } from './DataStreamManagement.js'
 
-describe('dataStreamManagement', () => {
+describe('DataStreamManagement', () => {
   it('should reject a setup write which is not a string as an invalid value', () => {
     const management = new DataStreamManagement()
     const callback = vi.fn()

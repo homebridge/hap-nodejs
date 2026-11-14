@@ -5,1550 +5,1550 @@ import { Characteristic } from '../Characteristic.js'
 
 import './index.js'
 
-describe('characteristicDefinitions', () => {
-  describe('accessCodeControlPoint', () => {
+describe('CharacteristicDefinitions', () => {
+  describe('AccessCodeControlPoint', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.AccessCodeControlPoint()).not.toThrow()
     })
   })
 
-  describe('accessCodeSupportedConfiguration', () => {
+  describe('AccessCodeSupportedConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.AccessCodeSupportedConfiguration()).not.toThrow()
     })
   })
 
-  describe('accessControlLevel', () => {
+  describe('AccessControlLevel', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.AccessControlLevel()).not.toThrow()
     })
   })
 
-  describe('accessoryFlags', () => {
+  describe('AccessoryFlags', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.AccessoryFlags()).not.toThrow()
     })
   })
 
-  describe('accessoryIdentifier', () => {
+  describe('AccessoryIdentifier', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.AccessoryIdentifier()).not.toThrow()
     })
   })
 
-  describe('active', () => {
+  describe('Active', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Active()).not.toThrow()
     })
   })
 
-  describe('activeIdentifier', () => {
+  describe('ActiveIdentifier', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ActiveIdentifier()).not.toThrow()
     })
   })
 
-  describe('activityInterval', () => {
+  describe('ActivityInterval', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ActivityInterval()).not.toThrow()
     })
   })
 
-  describe('administratorOnlyAccess', () => {
+  describe('AdministratorOnlyAccess', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.AdministratorOnlyAccess()).not.toThrow()
     })
   })
 
-  describe('airParticulateDensity', () => {
+  describe('AirParticulateDensity', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.AirParticulateDensity()).not.toThrow()
     })
   })
 
-  describe('airParticulateSize', () => {
+  describe('AirParticulateSize', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.AirParticulateSize()).not.toThrow()
     })
   })
 
-  describe('airPlayEnable', () => {
+  describe('AirPlayEnable', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.AirPlayEnable()).not.toThrow()
     })
   })
 
-  describe('airQuality', () => {
+  describe('AirQuality', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.AirQuality()).not.toThrow()
     })
   })
 
-  describe('appMatchingIdentifier', () => {
+  describe('AppMatchingIdentifier', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.AppMatchingIdentifier()).not.toThrow()
     })
   })
 
-  describe('assetUpdateReadiness', () => {
+  describe('AssetUpdateReadiness', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.AssetUpdateReadiness()).not.toThrow()
     })
   })
 
-  describe('audioFeedback', () => {
+  describe('AudioFeedback', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.AudioFeedback()).not.toThrow()
     })
   })
 
-  describe('batteryLevel', () => {
+  describe('BatteryLevel', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.BatteryLevel()).not.toThrow()
     })
   })
 
-  describe('brightness', () => {
+  describe('Brightness', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Brightness()).not.toThrow()
     })
   })
 
-  describe('buttonEvent', () => {
+  describe('ButtonEvent', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ButtonEvent()).not.toThrow()
     })
   })
 
-  describe('cameraOperatingModeIndicator', () => {
+  describe('CameraOperatingModeIndicator', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CameraOperatingModeIndicator()).not.toThrow()
     })
   })
 
-  describe('carbonDioxideDetected', () => {
+  describe('CarbonDioxideDetected', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CarbonDioxideDetected()).not.toThrow()
     })
   })
 
-  describe('carbonDioxideLevel', () => {
+  describe('CarbonDioxideLevel', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CarbonDioxideLevel()).not.toThrow()
     })
   })
 
-  describe('carbonDioxidePeakLevel', () => {
+  describe('CarbonDioxidePeakLevel', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CarbonDioxidePeakLevel()).not.toThrow()
     })
   })
 
-  describe('carbonMonoxideDetected', () => {
+  describe('CarbonMonoxideDetected', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CarbonMonoxideDetected()).not.toThrow()
     })
   })
 
-  describe('carbonMonoxideLevel', () => {
+  describe('CarbonMonoxideLevel', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CarbonMonoxideLevel()).not.toThrow()
     })
   })
 
-  describe('carbonMonoxidePeakLevel', () => {
+  describe('CarbonMonoxidePeakLevel', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CarbonMonoxidePeakLevel()).not.toThrow()
     })
   })
 
-  describe('cCAEnergyDetectThreshold', () => {
+  describe('CCAEnergyDetectThreshold', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CCAEnergyDetectThreshold()).not.toThrow()
     })
   })
 
-  describe('cCASignalDetectThreshold', () => {
+  describe('CCASignalDetectThreshold', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CCASignalDetectThreshold()).not.toThrow()
     })
   })
 
-  describe('characteristicValueActiveTransitionCount', () => {
+  describe('CharacteristicValueActiveTransitionCount', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CharacteristicValueActiveTransitionCount()).not.toThrow()
     })
   })
 
-  describe('characteristicValueTransitionControl', () => {
+  describe('CharacteristicValueTransitionControl', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CharacteristicValueTransitionControl()).not.toThrow()
     })
   })
 
-  describe('chargingState', () => {
+  describe('ChargingState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ChargingState()).not.toThrow()
     })
   })
 
-  describe('closedCaptions', () => {
+  describe('ClosedCaptions', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ClosedCaptions()).not.toThrow()
     })
   })
 
-  describe('colorTemperature', () => {
+  describe('ColorTemperature', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ColorTemperature()).not.toThrow()
     })
   })
 
-  describe('configurationState', () => {
+  describe('ConfigurationState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ConfigurationState()).not.toThrow()
     })
   })
 
-  describe('configuredName', () => {
+  describe('ConfiguredName', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ConfiguredName()).not.toThrow()
     })
   })
 
-  describe('connectionHealthMonitor', () => {
+  describe('ConnectionHealthMonitor', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ConnectionHealthMonitor()).not.toThrow()
     })
   })
 
-  describe('contactSensorState', () => {
+  describe('ContactSensorState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ContactSensorState()).not.toThrow()
     })
   })
 
-  describe('coolingThresholdTemperature', () => {
+  describe('CoolingThresholdTemperature', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CoolingThresholdTemperature()).not.toThrow()
     })
   })
 
-  describe('cryptoHash', () => {
+  describe('CryptoHash', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CryptoHash()).not.toThrow()
     })
   })
 
-  describe('currentAirPurifierState', () => {
+  describe('CurrentAirPurifierState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentAirPurifierState()).not.toThrow()
     })
   })
 
-  describe('currentAmbientLightLevel', () => {
+  describe('CurrentAmbientLightLevel', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentAmbientLightLevel()).not.toThrow()
     })
   })
 
-  describe('currentDoorState', () => {
+  describe('CurrentDoorState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentDoorState()).not.toThrow()
     })
   })
 
-  describe('currentFanState', () => {
+  describe('CurrentFanState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentFanState()).not.toThrow()
     })
   })
 
-  describe('currentHeaterCoolerState', () => {
+  describe('CurrentHeaterCoolerState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentHeaterCoolerState()).not.toThrow()
     })
   })
 
-  describe('currentHeatingCoolingState', () => {
+  describe('CurrentHeatingCoolingState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentHeatingCoolingState()).not.toThrow()
     })
   })
 
-  describe('currentHorizontalTiltAngle', () => {
+  describe('CurrentHorizontalTiltAngle', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentHorizontalTiltAngle()).not.toThrow()
     })
   })
 
-  describe('currentHumidifierDehumidifierState', () => {
+  describe('CurrentHumidifierDehumidifierState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentHumidifierDehumidifierState()).not.toThrow()
     })
   })
 
-  describe('currentMediaState', () => {
+  describe('CurrentMediaState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentMediaState()).not.toThrow()
     })
   })
 
-  describe('currentPosition', () => {
+  describe('CurrentPosition', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentPosition()).not.toThrow()
     })
   })
 
-  describe('currentRelativeHumidity', () => {
+  describe('CurrentRelativeHumidity', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentRelativeHumidity()).not.toThrow()
     })
   })
 
-  describe('currentSlatState', () => {
+  describe('CurrentSlatState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentSlatState()).not.toThrow()
     })
   })
 
-  describe('currentTemperature', () => {
+  describe('CurrentTemperature', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentTemperature()).not.toThrow()
     })
   })
 
-  describe('currentTiltAngle', () => {
+  describe('CurrentTiltAngle', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentTiltAngle()).not.toThrow()
     })
   })
 
-  describe('currentTransport', () => {
+  describe('CurrentTransport', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentTransport()).not.toThrow()
     })
   })
 
-  describe('currentVerticalTiltAngle', () => {
+  describe('CurrentVerticalTiltAngle', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentVerticalTiltAngle()).not.toThrow()
     })
   })
 
-  describe('currentVisibilityState', () => {
+  describe('CurrentVisibilityState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CurrentVisibilityState()).not.toThrow()
     })
   })
 
-  describe('dataStreamHAPTransport', () => {
+  describe('DataStreamHAPTransport', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.DataStreamHAPTransport()).not.toThrow()
     })
   })
 
-  describe('dataStreamHAPTransportInterrupt', () => {
+  describe('DataStreamHAPTransportInterrupt', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.DataStreamHAPTransportInterrupt()).not.toThrow()
     })
   })
 
-  describe('diagonalFieldOfView', () => {
+  describe('DiagonalFieldOfView', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.DiagonalFieldOfView()).not.toThrow()
     })
   })
 
-  describe('digitalZoom', () => {
+  describe('DigitalZoom', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.DigitalZoom()).not.toThrow()
     })
   })
 
-  describe('displayOrder', () => {
+  describe('DisplayOrder', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.DisplayOrder()).not.toThrow()
     })
   })
 
-  describe('errorStatus', () => {
+  describe('ErrorStatus', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ErrorStatus()).not.toThrow()
     })
   })
 
-  describe('eventRetransmissionMaximum', () => {
+  describe('EventRetransmissionMaximum', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.EventRetransmissionMaximum()).not.toThrow()
     })
   })
 
-  describe('eventSnapshotsActive', () => {
+  describe('EventSnapshotsActive', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.EventSnapshotsActive()).not.toThrow()
     })
   })
 
-  describe('eventTransmissionCounters', () => {
+  describe('EventTransmissionCounters', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.EventTransmissionCounters()).not.toThrow()
     })
   })
 
-  describe('filterChangeIndication', () => {
+  describe('FilterChangeIndication', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.FilterChangeIndication()).not.toThrow()
     })
   })
 
-  describe('filterLifeLevel', () => {
+  describe('FilterLifeLevel', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.FilterLifeLevel()).not.toThrow()
     })
   })
 
-  describe('firmwareRevision', () => {
+  describe('FirmwareRevision', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.FirmwareRevision()).not.toThrow()
     })
   })
 
-  describe('firmwareUpdateEnabled', () => {
+  describe('FirmwareUpdateEnabled', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.FirmwareUpdateEnabled()).not.toThrow()
     })
   })
 
-  describe('firmwareUpdateProtocolList', () => {
+  describe('FirmwareUpdateProtocolList', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.FirmwareUpdateProtocolList()).not.toThrow()
     })
   })
 
-  describe('firmwareUpdateReadiness', () => {
+  describe('FirmwareUpdateReadiness', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.FirmwareUpdateReadiness()).not.toThrow()
     })
   })
 
-  describe('firmwareUpdateStatus', () => {
+  describe('FirmwareUpdateStatus', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.FirmwareUpdateStatus()).not.toThrow()
     })
   })
 
-  describe('hardwareFinish', () => {
+  describe('HardwareFinish', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.HardwareFinish()).not.toThrow()
     })
   })
 
-  describe('hardwareRevision', () => {
+  describe('HardwareRevision', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.HardwareRevision()).not.toThrow()
     })
   })
 
-  describe('heartBeat', () => {
+  describe('HeartBeat', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.HeartBeat()).not.toThrow()
     })
   })
 
-  describe('heatingThresholdTemperature', () => {
+  describe('HeatingThresholdTemperature', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.HeatingThresholdTemperature()).not.toThrow()
     })
   })
 
-  describe('holdPosition', () => {
+  describe('HoldPosition', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.HoldPosition()).not.toThrow()
     })
   })
 
-  describe('homeKitCameraActive', () => {
+  describe('HomeKitCameraActive', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.HomeKitCameraActive()).not.toThrow()
     })
   })
 
-  describe('hue', () => {
+  describe('Hue', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Hue()).not.toThrow()
     })
   })
 
-  describe('identifier', () => {
+  describe('Identifier', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Identifier()).not.toThrow()
     })
   })
 
-  describe('identify', () => {
+  describe('Identify', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Identify()).not.toThrow()
     })
   })
 
-  describe('imageMirroring', () => {
+  describe('ImageMirroring', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ImageMirroring()).not.toThrow()
     })
   })
 
-  describe('imageRotation', () => {
+  describe('ImageRotation', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ImageRotation()).not.toThrow()
     })
   })
 
-  describe('inputDeviceType', () => {
+  describe('InputDeviceType', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.InputDeviceType()).not.toThrow()
     })
   })
 
-  describe('inputSourceType', () => {
+  describe('InputSourceType', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.InputSourceType()).not.toThrow()
     })
   })
 
-  describe('inUse', () => {
+  describe('InUse', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.InUse()).not.toThrow()
     })
   })
 
-  describe('isConfigured', () => {
+  describe('IsConfigured', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.IsConfigured()).not.toThrow()
     })
   })
 
-  describe('leakDetected', () => {
+  describe('LeakDetected', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.LeakDetected()).not.toThrow()
     })
   })
 
-  describe('listPairings', () => {
+  describe('ListPairings', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ListPairings()).not.toThrow()
     })
   })
 
-  describe('lockControlPoint', () => {
+  describe('LockControlPoint', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.LockControlPoint()).not.toThrow()
     })
   })
 
-  describe('lockCurrentState', () => {
+  describe('LockCurrentState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.LockCurrentState()).not.toThrow()
     })
   })
 
-  describe('lockLastKnownAction', () => {
+  describe('LockLastKnownAction', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.LockLastKnownAction()).not.toThrow()
     })
   })
 
-  describe('lockManagementAutoSecurityTimeout', () => {
+  describe('LockManagementAutoSecurityTimeout', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.LockManagementAutoSecurityTimeout()).not.toThrow()
     })
   })
 
-  describe('lockPhysicalControls', () => {
+  describe('LockPhysicalControls', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.LockPhysicalControls()).not.toThrow()
     })
   })
 
-  describe('lockTargetState', () => {
+  describe('LockTargetState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.LockTargetState()).not.toThrow()
     })
   })
 
-  describe('logs', () => {
+  describe('Logs', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Logs()).not.toThrow()
     })
   })
 
-  describe('mACRetransmissionMaximum', () => {
+  describe('MACRetransmissionMaximum', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.MACRetransmissionMaximum()).not.toThrow()
     })
   })
 
-  describe('mACTransmissionCounters', () => {
+  describe('MACTransmissionCounters', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.MACTransmissionCounters()).not.toThrow()
     })
   })
 
-  describe('managedNetworkEnable', () => {
+  describe('ManagedNetworkEnable', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ManagedNetworkEnable()).not.toThrow()
     })
   })
 
-  describe('manuallyDisabled', () => {
+  describe('ManuallyDisabled', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ManuallyDisabled()).not.toThrow()
     })
   })
 
-  describe('manufacturer', () => {
+  describe('Manufacturer', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Manufacturer()).not.toThrow()
     })
   })
 
-  describe('matterFirmwareRevisionNumber', () => {
+  describe('MatterFirmwareRevisionNumber', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.MatterFirmwareRevisionNumber()).not.toThrow()
     })
   })
 
-  describe('matterFirmwareUpdateStatus', () => {
+  describe('MatterFirmwareUpdateStatus', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.MatterFirmwareUpdateStatus()).not.toThrow()
     })
   })
 
-  describe('maximumTransmitPower', () => {
+  describe('MaximumTransmitPower', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.MaximumTransmitPower()).not.toThrow()
     })
   })
 
-  describe('mediaAccessControlLevel', () => {
+  describe('MediaAccessControlLevel', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.MediaAccessControlLevel()).not.toThrow()
     })
   })
 
-  describe('metricsBufferFullState', () => {
+  describe('MetricsBufferFullState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.MetricsBufferFullState()).not.toThrow()
     })
   })
 
-  describe('model', () => {
+  describe('Model', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Model()).not.toThrow()
     })
   })
 
-  describe('motionDetected', () => {
+  describe('MotionDetected', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.MotionDetected()).not.toThrow()
     })
   })
 
-  describe('multifunctionButton', () => {
+  describe('MultifunctionButton', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.MultifunctionButton()).not.toThrow()
     })
   })
 
-  describe('mute', () => {
+  describe('Mute', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Mute()).not.toThrow()
     })
   })
 
-  describe('name', () => {
+  describe('Name', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Name()).not.toThrow()
     })
   })
 
-  describe('networkAccessViolationControl', () => {
+  describe('NetworkAccessViolationControl', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.NetworkAccessViolationControl()).not.toThrow()
     })
   })
 
-  describe('networkClientProfileControl', () => {
+  describe('NetworkClientProfileControl', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.NetworkClientProfileControl()).not.toThrow()
     })
   })
 
-  describe('networkClientStatusControl', () => {
+  describe('NetworkClientStatusControl', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.NetworkClientStatusControl()).not.toThrow()
     })
   })
 
-  describe('nFCAccessControlPoint', () => {
+  describe('NFCAccessControlPoint', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.NFCAccessControlPoint()).not.toThrow()
     })
   })
 
-  describe('nFCAccessSupportedConfiguration', () => {
+  describe('NFCAccessSupportedConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.NFCAccessSupportedConfiguration()).not.toThrow()
     })
   })
 
-  describe('nightVision', () => {
+  describe('NightVision', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.NightVision()).not.toThrow()
     })
   })
 
-  describe('nitrogenDioxideDensity', () => {
+  describe('NitrogenDioxideDensity', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.NitrogenDioxideDensity()).not.toThrow()
     })
   })
 
-  describe('obstructionDetected', () => {
+  describe('ObstructionDetected', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ObstructionDetected()).not.toThrow()
     })
   })
 
-  describe('occupancyDetected', () => {
+  describe('OccupancyDetected', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.OccupancyDetected()).not.toThrow()
     })
   })
 
-  describe('on', () => {
+  describe('On', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.On()).not.toThrow()
     })
   })
 
-  describe('operatingStateResponse', () => {
+  describe('OperatingStateResponse', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.OperatingStateResponse()).not.toThrow()
     })
   })
 
-  describe('opticalZoom', () => {
+  describe('OpticalZoom', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.OpticalZoom()).not.toThrow()
     })
   })
 
-  describe('outletInUse', () => {
+  describe('OutletInUse', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.OutletInUse()).not.toThrow()
     })
   })
 
-  describe('ozoneDensity', () => {
+  describe('OzoneDensity', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.OzoneDensity()).not.toThrow()
     })
   })
 
-  describe('pairingFeatures', () => {
+  describe('PairingFeatures', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.PairingFeatures()).not.toThrow()
     })
   })
 
-  describe('pairSetup', () => {
+  describe('PairSetup', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.PairSetup()).not.toThrow()
     })
   })
 
-  describe('pairVerify', () => {
+  describe('PairVerify', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.PairVerify()).not.toThrow()
     })
   })
 
-  describe('passwordSetting', () => {
+  describe('PasswordSetting', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.PasswordSetting()).not.toThrow()
     })
   })
 
-  describe('periodicSnapshotsActive', () => {
+  describe('PeriodicSnapshotsActive', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.PeriodicSnapshotsActive()).not.toThrow()
     })
   })
 
-  describe('pictureMode', () => {
+  describe('PictureMode', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.PictureMode()).not.toThrow()
     })
   })
 
-  describe('ping', () => {
+  describe('Ping', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Ping()).not.toThrow()
     })
   })
 
-  describe('pM10Density', () => {
+  describe('PM10Density', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.PM10Density()).not.toThrow()
     })
   })
 
-  describe('pM2_5Density', () => {
+  describe('PM2_5Density', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.PM2_5Density()).not.toThrow()
     })
   })
 
-  describe('positionState', () => {
+  describe('PositionState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.PositionState()).not.toThrow()
     })
   })
 
-  describe('powerModeSelection', () => {
+  describe('PowerModeSelection', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.PowerModeSelection()).not.toThrow()
     })
   })
 
-  describe('preferredWiFiList', () => {
+  describe('PreferredWiFiList', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.PreferredWiFiList()).not.toThrow()
     })
   })
 
-  describe('productData', () => {
+  describe('ProductData', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ProductData()).not.toThrow()
     })
   })
 
-  describe('programmableSwitchEvent', () => {
+  describe('ProgrammableSwitchEvent', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ProgrammableSwitchEvent()).not.toThrow()
     })
   })
 
-  describe('programmableSwitchOutputState', () => {
+  describe('ProgrammableSwitchOutputState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ProgrammableSwitchOutputState()).not.toThrow()
     })
   })
 
-  describe('programMode', () => {
+  describe('ProgramMode', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ProgramMode()).not.toThrow()
     })
   })
 
-  describe('proximityControlEnabled', () => {
+  describe('ProximityControlEnabled', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ProximityControlEnabled()).not.toThrow()
     })
   })
 
-  describe('receivedSignalStrengthIndication', () => {
+  describe('ReceivedSignalStrengthIndication', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ReceivedSignalStrengthIndication()).not.toThrow()
     })
   })
 
-  describe('receiverSensitivity', () => {
+  describe('ReceiverSensitivity', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ReceiverSensitivity()).not.toThrow()
     })
   })
 
-  describe('recordingAudioActive', () => {
+  describe('RecordingAudioActive', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.RecordingAudioActive()).not.toThrow()
     })
   })
 
-  describe('relativeHumidityDehumidifierThreshold', () => {
+  describe('RelativeHumidityDehumidifierThreshold', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.RelativeHumidityDehumidifierThreshold()).not.toThrow()
     })
   })
 
-  describe('relativeHumidityHumidifierThreshold', () => {
+  describe('RelativeHumidityHumidifierThreshold', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.RelativeHumidityHumidifierThreshold()).not.toThrow()
     })
   })
 
-  describe('relayControlPoint', () => {
+  describe('RelayControlPoint', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.RelayControlPoint()).not.toThrow()
     })
   })
 
-  describe('relayEnabled', () => {
+  describe('RelayEnabled', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.RelayEnabled()).not.toThrow()
     })
   })
 
-  describe('relayState', () => {
+  describe('RelayState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.RelayState()).not.toThrow()
     })
   })
 
-  describe('remainingDuration', () => {
+  describe('RemainingDuration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.RemainingDuration()).not.toThrow()
     })
   })
 
-  describe('remoteKey', () => {
+  describe('RemoteKey', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.RemoteKey()).not.toThrow()
     })
   })
 
-  describe('resetFilterIndication', () => {
+  describe('ResetFilterIndication', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ResetFilterIndication()).not.toThrow()
     })
   })
 
-  describe('rotationDirection', () => {
+  describe('RotationDirection', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.RotationDirection()).not.toThrow()
     })
   })
 
-  describe('rotationSpeed', () => {
+  describe('RotationSpeed', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.RotationSpeed()).not.toThrow()
     })
   })
 
-  describe('routerStatus', () => {
+  describe('RouterStatus', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.RouterStatus()).not.toThrow()
     })
   })
 
-  describe('saturation', () => {
+  describe('Saturation', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Saturation()).not.toThrow()
     })
   })
 
-  describe('securitySystemAlarmType', () => {
+  describe('SecuritySystemAlarmType', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SecuritySystemAlarmType()).not.toThrow()
     })
   })
 
-  describe('securitySystemCurrentState', () => {
+  describe('SecuritySystemCurrentState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SecuritySystemCurrentState()).not.toThrow()
     })
   })
 
-  describe('securitySystemTargetState', () => {
+  describe('SecuritySystemTargetState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SecuritySystemTargetState()).not.toThrow()
     })
   })
 
-  describe('selectedAudioStreamConfiguration', () => {
+  describe('SelectedAudioStreamConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SelectedAudioStreamConfiguration()).not.toThrow()
     })
   })
 
-  describe('selectedCameraRecordingConfiguration', () => {
+  describe('SelectedCameraRecordingConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SelectedCameraRecordingConfiguration()).not.toThrow()
     })
   })
 
-  describe('selectedDiagnosticsModes', () => {
+  describe('SelectedDiagnosticsModes', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SelectedDiagnosticsModes()).not.toThrow()
     })
   })
 
-  describe('selectedRTPStreamConfiguration', () => {
+  describe('SelectedRTPStreamConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SelectedRTPStreamConfiguration()).not.toThrow()
     })
   })
 
-  describe('selectedSessionKeepaliveConfigurationList', () => {
+  describe('SelectedSessionKeepaliveConfigurationList', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SelectedSessionKeepaliveConfigurationList()).not.toThrow()
     })
   })
 
-  describe('selectedSleepConfiguration', () => {
+  describe('SelectedSleepConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SelectedSleepConfiguration()).not.toThrow()
     })
   })
 
-  describe('serialNumber', () => {
+  describe('SerialNumber', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SerialNumber()).not.toThrow()
     })
   })
 
-  describe('serviceLabelIndex', () => {
+  describe('ServiceLabelIndex', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ServiceLabelIndex()).not.toThrow()
     })
   })
 
-  describe('serviceLabelNamespace', () => {
+  describe('ServiceLabelNamespace', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ServiceLabelNamespace()).not.toThrow()
     })
   })
 
-  describe('sessionTransportEndpointList', () => {
+  describe('SessionTransportEndpointList', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SessionTransportEndpointList()).not.toThrow()
     })
   })
 
-  describe('setDuration', () => {
+  describe('SetDuration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SetDuration()).not.toThrow()
     })
   })
 
-  describe('setupDataStreamTransport', () => {
+  describe('SetupDataStreamTransport', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SetupDataStreamTransport()).not.toThrow()
     })
   })
 
-  describe('setupEndpoints', () => {
+  describe('SetupEndpoints', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SetupEndpoints()).not.toThrow()
     })
   })
 
-  describe('setupTransferTransport', () => {
+  describe('SetupTransferTransport', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SetupTransferTransport()).not.toThrow()
     })
   })
 
-  describe('signalToNoiseRatio', () => {
+  describe('SignalToNoiseRatio', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SignalToNoiseRatio()).not.toThrow()
     })
   })
 
-  describe('siriEnable', () => {
+  describe('SiriEnable', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SiriEnable()).not.toThrow()
     })
   })
 
-  describe('siriEndpointSessionStatus', () => {
+  describe('SiriEndpointSessionStatus', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SiriEndpointSessionStatus()).not.toThrow()
     })
   })
 
-  describe('siriEngineVersion', () => {
+  describe('SiriEngineVersion', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SiriEngineVersion()).not.toThrow()
     })
   })
 
-  describe('siriInputType', () => {
+  describe('SiriInputType', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SiriInputType()).not.toThrow()
     })
   })
 
-  describe('siriLightOnUse', () => {
+  describe('SiriLightOnUse', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SiriLightOnUse()).not.toThrow()
     })
   })
 
-  describe('siriListening', () => {
+  describe('SiriListening', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SiriListening()).not.toThrow()
     })
   })
 
-  describe('siriTouchToUse', () => {
+  describe('SiriTouchToUse', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SiriTouchToUse()).not.toThrow()
     })
   })
 
-  describe('slatType', () => {
+  describe('SlatType', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SlatType()).not.toThrow()
     })
   })
 
-  describe('sleepDiscoveryMode', () => {
+  describe('SleepDiscoveryMode', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SleepDiscoveryMode()).not.toThrow()
     })
   })
 
-  describe('sleepInterval', () => {
+  describe('SleepInterval', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SleepInterval()).not.toThrow()
     })
   })
 
-  describe('smokeDetected', () => {
+  describe('SmokeDetected', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SmokeDetected()).not.toThrow()
     })
   })
 
-  describe('softwareRevision', () => {
+  describe('SoftwareRevision', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SoftwareRevision()).not.toThrow()
     })
   })
 
-  describe('stagedFirmwareVersion', () => {
+  describe('StagedFirmwareVersion', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.StagedFirmwareVersion()).not.toThrow()
     })
   })
 
-  describe('statusActive', () => {
+  describe('StatusActive', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.StatusActive()).not.toThrow()
     })
   })
 
-  describe('statusFault', () => {
+  describe('StatusFault', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.StatusFault()).not.toThrow()
     })
   })
 
-  describe('statusJammed', () => {
+  describe('StatusJammed', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.StatusJammed()).not.toThrow()
     })
   })
 
-  describe('statusLowBattery', () => {
+  describe('StatusLowBattery', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.StatusLowBattery()).not.toThrow()
     })
   })
 
-  describe('statusTampered', () => {
+  describe('StatusTampered', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.StatusTampered()).not.toThrow()
     })
   })
 
-  describe('streamingStatus', () => {
+  describe('StreamingStatus', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.StreamingStatus()).not.toThrow()
     })
   })
 
-  describe('sulphurDioxideDensity', () => {
+  describe('SulphurDioxideDensity', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SulphurDioxideDensity()).not.toThrow()
     })
   })
 
-  describe('supportedAssetTypes', () => {
+  describe('SupportedAssetTypes', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedAssetTypes()).not.toThrow()
     })
   })
 
-  describe('supportedAudioRecordingConfiguration', () => {
+  describe('SupportedAudioRecordingConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedAudioRecordingConfiguration()).not.toThrow()
     })
   })
 
-  describe('supportedAudioStreamConfiguration', () => {
+  describe('SupportedAudioStreamConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedAudioStreamConfiguration()).not.toThrow()
     })
   })
 
-  describe('supportedCameraRecordingConfiguration', () => {
+  describe('SupportedCameraRecordingConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedCameraRecordingConfiguration()).not.toThrow()
     })
   })
 
-  describe('supportedCharacteristicValueTransitionConfiguration', () => {
+  describe('SupportedCharacteristicValueTransitionConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedCharacteristicValueTransitionConfiguration()).not.toThrow()
     })
   })
 
-  describe('supportedDataStreamTransportConfiguration', () => {
+  describe('SupportedDataStreamTransportConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedDataStreamTransportConfiguration()).not.toThrow()
     })
   })
 
-  describe('supportedDiagnosticsModes', () => {
+  describe('SupportedDiagnosticsModes', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedDiagnosticsModes()).not.toThrow()
     })
   })
 
-  describe('supportedDiagnosticsSnapshot', () => {
+  describe('SupportedDiagnosticsSnapshot', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedDiagnosticsSnapshot()).not.toThrow()
     })
   })
 
-  describe('supportedFirmwareUpdateConfiguration', () => {
+  describe('SupportedFirmwareUpdateConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedFirmwareUpdateConfiguration()).not.toThrow()
     })
   })
 
-  describe('supportedMetrics', () => {
+  describe('SupportedMetrics', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedMetrics()).not.toThrow()
     })
   })
 
-  describe('supportedRouterConfiguration', () => {
+  describe('SupportedRouterConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedRouterConfiguration()).not.toThrow()
     })
   })
 
-  describe('supportedRTPConfiguration', () => {
+  describe('SupportedRTPConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedRTPConfiguration()).not.toThrow()
     })
   })
 
-  describe('supportedSessionKeepaliveConfigurationList', () => {
+  describe('SupportedSessionKeepaliveConfigurationList', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedSessionKeepaliveConfigurationList()).not.toThrow()
     })
   })
 
-  describe('supportedSleepConfiguration', () => {
+  describe('SupportedSleepConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedSleepConfiguration()).not.toThrow()
     })
   })
 
-  describe('supportedTransferTransportConfiguration', () => {
+  describe('SupportedTransferTransportConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedTransferTransportConfiguration()).not.toThrow()
     })
   })
 
-  describe('supportedVideoRecordingConfiguration', () => {
+  describe('SupportedVideoRecordingConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedVideoRecordingConfiguration()).not.toThrow()
     })
   })
 
-  describe('supportedVideoStreamConfiguration', () => {
+  describe('SupportedVideoStreamConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedVideoStreamConfiguration()).not.toThrow()
     })
   })
 
-  describe('swingMode', () => {
+  describe('SwingMode', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SwingMode()).not.toThrow()
     })
   })
 
-  describe('tapType', () => {
+  describe('TapType', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TapType()).not.toThrow()
     })
   })
 
-  describe('targetAirPurifierState', () => {
+  describe('TargetAirPurifierState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetAirPurifierState()).not.toThrow()
     })
   })
 
-  describe('targetControlList', () => {
+  describe('TargetControlList', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetControlList()).not.toThrow()
     })
   })
 
-  describe('targetControlSupportedConfiguration', () => {
+  describe('TargetControlSupportedConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetControlSupportedConfiguration()).not.toThrow()
     })
   })
 
-  describe('targetDoorState', () => {
+  describe('TargetDoorState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetDoorState()).not.toThrow()
     })
   })
 
-  describe('targetFanState', () => {
+  describe('TargetFanState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetFanState()).not.toThrow()
     })
   })
 
-  describe('targetHeaterCoolerState', () => {
+  describe('TargetHeaterCoolerState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetHeaterCoolerState()).not.toThrow()
     })
   })
 
-  describe('targetHeatingCoolingState', () => {
+  describe('TargetHeatingCoolingState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetHeatingCoolingState()).not.toThrow()
     })
   })
 
-  describe('targetHorizontalTiltAngle', () => {
+  describe('TargetHorizontalTiltAngle', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetHorizontalTiltAngle()).not.toThrow()
     })
   })
 
-  describe('targetHumidifierDehumidifierState', () => {
+  describe('TargetHumidifierDehumidifierState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetHumidifierDehumidifierState()).not.toThrow()
     })
   })
 
-  describe('targetMediaState', () => {
+  describe('TargetMediaState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetMediaState()).not.toThrow()
     })
   })
 
-  describe('targetPosition', () => {
+  describe('TargetPosition', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetPosition()).not.toThrow()
     })
   })
 
-  describe('targetRelativeHumidity', () => {
+  describe('TargetRelativeHumidity', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetRelativeHumidity()).not.toThrow()
     })
   })
 
-  describe('targetTemperature', () => {
+  describe('TargetTemperature', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetTemperature()).not.toThrow()
     })
   })
 
-  describe('targetTiltAngle', () => {
+  describe('TargetTiltAngle', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetTiltAngle()).not.toThrow()
     })
   })
 
-  describe('targetVerticalTiltAngle', () => {
+  describe('TargetVerticalTiltAngle', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetVerticalTiltAngle()).not.toThrow()
     })
   })
 
-  describe('targetVisibilityState', () => {
+  describe('TargetVisibilityState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TargetVisibilityState()).not.toThrow()
     })
   })
 
-  describe('temperatureDisplayUnits', () => {
+  describe('TemperatureDisplayUnits', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TemperatureDisplayUnits()).not.toThrow()
     })
   })
 
-  describe('thirdPartyCameraActive', () => {
+  describe('ThirdPartyCameraActive', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ThirdPartyCameraActive()).not.toThrow()
     })
   })
 
-  describe('thirdPartyCameraInUse', () => {
+  describe('ThirdPartyCameraInUse', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ThirdPartyCameraInUse()).not.toThrow()
     })
   })
 
-  describe('thirdPartyEcosystemEnabled', () => {
+  describe('ThirdPartyEcosystemEnabled', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ThirdPartyEcosystemEnabled()).not.toThrow()
     })
   })
 
-  describe('threadControlPoint', () => {
+  describe('ThreadControlPoint', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ThreadControlPoint()).not.toThrow()
     })
   })
 
-  describe('threadNodeCapabilities', () => {
+  describe('ThreadNodeCapabilities', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ThreadNodeCapabilities()).not.toThrow()
     })
   })
 
-  describe('threadOpenThreadVersion', () => {
+  describe('ThreadOpenThreadVersion', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ThreadOpenThreadVersion()).not.toThrow()
     })
   })
 
-  describe('threadStatus', () => {
+  describe('ThreadStatus', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ThreadStatus()).not.toThrow()
     })
   })
 
-  describe('token', () => {
+  describe('Token', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Token()).not.toThrow()
     })
   })
 
-  describe('transmitPower', () => {
+  describe('TransmitPower', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TransmitPower()).not.toThrow()
     })
   })
 
-  describe('tunnelConnectionTimeout', () => {
+  describe('TunnelConnectionTimeout', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TunnelConnectionTimeout()).not.toThrow()
     })
   })
 
-  describe('tunneledAccessoryAdvertising', () => {
+  describe('TunneledAccessoryAdvertising', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TunneledAccessoryAdvertising()).not.toThrow()
     })
   })
 
-  describe('tunneledAccessoryConnected', () => {
+  describe('TunneledAccessoryConnected', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TunneledAccessoryConnected()).not.toThrow()
     })
   })
 
-  describe('tunneledAccessoryStateNumber', () => {
+  describe('TunneledAccessoryStateNumber', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.TunneledAccessoryStateNumber()).not.toThrow()
     })
   })
 
-  describe('valveType', () => {
+  describe('ValveType', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ValveType()).not.toThrow()
     })
   })
 
-  describe('version', () => {
+  describe('Version', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Version()).not.toThrow()
     })
   })
 
-  describe('videoAnalysisActive', () => {
+  describe('VideoAnalysisActive', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.VideoAnalysisActive()).not.toThrow()
     })
   })
 
-  describe('vOCDensity', () => {
+  describe('VOCDensity', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.VOCDensity()).not.toThrow()
     })
   })
 
-  describe('volume', () => {
+  describe('Volume', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Volume()).not.toThrow()
     })
   })
 
-  describe('volumeControlType', () => {
+  describe('VolumeControlType', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.VolumeControlType()).not.toThrow()
     })
   })
 
-  describe('volumeSelector', () => {
+  describe('VolumeSelector', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.VolumeSelector()).not.toThrow()
     })
   })
 
-  describe('wakeConfiguration', () => {
+  describe('WakeConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.WakeConfiguration()).not.toThrow()
     })
   })
 
-  describe('wANConfigurationList', () => {
+  describe('WANConfigurationList', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.WANConfigurationList()).not.toThrow()
     })
   })
 
-  describe('wANStatusList', () => {
+  describe('WANStatusList', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.WANStatusList()).not.toThrow()
     })
   })
 
-  describe('waterLevel', () => {
+  describe('WaterLevel', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.WaterLevel()).not.toThrow()
     })
   })
 
-  describe('wiFiCapabilities', () => {
+  describe('WiFiCapabilities', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.WiFiCapabilities()).not.toThrow()
     })
   })
 
-  describe('wiFiConfigurationControl', () => {
+  describe('WiFiConfigurationControl', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.WiFiConfigurationControl()).not.toThrow()
     })
   })
 
-  describe('wiFiSatelliteStatus', () => {
+  describe('WiFiSatelliteStatus', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.WiFiSatelliteStatus()).not.toThrow()
     })

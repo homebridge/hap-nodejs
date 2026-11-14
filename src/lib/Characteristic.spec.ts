@@ -96,7 +96,7 @@ describe('describePerms', () => {
   })
 })
 
-describe('characteristic', () => {
+describe('Characteristic', () => {
   beforeEach(() => {
     vi.resetAllMocks()
   })
@@ -2804,7 +2804,7 @@ describe('characteristic', () => {
     })
   })
 
-  describe('undefined string in characteristic error warnings (fix fe8c1b3a)', () => {
+  describe('undefined string in characteristic error warnings', () => {
     it('setValue should emit "Unknown error" when validateUserInput throws an object without a message', () => {
       const characteristic = createCharacteristic(Formats.STRING)
 

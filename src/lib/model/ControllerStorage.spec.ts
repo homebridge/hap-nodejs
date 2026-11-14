@@ -77,7 +77,7 @@ class UnreadableController extends SteppedController {
   }
 }
 
-describe('controllerStorage', () => {
+describe('ControllerStorage', () => {
   it('state changes reported while restoring do not overwrite the stored data', () => {
     const accessory = new Accessory('Test', uuid.generate('controller-storage'))
     const storage = new ControllerStorage(accessory)

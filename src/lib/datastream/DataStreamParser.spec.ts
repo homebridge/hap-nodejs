@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 
 import { DataStreamParser, DataStreamReader, DataStreamWriter, Float64, Int64 } from './DataStreamParser.js'
 
-describe('dataStreamParser', () => {
+describe('DataStreamParser', () => {
   describe('writeNumber Int32 range check', () => {
     it('should encode numbers in Int32 range as Int32, not Int64', () => {
       const writer = new DataStreamWriter()
@@ -109,7 +109,7 @@ describe('dataStreamParser', () => {
     })
   })
 
-  describe('uTF-8 tag byte length', () => {
+  describe('UTF-8 tag byte length', () => {
     it('should correctly encode multi-byte UTF-8 strings', () => {
       const writer = new DataStreamWriter()
       // "é" is 2 bytes in UTF-8 but 1 character in JS

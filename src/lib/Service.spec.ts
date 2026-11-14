@@ -9,7 +9,7 @@ function createService() {
   return new Service('Test', uuid.generate('Foo'), 'subtype')
 }
 
-describe('service', () => {
+describe('Service', () => {
   describe('#constructor()', () => {
     it('should set the name characteristic to the display name', () => {
       const service = createService()

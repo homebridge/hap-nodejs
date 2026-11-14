@@ -490,7 +490,7 @@ describe('eventedhttp', () => {
   })
 })
 
-describe('eventedHTTPServer', () => {
+describe('EventedHTTPServer', () => {
   describe('idle connection timeout', () => {
     it('should schedule the next check for the connection which becomes idle first', () => {
       vi.useFakeTimers()
@@ -527,7 +527,7 @@ describe('eventedHTTPServer', () => {
   })
 })
 
-describe('hAPConnection', () => {
+describe('HAPConnection', () => {
   describe('listener registration debugging', () => {
     it.each(['off', 'removeListener'] as const)('%s() should report the listener count from before the removal', (method) => {
       const connection = Object.create(HAPConnection.prototype) as HAPConnection
