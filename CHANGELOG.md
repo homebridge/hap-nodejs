@@ -127,6 +127,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(controller): type the saved data of a serializable controller as unknown by default
 - refactor(remote): let a plugin name the type of its siri audio producer options
 - fix(camera): check the type of data stream message fields before the recording stream uses them
+- fix(remote): check the type of data stream message fields before the remote controller uses them
 
 ### Homebridge Dependencies
 

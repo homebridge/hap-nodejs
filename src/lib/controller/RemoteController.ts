@@ -252,7 +252,9 @@ const enum SiriAudioSessionState {
   CLOSED = 3, // the close event was sent
 }
 
-interface DataSendMessageData {
+// a type and not an interface, as only a type is accepted where a dictionary of unknown values (HDSMessage) is expected
+// eslint-disable-next-line ts/consistent-type-definitions
+type DataSendMessageData = {
   packets: AudioFramePacket[]
   streamId: Int64
   endOfStream: boolean
@@ -1084,6 +1086,11 @@ export class RemoteController<O = unknown> extends EventEmitter
 
   private handleTargetControlWhoAmI(connection: DataStreamConnection, message: HDSMessage): void {
     const targetIdentifier = message.identifier
+    if (typeof targetIdentifier !== 'number') {
+      // sent by the controller: without the identifier of a target there is nothing to remember the connection for
+      debug('Ignoring whoami message without a numeric targetIdentifier: %o', targetIdentifier)
+      return
+    }
     this.dataStreamConnections.set(targetIdentifier, connection)
     debug('Discovered HDS connection for targetIdentifier %s', targetIdentifier)
 
@@ -1146,7 +1153,7 @@ export class RemoteController<O = unknown> extends EventEmitter
 
     const session = this.audioSessionWithStreamId(streamId)
     if (session) {
-      session.handleDataSendAckEvent(endOfStream)
+      session.handleDataSendAckEvent(endOfStream === true) // only the acknowledgment of the end of a stream matters
     } else {
       debug('Received dataSend acknowledgment event for unknown streamId \'%s\'', streamId)
     }
@@ -1164,7 +1171,10 @@ export class RemoteController<O = unknown> extends EventEmitter
 
   private handleDataSendCloseEvent(message: HDSMessage): void { // controller indicates he can't handle audio request currently
     const streamId = message.streamId
-    const reason: HDSProtocolSpecificErrorReason = message.reason
+    // a reason which is not a number is handled like a missing one
+    const reason: HDSProtocolSpecificErrorReason | undefined = typeof message.reason === 'number'
+      ? message.reason
+      : undefined
 
     const session = this.audioSessionWithStreamId(streamId)
     if (session) {
@@ -1563,18 +1573,21 @@ export class SiriAudioSession<O = unknown> extends EventEmitter {
       assert.strictEqual(this.state, SiriAudioSessionState.STARTING)
       this.state = SiriAudioSessionState.SENDING
 
-      if (error || status) {
+      const streamId = message.streamId
+      if (error || status || typeof streamId !== 'number') {
         if (error) { // errors get produced by hap-nodejs
           debug('Error occurred trying to start siri audio stream: %s', error.message)
         } else if (status) { // status codes are those returned by the hds response
           debug('Controller responded with non-zero status code: %s', HDSStatus[status])
+        } else { // without the id of the stream no audio can be sent
+          debug('Controller responded without a numeric streamId: %o', streamId)
         }
         if (this.producerRunning) {
           this.stopAudioProducer()
         }
         this.closed()
       } else {
-        this.streamId = message.streamId
+        this.streamId = streamId
 
         if (!this.producerRunning) { // audio producer errored in the meantime
           this.sendDataSendCloseEvent(HDSProtocolSpecificErrorReason.CANCELLED)
@@ -1728,8 +1741,11 @@ export class SiriAudioSession<O = unknown> extends EventEmitter {
     this.sendDataSendCloseEvent(HDSProtocolSpecificErrorReason.NORMAL)
   }
 
-  handleDataSendCloseEvent(reason: HDSProtocolSpecificErrorReason): void { // controller indicates he can't handle audio request currently
-    debug('Received close event from controller with reason %s for stream with streamId %s', HDSProtocolSpecificErrorReason[reason], this.streamId)
+  handleDataSendCloseEvent(reason?: HDSProtocolSpecificErrorReason): void { // controller indicates he can't handle audio request currently
+    debug('Received close event from controller with reason %s for stream with streamId %s',
+      reason !== undefined
+        ? HDSProtocolSpecificErrorReason[reason]
+        : reason, this.streamId)
     if (this.state <= SiriAudioSessionState.SENDING) {
       this.stopAudioProducer()
     }
