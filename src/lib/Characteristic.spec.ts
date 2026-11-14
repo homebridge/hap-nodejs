@@ -1392,6 +1392,17 @@ describe('characteristic', () => {
     expect(original.props.validValues).toEqual([1, 2, 3])
   })
 
+  it('should leave the object passed to setProps unchanged', () => {
+    const characteristic = createCharacteristic(Formats.STRING)
+    const props = { maxLen: 999, minValue: -5 }
+
+    characteristic.setProps(props)
+
+    expect(props).toEqual({ maxLen: 999, minValue: -5 })
+    expect(characteristic.props.maxLen).toBe(256)
+    expect(characteristic.props.minValue).toBeUndefined()
+  })
+
   describe('a string characteristic which is given no string', () => {
     it.each([undefined, {}, true])('should stay empty, and not hold the text of %j, when it had no value', (value) => {
       const characteristic = new Characteristic('Text', uuid.generate('text without a value'), {

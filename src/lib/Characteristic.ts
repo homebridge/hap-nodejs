@@ -1908,6 +1908,8 @@ export class Characteristic extends EventEmitter {
   public setProps(props: PartialAllowingNull<CharacteristicProps>): Characteristic {
     assert(props, 'props cannot be undefined when setting props')
 
+    props = { ...props } // values are corrected below, and that must not change the object of the caller
+
     let formatDidChange = false
 
     // for every value "null" can be used to reset props, except for required props
