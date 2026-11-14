@@ -295,9 +295,11 @@ export interface SiriAudioStreamProducer {
 }
 
 /**
+ * `O` is the type of the options the producer takes. Name it, as otherwise the options are typed as `unknown`.
+ *
  * @group Apple TV Remote
  */
-export interface SiriAudioStreamProducerConstructor {
+export interface SiriAudioStreamProducerConstructor<O = unknown> {
 
   /**
    * Creates a new instance of a SiriAudioStreamProducer
@@ -306,8 +308,7 @@ export interface SiriAudioStreamProducerConstructor {
    * @param errorHandler - should be called with an appropriate reason when the producing process errored
    * @param options - optional parameter for passing any configuration related options
    */
-
-  new(frameHandler: FrameHandler, errorHandler: ErrorHandler, options?: any): SiriAudioStreamProducer
+  new(frameHandler: FrameHandler, errorHandler: ErrorHandler, options?: O): SiriAudioStreamProducer
 
 }
 
@@ -401,16 +402,20 @@ export interface SerializedControllerState {
 /**
  * Handles everything needed to implement a fully working HomeKit remote controller.
  *
+ * `O` is the type of the options handed to the {@link SiriAudioStreamProducer}. It is taken from the constructor arguments.
+ *
  * @group Apple TV Remote
  */
-export class RemoteController extends EventEmitter
+export class RemoteController<O = unknown> extends EventEmitter
   implements SerializableController<RemoteControllerServiceMap, SerializedControllerState>, DataStreamProtocolHandler {
   private stateChangeDelegate?: StateChangeDelegate
 
   private readonly audioSupported: boolean
-  private readonly audioProducerConstructor?: SiriAudioStreamProducerConstructor
-
-  private readonly audioProducerOptions?: any
+  /**
+   * Creates the session for one audio transmission, with the producer and the options this controller was created with.
+   * It is only set for a remote which supports siri.
+   */
+  private readonly createAudioSession?: (connection: DataStreamConnection, configuration: AudioCodecConfiguration) => SiriAudioSession
 
   private targetControlManagementService?: TargetControlManagement
   private targetControlService?: TargetControl
@@ -458,12 +463,14 @@ export class RemoteController extends EventEmitter
    * @param producerOptions - if supplied this argument will be supplied as third argument of the SiriAudioStreamProducer
    * constructor. This should be used to supply configurations to the stream producer.
    */
-  // eslint-disable-next-line ts/explicit-module-boundary-types
-  public constructor(audioProducerConstructor?: SiriAudioStreamProducerConstructor, producerOptions?: any) {
+  public constructor(audioProducerConstructor?: SiriAudioStreamProducerConstructor<O>, producerOptions?: O) {
     super()
     this.audioSupported = audioProducerConstructor !== undefined
-    this.audioProducerConstructor = audioProducerConstructor
-    this.audioProducerOptions = producerOptions
+    if (audioProducerConstructor) {
+      this.createAudioSession = (connection, configuration) =>
+        // eslint-disable-next-line ts/no-use-before-define
+        new SiriAudioSession(connection, configuration, audioProducerConstructor, producerOptions)
+    }
 
     const configuration: SupportedConfiguration = this.constructSupportedConfiguration()
     this.supportedConfiguration = this.buildTargetControlSupportedConfigurationTLV(configuration)
@@ -1084,7 +1091,7 @@ export class RemoteController extends EventEmitter
   }
 
   private handleSiriAudioStart(): void {
-    if (!this.audioSupported) {
+    if (!this.createAudioSession) {
       throw new Error('Cannot start siri stream on remote where siri is not supported')
     }
 
@@ -1106,8 +1113,7 @@ export class RemoteController extends EventEmitter
       return
     }
 
-    // eslint-disable-next-line ts/no-use-before-define
-    const audioSession = new SiriAudioSession(connection, this.selectedAudioConfiguration, this.audioProducerConstructor!, this.audioProducerOptions)
+    const audioSession = this.createAudioSession(connection, this.selectedAudioConfiguration)
     if (!this.activeAudioSession) {
       this.activeAudioSession = audioSession
     } else {
@@ -1498,9 +1504,11 @@ export declare interface SiriAudioSession {
 
 /**
  * Represents an ongoing audio transmission
+ *
+ * `O` is the type of the options handed to the {@link SiriAudioStreamProducer}. It is taken from the constructor arguments.
  * @group Apple TV Remote
  */
-export class SiriAudioSession extends EventEmitter {
+export class SiriAudioSession<O = unknown> extends EventEmitter {
   readonly connection: DataStreamConnection
   private readonly selectedAudioConfiguration: AudioCodecConfiguration
 
@@ -1524,9 +1532,8 @@ export class SiriAudioSession extends EventEmitter {
   constructor(
     connection: DataStreamConnection,
     selectedAudioConfiguration: AudioCodecConfiguration,
-    producerConstructor: SiriAudioStreamProducerConstructor,
-    // eslint-disable-next-line ts/explicit-module-boundary-types
-    producerOptions?: any,
+    producerConstructor: SiriAudioStreamProducerConstructor<O>,
+    producerOptions?: O,
   ) {
     super()
     this.connection = connection

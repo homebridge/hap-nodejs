@@ -1,3 +1,5 @@
+import type { ErrorHandler, FrameHandler, SiriAudioStreamProducer } from './RemoteController.js'
+
 import { Buffer } from 'node:buffer'
 import { EventEmitter } from 'node:events'
 
@@ -379,6 +381,33 @@ describe('remoteController', () => {
           .map(call => ({ frames: call[2].packets.length as number, endOfStream: call[2].endOfStream as boolean })),
       }
     }
+
+    it('should hand the options given to the controller to the producer of a session, untouched', () => {
+      interface ProducerOptions { device: string }
+      const received: (ProducerOptions | undefined)[] = []
+      class Producer implements SiriAudioStreamProducer {
+        constructor(_frameHandler: FrameHandler, _errorHandler: ErrorHandler, options?: ProducerOptions) {
+          received.push(options)
+        }
+
+        startAudioProduction = vi.fn()
+        stopAudioProduction = vi.fn()
+      }
+
+      const options: ProducerOptions = { device: 'microphone' }
+      // the type of the options is taken from the producer, and a controller with typed options is still a RemoteController
+      const controller: RemoteController = new RemoteController(Producer, options)
+      const connection = Object.assign(new EventEmitter(), {
+        sendRequest: vi.fn(),
+        sendEvent: vi.fn(),
+      })
+
+      // @ts-expect-error: private access, and the connection is a minimal fake
+      controller.createAudioSession(connection, configuration)
+
+      expect(received).toHaveLength(1)
+      expect(received[0]).toBe(options)
+    })
 
     it('should send every queued frame when the stream ends, with endOfStream on the last packet only', () => {
       const { session, produce, open, dataEvents } = createSession()

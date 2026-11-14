@@ -125,6 +125,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(characteristic): type the context of a characteristic change as unknown instead of any
 - refactor(accessory): check the context of a characteristic change with a type guard
 - refactor(controller): type the saved data of a serializable controller as unknown by default
+- refactor(remote): let a plugin name the type of its siri audio producer options
 
 ### Homebridge Dependencies
 
