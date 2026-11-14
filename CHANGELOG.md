@@ -115,6 +115,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(characteristic): keep editor suggestions for the format and unit of characteristic props
 - refactor(advertiser): let an advertiser return a promise from destroy and updateAdvertisement
 - refactor(storage): let getItem name the type of the stored value
+- refactor(datastream): add the HDSMessage type and use it for data stream messages
 
 ### Homebridge Dependencies
 
