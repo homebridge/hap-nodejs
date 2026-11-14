@@ -1019,7 +1019,7 @@ export class AdaptiveLightingController
 
           debug('[%s] Failed CharacteristicValueTransitionControl write: \'%s\'', this.lightbulb.displayName, value)
           console.warn(`[${this.lightbulb.displayName}] Encountered error on CharacteristicValueTransitionControl characteristic: ${error.stack}`)
-          this.disableAdaptiveLighting()
+          this.handleAdaptiveLightingDisabled() // also tells a plugin in MANUAL mode, which runs the transition itself
           throw new HapStatusError(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
         }
       })
