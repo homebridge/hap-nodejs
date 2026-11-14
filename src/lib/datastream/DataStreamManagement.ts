@@ -98,7 +98,7 @@ export class DataStreamManagement {
 
   /**
    * Registers a new event handler to handle incoming event messages.
-   * The handler is only called for a connection if for the give protocol no ProtocolHandler
+   * The handler is only called for a connection if for the given protocol no ProtocolHandler
    * was registered on the connection level.
    *
    * @param protocol - name of the protocol to register the handler for
@@ -124,7 +124,7 @@ export class DataStreamManagement {
 
   /**
    * Registers a new request handler to handle incoming request messages.
-   * The handler is only called for a connection if for the give protocol no ProtocolHandler
+   * The handler is only called for a connection if for the given protocol no ProtocolHandler
    * was registered on the connection level.
    *
    * @param protocol - name of the protocol to register the handler for
@@ -149,7 +149,7 @@ export class DataStreamManagement {
   }
 
   /**
-   * Forwards any event listener for an DataStreamServer event to the DataStreamServer instance
+   * Forwards any event listener for a DataStreamServer event to the DataStreamServer instance
    *
    * @param event - the event to register for
    * @param listener - the event handler
