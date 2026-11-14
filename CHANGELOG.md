@@ -96,6 +96,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(datastream): drop a ts-expect-error and a non-null assertion in the data stream management
 - refactor(accessory): replace any, ts-expect-error and needless non-null assertions with real types
 - refactor(service): drop three ts-expect-error and four needless non-null assertions
+- refactor(characteristic): drop a needless non-null assertion on the instance id
 
 ### Homebridge Dependencies
 

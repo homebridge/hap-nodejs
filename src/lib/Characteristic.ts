@@ -3174,7 +3174,7 @@ export class Characteristic extends EventEmitter {
     // TODO include the value for characteristics of the AccessoryInformation service
     return {
       'type': toShortForm(this.UUID),
-      'iid': this.iid!,
+      'iid': this.iid,
       'value': null,
       'perms': this.props.perms,
       'description': this.props.description || this.displayName,
