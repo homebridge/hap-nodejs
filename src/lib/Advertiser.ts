@@ -699,8 +699,10 @@ export class ResolvedAdvertiser extends EventEmitter implements Advertiser {
     try {
       this.path = await ResolvedAdvertiser.managerInvoke(this.bus, 'RegisterService', {
         body: [
-          this.accessoryInfo.displayName, // name
-          this.accessoryInfo.displayName, // name_template
+          // id: only a local identifier, and it must be a valid file name, which a display name with a "/" is not
+          this.accessoryInfo.username.replace(/:/g, '_'),
+          // name_template: systemd expands "%" specifiers in it, so a literal "%" is written as "%%"
+          this.accessoryInfo.displayName.replace(/%/g, '%%'),
           '_hap._tcp', // type
           this.port, // service_port
           0, // service_priority

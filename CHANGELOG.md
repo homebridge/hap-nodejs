@@ -14,6 +14,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(advertiser): warn when a name with a dot is used with the bonjour-hap advertiser
 - fix(advertiser): log a failed systemd-resolved update instead of crashing the process
 - fix(advertiser): run systemd-resolved registrations one at a time so none is left behind
+- fix(advertiser): register names with a slash or percent sign with systemd-resolved
 
 ### Homebridge Dependencies
 
