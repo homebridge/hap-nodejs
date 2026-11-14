@@ -35,7 +35,7 @@ const debug = createDebug('HAP-NodeJS:HAPServer')
  *
  * @group HAP Accessory Server
  */
-export const enum TLVErrorCode {
+export enum TLVErrorCode {
   // noinspection JSUnusedGlobalSymbols
   UNKNOWN = 0x01,
   INVALID_REQUEST = 0x02,
@@ -134,7 +134,7 @@ export function IsKnownHAPStatusError(status: HAPStatus): boolean {
  *
  * @group HAP Accessory Server
  */
-export const enum HAPHTTPCode {
+export enum HAPHTTPCode {
   // noinspection JSUnusedGlobalSymbols
   OK = 200,
   NO_CONTENT = 204,
@@ -156,7 +156,7 @@ export const enum HAPHTTPCode {
  *
  * @group HAP Accessory Server
  */
-export const enum HAPPairingHTTPCode {
+export enum HAPPairingHTTPCode {
   // noinspection JSUnusedGlobalSymbols
   OK = 200,
 
@@ -220,7 +220,7 @@ export type ResourceRequestCallback = (error: HAPHttpError | undefined, resource
 /**
  * @group HAP Accessory Server
  */
-export const enum HAPServerEventTypes {
+export enum HAPServerEventTypes {
   /**
    * Emitted when the server is fully set up and ready to receive connections.
    */
