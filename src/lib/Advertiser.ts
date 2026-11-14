@@ -643,6 +643,7 @@ export class ResolvedAdvertiser extends EventEmitter implements Advertiser {
 
   private bus?: MessageBus
   private path?: string
+  private queue: Promise<void> = Promise.resolve()
 
   constructor(accessoryInfo: AccessoryInfo) {
     super()
@@ -667,6 +668,16 @@ export class ResolvedAdvertiser extends EventEmitter implements Advertiser {
     this.port = port
   }
 
+  /**
+   * systemd-resolved can't change a record, so an update is "unregister, then register again".
+   * Every operation waits for the one before it, otherwise two updates at once would both register the service.
+   */
+  private enqueue<T>(task: () => Promise<T>): Promise<T> {
+    const result = this.queue.then(task)
+    this.queue = result.then(() => undefined, () => undefined)
+    return result
+  }
+
   public async startAdvertising(): Promise<void> {
     if (this.port == null) {
       throw new Error('Tried starting systemd-resolved advertisement without initializing port!')
@@ -676,6 +687,14 @@ export class ResolvedAdvertiser extends EventEmitter implements Advertiser {
     }
 
     debug(`Starting to advertise '${this.accessoryInfo.displayName}' using systemd-resolved backend!`)
+
+    await this.enqueue(() => this.registerService())
+  }
+
+  private async registerService(): Promise<void> {
+    if (!this.bus) {
+      return // destroyed while waiting for its turn
+    }
 
     try {
       this.path = await ResolvedAdvertiser.managerInvoke(this.bus, 'RegisterService', {
@@ -711,30 +730,29 @@ export class ResolvedAdvertiser extends EventEmitter implements Advertiser {
 
     // Currently, systemd-resolved has no way to update an existing record.
     try {
-      await this.stopAdvertising()
-      await this.startAdvertising()
+      await this.enqueue(async () => {
+        await this.unregisterService()
+        await this.registerService()
+      })
     } catch (error) {
       // the callers do not wait for this promise, so a rejection here would end the process
       console.error(`Failed to update systemd-resolved advertisement: ${error}`)
     }
   }
 
-  private async stopAdvertising(): Promise<void> {
-    if (!this.bus) {
-      throw new Error('Tried to destroy systemd-resolved advertisement on a destroyed advertiser!')
-    }
-
-    if (this.path) {
+  private async unregisterService(): Promise<void> {
+    if (this.bus && this.path) {
+      const path = this.path
+      this.path = undefined
       try {
         await ResolvedAdvertiser.managerInvoke(this.bus, 'UnregisterService', {
-          body: [this.path],
+          body: [path],
           signature: 'o',
         })
       } catch (error) {
         // Typically, this fails if e.g. systemd-resolved service was stopped in the meantime.
         debug(`Destroying systemd-resolved advertisement failed: ${error}`)
       }
-      this.path = undefined
     }
   }
 
@@ -743,10 +761,12 @@ export class ResolvedAdvertiser extends EventEmitter implements Advertiser {
       throw new Error('Tried to destroy systemd-resolved advertisement on a destroyed advertiser!')
     }
 
-    await this.stopAdvertising()
+    await this.enqueue(async () => {
+      await this.unregisterService()
 
-    this.bus.connection.stream.destroy()
-    this.bus = undefined
+      this.bus?.connection.stream.destroy()
+      this.bus = undefined
+    })
   }
 
   public static async isAvailable(): Promise<boolean> {

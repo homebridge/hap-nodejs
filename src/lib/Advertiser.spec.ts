@@ -293,6 +293,41 @@ describe('d-Bus advertisers', () => {
     }
   })
 
+  it('should run systemd-resolved updates one at a time', async () => {
+    const calls: string[] = []
+    let registered = 0
+    invokeHandler = async (msg) => {
+      await new Promise(resolve => setTimeout(resolve, 2))
+      if (msg.member === 'RegisterService') {
+        registered++
+        calls.push(`register p${registered}`)
+        return `p${registered}`
+      }
+      calls.push(`unregister ${msg.body[0]}`)
+    }
+    const advertiser = new ResolvedAdvertiser(AccessoryInfo.create('AA:BB:CC:DD:EE:FF'))
+    advertiser.initPort(51826)
+
+    // as the accessory does: nobody waits for one call before making the next
+    const started = advertiser.startAdvertising()
+    const updates = [
+      advertiser.updateAdvertisement(),
+      advertiser.updateAdvertisement(),
+    ]
+    const destroyed = advertiser.destroy()
+    await Promise.all([started, ...updates, destroyed])
+
+    // every service that was registered is unregistered again before the next one, and at the end
+    expect(calls).toEqual([
+      'register p1',
+      'unregister p1',
+      'register p2',
+      'unregister p2',
+      'register p3',
+      'unregister p3',
+    ])
+  })
+
   it('should point at the mDNS wiki when systemd-resolved refuses permission', async () => {
     invokeHandler = () => {
       throw dbusError('org.freedesktop.DBus.Error.AccessDenied', 'Access denied')
