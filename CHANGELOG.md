@@ -143,6 +143,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(examples): list the targets of the apple tv remote example instead of an empty object
 - refactor(examples): export the example accessories as es modules and drop the dead Core.js fields
 - refactor(model): turn the const enums of accessory, service and characteristic into normal enums
+- refactor(server): turn the const enums of the server, advertiser and connection into normal enums
 
 ### Homebridge Dependencies
 

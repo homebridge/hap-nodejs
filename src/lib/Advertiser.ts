@@ -21,7 +21,7 @@ const debug = createDebug('HAP-NodeJS:Advertiser')
  *
  * @group Advertiser
  */
-export const enum StatusFlag {
+export enum StatusFlag {
   NOT_PAIRED = 0x01,
   NOT_JOINED_WIFI = 0x02,
   PROBLEM_DETECTED = 0x04,
@@ -33,7 +33,7 @@ export const enum StatusFlag {
  *
  * @group Advertiser
  */
-export const enum PairingFeatureFlag {
+export enum PairingFeatureFlag {
   SUPPORTS_HARDWARE_AUTHENTICATION = 0x01,
   SUPPORTS_SOFTWARE_AUTHENTICATION = 0x02,
 }
@@ -41,7 +41,7 @@ export const enum PairingFeatureFlag {
 /**
  * @group Advertiser
  */
-export const enum AdvertiserEvent {
+export enum AdvertiserEvent {
   /**
    * Emitted if the underlying mDNS advertisers signals, that the service name
    * was automatically changed due to some naming conflicts on the network.
@@ -426,7 +426,7 @@ function systemBus(): MessageBus {
  *
  * @group Advertiser
  */
-const enum AvahiServerState {
+enum AvahiServerState {
   // noinspection JSUnusedGlobalSymbols
   INVALID = 0,
   REGISTERING,
