@@ -76,6 +76,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(accessory): keep the listeners of the plugin when a bridged accessory is removed
 - test: assert on two displayName checks which had no matcher and enforce it with the lint rule
 - ci: let the discord announcement run by dropping the check on a job which does not exist
+- fix(accessory-info): count an admin once when the same pairing is added again
 
 ### Homebridge Dependencies
 

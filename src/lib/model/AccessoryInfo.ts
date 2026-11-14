@@ -83,6 +83,10 @@ export class AccessoryInfo {
    * @param {PermissionTypes} permission
    */
   public addPairedClient(username: HAPUsername, publicKey: Buffer, permission: PermissionTypes): void {
+    if (this.pairedClients[username]?.permission === PermissionTypes.ADMIN) {
+      this.pairedAdminClients-- // paired as admin already: it must not be counted a second time below
+    }
+
     this.pairedClients[username] = {
       username,
       publicKey,
