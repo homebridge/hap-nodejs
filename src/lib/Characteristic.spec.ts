@@ -1356,6 +1356,32 @@ describe('characteristic', () => {
     })
   })
 
+  describe('a string characteristic which is given no string', () => {
+    it.each([undefined, {}, true])('should stay empty, and not hold the text of %j, when it had no value', (value) => {
+      const characteristic = new Characteristic('Text', uuid.generate('text without a value'), {
+        format: Formats.STRING,
+        perms: [Perms.PAIRED_READ, Perms.NOTIFY],
+      })
+      characteristic.value = null
+      const warning = vi.fn()
+      characteristic.on(CharacteristicEventTypes.CHARACTERISTIC_WARNING, warning)
+
+      characteristic.updateValue(value as unknown as string)
+
+      expect(characteristic.value).toBe('')
+      expect(warning).toHaveBeenCalledTimes(1)
+    })
+
+    it('should keep its value when it had one', () => {
+      const characteristic = createCharacteristic(Formats.STRING)
+      characteristic.updateValue('Living Room')
+
+      characteristic.updateValue(undefined as unknown as string)
+
+      expect(characteristic.value).toBe('Living Room')
+    })
+  })
+
   describe('client writes of a number which is not whole', () => {
     it.each([
       Formats.UINT8,
@@ -1924,10 +1950,10 @@ describe('characteristic', () => {
 
       const mock = vi.spyOn(characteristic, 'characteristicWarning')
 
-      // undefined values should be set to "undefined" of no valid value is set yet
+      // undefined values leave the string empty if no valid value is set yet (and not the text "undefined")
       mock.mockReset()
       characteristic.setValue(undefined as unknown as boolean)
-      expect(characteristic.value).toEqual('undefined')
+      expect(characteristic.value).toEqual('')
       expect(mock).toHaveBeenCalledTimes(1)
 
       // undefined values should revert back to last known good value if set

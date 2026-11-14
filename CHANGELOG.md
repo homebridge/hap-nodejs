@@ -66,6 +66,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): answer a snapshot request for a camera without streams instead of throwing
 - fix(datastream): answer a request named like an inherited object property as unhandled
 - fix(characteristic): refuse a client write of a number which is not whole to an integer format
+- fix(characteristic): keep the value of a string characteristic which is given no string
 
 ### Homebridge Dependencies
 

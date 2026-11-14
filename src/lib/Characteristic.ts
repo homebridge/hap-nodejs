@@ -3007,9 +3007,10 @@ export class Characteristic extends EventEmitter {
         }
         if (typeof value !== 'string') {
           this.characteristicWarning(`characteristic value expected string and received ${typeof value}`, warningType)
+          // keep what is there. Turning the value into text would store the words "undefined" or "null".
           value = typeof this.value === 'string'
             ? this.value
-            : `${value}`
+            : ''
         }
 
         // mirrors the case value = null at the beginning
