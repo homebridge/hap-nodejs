@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer'
 import { EventEmitter } from 'node:events'
 import process from 'node:process'
 
@@ -12,6 +13,7 @@ import {
   EventTriggerOption,
   MediaContainerType,
   RecordingManagement,
+  RecordingPacket,
 } from './RecordingManagement.js'
 import { AudioBitrate, H264Level, H264Profile, VideoCodecType } from './RTPStreamManagement.js'
 
@@ -83,10 +85,10 @@ describe('recordingManagement', () => {
   })
 
   describe('dataSend open', () => {
-    function managementReadyToRecord(): RecordingManagement {
+    function managementReadyToRecord(delegate = new MockDelegate()): RecordingManagement {
       const management = new RecordingManagement(
         mockRecordingOptions,
-        new MockDelegate(),
+        delegate,
         new Set([EventTriggerOption.MOTION, EventTriggerOption.DOORBELL]),
       )
       const internals = management as any
@@ -133,6 +135,51 @@ describe('recordingManagement', () => {
         process.off('unhandledRejection', onUnhandled)
         error.mockRestore()
       }
+    })
+
+    it('should signal the end of the stream when the last packet has no data', async () => {
+      class EmptyLastPacketDelegate extends MockDelegate {
+        async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
+          yield {
+            data: Buffer.alloc(100, 1),
+            isLast: false,
+          }
+          yield {
+            data: Buffer.alloc(0),
+            isLast: false,
+          } // skipped, without using up a sequence number
+          yield {
+            data: Buffer.alloc(50, 2),
+            isLast: false,
+          }
+          yield {
+            data: Buffer.alloc(0),
+            isLast: true,
+          }
+        }
+      }
+      const management = managementReadyToRecord(new EmptyLastPacketDelegate())
+      const connection = fakeConnection(() => undefined)
+
+      ;(management as any).handleDataSendOpen(connection, 1, {
+        streamId: 5,
+        type: 'ipcamera.recording',
+        target: 'controller',
+        reason: 'record',
+      })
+      await new Promise(resolve => setTimeout(resolve, 10))
+
+      const events = connection.sendEvent.mock.calls.map(call => ({
+        length: call[2].packets[0].data.length,
+        sequenceNumber: call[2].packets[0].metadata.dataSequenceNumber,
+        endOfStream: call[2].endOfStream,
+      }))
+      expect(events).toEqual([
+        { length: 100, sequenceNumber: 1, endOfStream: false },
+        { length: 50, sequenceNumber: 2, endOfStream: false },
+        { length: 0, sequenceNumber: 3, endOfStream: true },
+      ])
+      ;(management as any).recordingStream?.close(0)
     })
 
     it('should reject an open without a numeric stream id', () => {

@@ -1078,10 +1078,14 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
         }
 
         const fragment = packet.data
+        if (fragment.length === 0 && !packet.isLast) {
+          continue // nothing to send, and no sequence number is used up
+        }
 
         let offset = 0
         let dataChunkSequenceNumber = 1
-        while (offset < fragment.length) {
+        // at least once: a last packet without data still has to tell the controller that the stream has ended
+        do {
           if (this.closed) {
             break
           }
@@ -1117,7 +1121,7 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
 
           dataChunkSequenceNumber++
           initialization = false
-        }
+        } while (offset < fragment.length)
 
         lastFragmentWasMarkedLast = packet.isLast
 
