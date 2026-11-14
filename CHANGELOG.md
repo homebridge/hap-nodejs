@@ -57,6 +57,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): add a motion or occupancy sensor which was enabled for a saved camera
 - fix(camera): leave the streaming options of the plugin unchanged
 - fix(camera): ignore a prepared stream which arrives after its session has ended
+- fix(camera): close the rtp proxy sockets when the proxy is destroyed while they are being bound
 
 ### Homebridge Dependencies
 
