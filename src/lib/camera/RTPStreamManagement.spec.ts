@@ -1,7 +1,9 @@
 import type { MockInstance } from 'vitest'
 
 import { Buffer } from 'node:buffer'
+import util from 'node:util'
 
+import createDebug from 'debug'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
@@ -269,6 +271,37 @@ describe('rTPStreamManagement', () => {
 
       expect(callback).toHaveBeenCalledTimes(1)
       expect(callback.mock.calls[0][0]).toBe(HAPStatus.INVALID_VALUE_IN_REQUEST)
+    })
+  })
+
+  describe('debug output', () => {
+    it('should not contain the SRTP keys of a stream', () => {
+      const controller = new CameraController(buildControllerOptions(baseStreamingOptions))
+      controller.constructServices()
+      controller.configureServices()
+      const rtp = controller.streamManagements[0] as RTPStreamManagement
+      vi.spyOn(MockDelegate.prototype, 'prepareStream').mockImplementation(() => undefined)
+
+      const namespaces = createDebug.disable()
+      createDebug.enable('HAP-NodeJS:Camera:RTPStreamManagement')
+      const lines: string[] = []
+      const log = vi.spyOn(createDebug, 'log').mockImplementation((...args: unknown[]) => {
+        lines.push(util.format(...args))
+      })
+      try {
+        // @ts-expect-error: private method access
+        rtp.handleSetupEndpoints(buildSetupEndpointsTlv(), vi.fn(), buildMockConnection())
+
+        const output = lines.join('\n')
+        expect(output).toContain('11111111-1111-1111-1111-111111111111') // the line with the session was written
+        expect(output).not.toContain('Master')
+        expect(output).not.toContain('<Buffer')
+      } finally {
+        log.mockRestore()
+        createDebug.enable(namespaces)
+        vi.restoreAllMocks()
+        controller.handleFactoryReset()
+      }
     })
   })
 
