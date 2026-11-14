@@ -304,7 +304,7 @@ export interface PrepareWriteRequest {
 /**
  * @group HAP Accessory Server
  */
-export const enum ResourceRequestType {
+export enum ResourceRequestType {
   IMAGE = 'image',
 }
 
