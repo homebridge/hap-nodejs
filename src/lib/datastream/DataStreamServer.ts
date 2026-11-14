@@ -32,36 +32,43 @@ export interface PreparedDataStreamSession {
 }
 
 /**
+ * The body of a HomeKit Data Stream message, or its header: a dictionary of named values.
+ *
+ * @group HomeKit Data Streams (HDS)
+ */
+export type HDSMessage = Record<string, any>
+
+/**
  * @group HomeKit Data Streams (HDS)
  */
 export type PrepareSessionCallback = (error?: Error, preparedSession?: PreparedDataStreamSession) => void
 /**
  * @group HomeKit Data Streams (HDS)
  */
-export type EventHandler = (message: Record<any, any>) => void
+export type EventHandler = (message: HDSMessage) => void
 /**
  * @group HomeKit Data Streams (HDS)
  */
-export type RequestHandler = (id: number, message: Record<any, any>) => void
+export type RequestHandler = (id: number, message: HDSMessage) => void
 /**
  * @group HomeKit Data Streams (HDS)
  */
 export type ResponseHandler = (
   error: Error | undefined,
   status: HDSStatus | undefined,
-  message: Record<any, any>) => void
+  message: HDSMessage) => void
 /**
  * @group HomeKit Data Streams (HDS)
  */
 export type GlobalEventHandler = (
   connection: DataStreamConnection,
-  message: Record<any, any>) => void
+  message: HDSMessage) => void
 /**
  * @group HomeKit Data Streams (HDS)
  */
 export type GlobalRequestHandler = (
   connection: DataStreamConnection, id: number,
-  message: Record<any, any>) => void
+  message: HDSMessage) => void
 
 /**
  * @group HomeKit Data Streams (HDS)
@@ -193,7 +200,7 @@ export interface DataStreamMessage {
   id?: number // for requests and responses
   status?: HDSStatus // for responses
 
-  message: Record<any, any>
+  message: HDSMessage
 }
 
 /**
@@ -683,7 +690,7 @@ export class DataStreamConnection extends EventEmitter {
     this.setMaxListeners(100)
   }
 
-  private handleHello(id: number, message: Record<any, any>) {
+  private handleHello(id: number, message: HDSMessage) {
     // that hello is indeed the _first_ message received is verified in onSocketData(...)
     debug('[%s] Received hello message from client: %o', this.remoteAddress, message)
 
@@ -733,8 +740,8 @@ export class DataStreamConnection extends EventEmitter {
    * @param message - message dictionary which gets sent along the event
    */
 
-  sendEvent(protocol: string | Protocols, event: string | Topics, message: Record<any, any> = {}): void {
-    const header: Record<any, any> = {}
+  sendEvent(protocol: string | Protocols, event: string | Topics, message: HDSMessage = {}): void {
+    const header: HDSMessage = {}
     header.protocol = protocol
     header.event = event
 
@@ -753,7 +760,7 @@ export class DataStreamConnection extends EventEmitter {
    * arrive in time or the status and the message dictionary from the response
    */
 
-  sendRequest(protocol: string | Protocols, request: string | Topics, message: Record<any, any> = {}, callback: ResponseHandler): void {
+  sendRequest(protocol: string | Protocols, request: string | Topics, message: HDSMessage = {}, callback: ResponseHandler): void {
     if (this.state >= ConnectionState.CLOSING) {
       // before anything is registered: the caller gets this error, and must not get a timeout for the same request later
       throw new HDSConnectionError('Cannot send message on closing/closed socket!', HDSConnectionErrorType.CLOSED_SOCKET)
@@ -779,7 +786,7 @@ export class DataStreamConnection extends EventEmitter {
       handler(new Error('timeout'), undefined, {})
     }, 10000) // 10s timer
 
-    const header: Record<any, any> = {}
+    const header: HDSMessage = {}
     header.protocol = protocol
     header.request = request
     header.id = new Int64(requestId)
@@ -810,9 +817,9 @@ export class DataStreamConnection extends EventEmitter {
     id: number,
     status: HDSStatus = HDSStatus.SUCCESS,
 
-    message: Record<any, any> = {},
+    message: HDSMessage = {},
   ): void {
-    const header: Record<any, any> = {}
+    const header: HDSMessage = {}
     header.protocol = protocol
     header.response = response
     header.id = new Int64(id)
@@ -1068,9 +1075,9 @@ export class DataStreamConnection extends EventEmitter {
       const headerPayload = new DataStreamReader(payload.subarray(headerBegin, headerBegin + headerLength))
       const messagePayload = new DataStreamReader(payload.subarray(messageBegin, messageBegin + messageLength))
 
-      let headerDictionary: Record<any, any>
+      let headerDictionary: HDSMessage
 
-      let messageDictionary: Record<any, any>
+      let messageDictionary: HDSMessage
       try {
         headerDictionary = DataStreamParser.decode(headerPayload)
         headerPayload.finished()
@@ -1129,7 +1136,7 @@ export class DataStreamConnection extends EventEmitter {
     return messages
   }
 
-  private sendHDSFrame(header: Record<any, any>, message: Record<any, any>) {
+  private sendHDSFrame(header: HDSMessage, message: HDSMessage) {
     if (this.state >= ConnectionState.CLOSING) {
       throw new HDSConnectionError('Cannot send message on closing/closed socket!', HDSConnectionErrorType.CLOSED_SOCKET)
     }

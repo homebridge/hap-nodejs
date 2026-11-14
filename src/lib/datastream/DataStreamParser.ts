@@ -1,3 +1,5 @@
+import type { HDSMessage } from './DataStreamServer.js'
+
 import assert from 'node:assert'
 import { Buffer } from 'node:buffer'
 
@@ -221,7 +223,7 @@ export class DataStreamParser {
     } else if (tag >= DataFormatTags.DICTIONARY_LENGTH_START && tag <= DataFormatTags.DICTIONARY_LENGTH_STOP) {
       const length = tag - DataFormatTags.DICTIONARY_LENGTH_START
 
-      const dictionary: Record<any, any> = {}
+      const dictionary: HDSMessage = {}
 
       for (let i = 0; i < length; i++) {
         const key = this.decode(buffer)
@@ -230,7 +232,7 @@ export class DataStreamParser {
 
       return dictionary
     } else if (tag === DataFormatTags.DICTIONARY_TERMINATED) {
-      const dictionary: Record<any, any> = {}
+      const dictionary: HDSMessage = {}
 
       let key
       // eslint-disable-next-line no-cond-assign
