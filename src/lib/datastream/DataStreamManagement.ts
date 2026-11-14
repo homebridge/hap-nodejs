@@ -155,8 +155,12 @@ export class DataStreamManagement {
    * @param listener - the event handler
    */
   onServerEvent(event: DataStreamServerEvent, listener: (connection: DataStreamConnection) => void): this {
-    // @ts-expect-error: event type
-    this.dataStreamServer.on(event, listener)
+    // the server declares one overload per event, which a union of both events matches only once it is narrowed
+    if (event === DataStreamServerEvent.CONNECTION_OPENED) {
+      this.dataStreamServer.on(event, listener)
+    } else {
+      this.dataStreamServer.on(event, listener)
+    }
     return this
   }
 
@@ -182,12 +186,12 @@ export class DataStreamManagement {
       }
 
       this.dataStreamServer.prepareSession(connection, controllerKeySalt, (error, preparedSession) => {
-        if (error || !preparedSession) {
+        if (error || preparedSession?.port == null) {
           callback(error ?? new Error('PreparedSession was undefined!'))
           return
         }
 
-        const listeningPort = tlv.encode(TransportSessionConfiguration.TCP_LISTENING_PORT, tlv.writeUInt16(preparedSession.port!))
+        const listeningPort = tlv.encode(TransportSessionConfiguration.TCP_LISTENING_PORT, tlv.writeUInt16(preparedSession.port))
 
         let response: Buffer = Buffer.concat([
           tlv.encode(SetupDataStreamWriteResponseTypes.STATUS, DataStreamStatus.SUCCESS),
