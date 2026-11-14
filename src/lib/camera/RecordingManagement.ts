@@ -81,7 +81,7 @@ export interface CameraRecordingOptions {
  *
  * @group Camera
  */
-export const enum EventTriggerOption {
+export enum EventTriggerOption {
   /**
    * The Motion trigger. If enabled motion should trigger the start of a recording.
    */
@@ -100,7 +100,7 @@ export const enum EventTriggerOption {
 /**
  * @group Camera
  */
-export const enum MediaContainerType {
+export enum MediaContainerType {
   FRAGMENTED_MP4 = 0x00,
 }
 
@@ -215,26 +215,26 @@ export interface SelectedH264CodecParameters {
   iFrameInterval: number
 }
 
-const enum VideoCodecConfigurationTypes {
+enum VideoCodecConfigurationTypes {
   CODEC_TYPE = 0x01,
   CODEC_PARAMETERS = 0x02,
   ATTRIBUTES = 0x03,
 }
 
-const enum VideoCodecParametersTypes {
+enum VideoCodecParametersTypes {
   PROFILE_ID = 0x01,
   LEVEL = 0x02,
   BITRATE = 0x03,
   IFRAME_INTERVAL = 0x04,
 }
 
-const enum VideoAttributesTypes {
+enum VideoAttributesTypes {
   IMAGE_WIDTH = 0x01,
   IMAGE_HEIGHT = 0x02,
   FRAME_RATE = 0x03,
 }
 
-const enum SelectedCameraRecordingConfigurationTypes {
+enum SelectedCameraRecordingConfigurationTypes {
   SELECTED_RECORDING_CONFIGURATION = 0x01,
   SELECTED_VIDEO_CONFIGURATION = 0x02,
   SELECTED_AUDIO_CONFIGURATION = 0x03,
@@ -243,7 +243,7 @@ const enum SelectedCameraRecordingConfigurationTypes {
 /**
  * @group Camera
  */
-export const enum AudioRecordingCodecType {
+export enum AudioRecordingCodecType {
   AAC_LC = 0,
   AAC_ELD = 1,
 }
@@ -251,7 +251,7 @@ export const enum AudioRecordingCodecType {
 /**
  * @group Camera
  */
-export const enum AudioRecordingSamplerate {
+export enum AudioRecordingSamplerate {
   KHZ_8 = 0,
   KHZ_16 = 1,
   KHZ_24 = 2,
@@ -260,45 +260,45 @@ export const enum AudioRecordingSamplerate {
   KHZ_48 = 5,
 }
 
-const enum SupportedVideoRecordingConfigurationTypes {
+enum SupportedVideoRecordingConfigurationTypes {
   VIDEO_CODEC_CONFIGURATION = 0x01,
 }
 
-const enum SupportedCameraRecordingConfigurationTypes {
+enum SupportedCameraRecordingConfigurationTypes {
   PREBUFFER_LENGTH = 0x01,
   EVENT_TRIGGER_OPTIONS = 0x02,
   MEDIA_CONTAINER_CONFIGURATIONS = 0x03,
 }
 
-const enum MediaContainerConfigurationTypes {
+enum MediaContainerConfigurationTypes {
   MEDIA_CONTAINER_TYPE = 0x01,
   MEDIA_CONTAINER_PARAMETERS = 0x02,
 }
 
-const enum MediaContainerParameterTypes {
+enum MediaContainerParameterTypes {
   FRAGMENT_LENGTH = 0x01,
 }
 
-const enum AudioCodecParametersTypes {
+enum AudioCodecParametersTypes {
   CHANNEL = 0x01,
   BIT_RATE = 0x02,
   SAMPLE_RATE = 0x03,
   MAX_AUDIO_BITRATE = 0x04, // only present in selected audio codec parameters tlv
 }
 
-const enum AudioCodecConfigurationTypes {
+enum AudioCodecConfigurationTypes {
   CODEC_TYPE = 0x01,
   CODEC_PARAMETERS = 0x02,
 }
 
-const enum SupportedAudioRecordingConfigurationTypes {
+enum SupportedAudioRecordingConfigurationTypes {
   AUDIO_CODEC_CONFIGURATION = 0x01,
 }
 
 /**
  * @group Camera
  */
-export const enum PacketDataType {
+export enum PacketDataType {
   /**
    * mp4 moov box
    */
@@ -966,7 +966,7 @@ export class RecordingManagement {
 /**
  * @group Camera
  */
-const enum CameraRecordingStreamEvents {
+enum CameraRecordingStreamEvents {
   /**
    * This event is fired when the recording stream is closed.
    * Either due to a normal exit (e.g. the HomeKit Controller acknowledging the stream)

@@ -23,11 +23,11 @@ import RTPProxy from './RTPProxy.js'
 const debug = createDebug('HAP-NodeJS:Camera:RTPStreamManagement')
 // ---------------------------------- TLV DEFINITIONS START ----------------------------------
 
-const enum StreamingStatusTypes {
+enum StreamingStatusTypes {
   STATUS = 0x01,
 }
 
-const enum StreamingStatus {
+enum StreamingStatus {
   AVAILABLE = 0x00,
   IN_USE = 0x01, // Session is marked IN_USE after the first setup request
   UNAVAILABLE = 0x02, // other reasons
@@ -35,17 +35,17 @@ const enum StreamingStatus {
 
 // ----------
 
-const enum SupportedVideoStreamConfigurationTypes {
+enum SupportedVideoStreamConfigurationTypes {
   VIDEO_CODEC_CONFIGURATION = 0x01,
 }
 
-const enum VideoCodecConfigurationTypes {
+enum VideoCodecConfigurationTypes {
   CODEC_TYPE = 0x01,
   CODEC_PARAMETERS = 0x02,
   ATTRIBUTES = 0x03,
 }
 
-const enum VideoCodecParametersTypes {
+enum VideoCodecParametersTypes {
   PROFILE_ID = 0x01,
   LEVEL = 0x02,
   PACKETIZATION_MODE = 0x03,
@@ -53,7 +53,7 @@ const enum VideoCodecParametersTypes {
   CVO_ID = 0x05, // ID for CVO RTP extension, value in range from 1 to 14
 }
 
-const enum VideoAttributesTypes {
+enum VideoAttributesTypes {
   IMAGE_WIDTH = 0x01,
   IMAGE_HEIGHT = 0x02,
   FRAME_RATE = 0x03,
@@ -62,7 +62,7 @@ const enum VideoAttributesTypes {
 /**
  * @group Camera
  */
-export const enum VideoCodecType {
+export enum VideoCodecType {
   H264 = 0x00,
   // while the namespace is already reserved for H265 it isn't currently supported.
   // H265 = 0x01,
@@ -71,7 +71,7 @@ export const enum VideoCodecType {
 /**
  * @group Camera
  */
-export const enum H264Profile {
+export enum H264Profile {
   BASELINE = 0x00,
   MAIN = 0x01,
   HIGH = 0x02,
@@ -80,7 +80,7 @@ export const enum H264Profile {
 /**
  * @group Camera
  */
-export const enum H264Level {
+export enum H264Level {
   LEVEL3_1 = 0x00,
   LEVEL3_2 = 0x01,
   LEVEL4_0 = 0x02,
@@ -89,28 +89,28 @@ export const enum H264Level {
 /**
  * @group Camera
  */
-export const enum VideoCodecPacketizationMode {
+export enum VideoCodecPacketizationMode {
   NON_INTERLEAVED = 0x00,
 }
 
-const enum VideoCodecCVO { // Coordination of Video Orientation
+enum VideoCodecCVO { // Coordination of Video Orientation
   UNSUPPORTED = 0x00,
   SUPPORTED = 0x01,
 }
 
 // ----------
 
-const enum SupportedAudioStreamConfigurationTypes {
+enum SupportedAudioStreamConfigurationTypes {
   AUDIO_CODEC_CONFIGURATION = 0x01,
   COMFORT_NOISE_SUPPORT = 0x02,
 }
 
-const enum AudioCodecConfigurationTypes {
+enum AudioCodecConfigurationTypes {
   CODEC_TYPE = 0x01,
   CODEC_PARAMETERS = 0x02,
 }
 
-const enum AudioCodecTypes { // only really by HAP supported codecs are AAC-ELD and OPUS
+enum AudioCodecTypes { // only really by HAP supported codecs are AAC-ELD and OPUS
   PCMU = 0x00,
   PCMA = 0x01,
   AAC_ELD = 0x02,
@@ -120,7 +120,7 @@ const enum AudioCodecTypes { // only really by HAP supported codecs are AAC-ELD 
   AMR_WB = 0x06,
 }
 
-const enum AudioCodecParametersTypes {
+enum AudioCodecParametersTypes {
   CHANNEL = 0x01,
   BIT_RATE = 0x02,
   SAMPLE_RATE = 0x03,
@@ -130,7 +130,7 @@ const enum AudioCodecParametersTypes {
 /**
  * @group Camera
  */
-export const enum AudioBitrate {
+export enum AudioBitrate {
   VARIABLE = 0x00,
   CONSTANT = 0x01,
 }
@@ -138,7 +138,7 @@ export const enum AudioBitrate {
 /**
  * @group Camera
  */
-export const enum AudioSamplerate {
+export enum AudioSamplerate {
   KHZ_8 = 0x00,
   KHZ_16 = 0x01,
   KHZ_24 = 0x02,
@@ -148,14 +148,14 @@ export const enum AudioSamplerate {
 
 // ----------
 
-const enum SupportedRTPConfigurationTypes {
+enum SupportedRTPConfigurationTypes {
   SRTP_CRYPTO_SUITE = 0x02,
 }
 
 /**
  * @group Camera
  */
-export const enum SRTPCryptoSuites { // public API
+export enum SRTPCryptoSuites { // public API
   AES_CM_128_HMAC_SHA1_80 = 0x00,
   AES_CM_256_HMAC_SHA1_80 = 0x01,
   NONE = 0x02,
@@ -163,32 +163,32 @@ export const enum SRTPCryptoSuites { // public API
 
 // ----------
 
-const enum SetupEndpointsTypes {
+enum SetupEndpointsTypes {
   SESSION_ID = 0x01,
   CONTROLLER_ADDRESS = 0x03,
   VIDEO_SRTP_PARAMETERS = 0x04,
   AUDIO_SRTP_PARAMETERS = 0x05,
 }
 
-const enum AddressTypes {
+enum AddressTypes {
   ADDRESS_VERSION = 0x01,
   ADDRESS = 0x02,
   VIDEO_RTP_PORT = 0x03,
   AUDIO_RTP_PORT = 0x04,
 }
 
-const enum IPAddressVersion {
+enum IPAddressVersion {
   IPV4 = 0x00,
   IPV6 = 0x01,
 }
 
-const enum SRTPParametersTypes {
+enum SRTPParametersTypes {
   SRTP_CRYPTO_SUITE = 0x01,
   MASTER_KEY = 0x02, // 16 bytes for AES_CM_128_HMAC_SHA1_80; 32 bytes for AES_256_CM_HMAC_SHA1_80
   MASTER_SALT = 0x03, // 14 bytes
 }
 
-const enum SetupEndpointsResponseTypes {
+enum SetupEndpointsResponseTypes {
   SESSION_ID = 0x01,
   STATUS = 0x02,
   ACCESSORY_ADDRESS = 0x03,
@@ -198,7 +198,7 @@ const enum SetupEndpointsResponseTypes {
   AUDIO_SSRC = 0x07,
 }
 
-const enum SetupEndpointsStatus {
+enum SetupEndpointsStatus {
   SUCCESS = 0x00,
   BUSY = 0x01,
   ERROR = 0x02,
@@ -206,13 +206,13 @@ const enum SetupEndpointsStatus {
 
 // ----------
 
-const enum SelectedRTPStreamConfigurationTypes {
+enum SelectedRTPStreamConfigurationTypes {
   SESSION_CONTROL = 0x01,
   SELECTED_VIDEO_PARAMETERS = 0x02,
   SELECTED_AUDIO_PARAMETERS = 0x03,
 }
 
-const enum SessionControlTypes {
+enum SessionControlTypes {
   SESSION_IDENTIFIER = 0x01, // uuid, 16 bytes
   COMMAND = 0x02,
 }
@@ -225,14 +225,14 @@ enum SessionControlCommand {
   RECONFIGURE_SESSION = 0x04,
 }
 
-const enum SelectedVideoParametersTypes {
+enum SelectedVideoParametersTypes {
   CODEC_TYPE = 0x01,
   CODEC_PARAMETERS = 0x02,
   ATTRIBUTES = 0x03,
   RTP_PARAMETERS = 0x04,
 }
 
-const enum VideoRTPParametersTypes {
+enum VideoRTPParametersTypes {
   PAYLOAD_TYPE = 0x01,
   SYNCHRONIZATION_SOURCE = 0x02,
   MAX_BIT_RATE = 0x03,
@@ -240,14 +240,14 @@ const enum VideoRTPParametersTypes {
   MAX_MTU = 0x05, // only there if value is not default value; default values: ipv4 1378; ipv6 1228 bytes
 }
 
-const enum SelectedAudioParametersTypes {
+enum SelectedAudioParametersTypes {
   CODEC_TYPE = 0x01,
   CODEC_PARAMETERS = 0x02,
   RTP_PARAMETERS = 0x03,
   COMFORT_NOISE = 0x04,
 }
 
-const enum AudioRTPParametersTypes {
+enum AudioRTPParametersTypes {
   PAYLOAD_TYPE = 0x01,
   SYNCHRONIZATION_SOURCE = 0x02,
   MAX_BIT_RATE = 0x03,
@@ -339,7 +339,7 @@ export interface AudioStreamingCodec {
 /**
  * @group Camera
  */
-export const enum AudioStreamingCodecType { // codecs as defined by the HAP spec; only AAC-ELD and OPUS seem to work
+export enum AudioStreamingCodecType { // codecs as defined by the HAP spec; only AAC-ELD and OPUS seem to work
   PCMU = 'PCMU',
   PCMA = 'PCMA',
   AAC_ELD = 'AAC-eld',
@@ -352,7 +352,7 @@ export const enum AudioStreamingCodecType { // codecs as defined by the HAP spec
 /**
  * @group Camera
  */
-export const enum AudioStreamingSamplerate {
+export enum AudioStreamingSamplerate {
   KHZ_8 = 8,
   KHZ_16 = 16,
   KHZ_24 = 24,
@@ -443,7 +443,7 @@ export interface ProxiedSourceResponse {
 /**
  * @group Camera
  */
-export const enum StreamRequestTypes {
+export enum StreamRequestTypes {
   RECONFIGURE = 'reconfigure',
   START = 'start',
   STOP = 'stop',
