@@ -135,7 +135,6 @@ export const enum ServiceEventTypes {
   CHARACTERISTIC_WARNING = 'characteristic-warning',
 }
 
-// eslint-disable-next-line ts/no-unsafe-declaration-merging
 export declare interface Service {
   on(event: 'characteristic-change', listener: (change: ServiceCharacteristicChange) => void): this
   on(event: 'service-configurationChange', listener: () => void): this
@@ -168,7 +167,6 @@ export declare interface Service {
  *
  * @group Service
  */
-// eslint-disable-next-line ts/no-unsafe-declaration-merging
 export class Service extends EventEmitter {
   // Service MUST NOT have any other static variables
 

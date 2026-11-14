@@ -263,7 +263,6 @@ export const enum HAPServerEventTypes {
   CONNECTION_CLOSED = 'connection-closed',
 }
 
-// eslint-disable-next-line ts/no-unsafe-declaration-merging
 export declare interface HAPServer {
   on(event: 'listening', listener: (port: number, address: string) => void): this
   on(event: 'identify', listener: (callback: IdentifyCallback) => void): this
@@ -333,7 +332,6 @@ export declare interface HAPServer {
  *
  * @group HAP Accessory Server
  */
-// eslint-disable-next-line ts/no-unsafe-declaration-merging
 export class HAPServer extends EventEmitter {
   private accessoryInfo: AccessoryInfo
   private httpServer: EventedHTTPServer
