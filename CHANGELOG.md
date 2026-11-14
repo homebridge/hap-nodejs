@@ -33,6 +33,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(server): answer a malformed JSON body with 400 and an invalid value status
 - fix(server): answer a pairing request with a missing or malformed key with a pairing error
 - fix(server): deliver events after stray bytes and hold them while a second request is answered
+- fix(tlv): reject a truncated entry in decodeList instead of cutting it short
 
 ### Homebridge Dependencies
 
