@@ -43,30 +43,25 @@ const FAKE_OUTLET = {
 const outletUUID = uuid.generate('hap-nodejs:accessories:Outlet')
 
 // This is the Accessory that we'll return to HAP-NodeJS that represents our fake light.
-const outlet = exports.accessory = new Accessory('Outlet', outletUUID)
+export const accessory = new Accessory('Outlet', outletUUID)
 
-// Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
-// @ts-expect-error: Core/BridgeCore API
-outlet.username = '1A:2B:3C:4D:5D:FF'
-// @ts-expect-error: Core/BridgeCore API
-outlet.pincode = '031-45-154'
-outlet.category = Categories.OUTLET
+accessory.category = Categories.OUTLET
 
 // set some basic properties (these values are arbitrary and setting them is optional)
-outlet
+accessory
   .getService(Service.AccessoryInformation)!
   .setCharacteristic(Characteristic.Manufacturer, 'Oltica')
   .setCharacteristic(Characteristic.Model, 'Rev-1')
   .setCharacteristic(Characteristic.SerialNumber, 'A1S2NASF88EW')
 
 // listen for the "identify" event for this Accessory
-outlet.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, callback: VoidCallback) => {
+accessory.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, callback: VoidCallback) => {
   FAKE_OUTLET.identify()
   callback() // success
 })
 
 // Add the actual outlet Service and listen for change events from iOS.
-outlet
+accessory
   .addService(Service.Outlet, 'Fake Outlet') // services exposed to the user should have "names" like "Fake Light" for us
   .getCharacteristic(Characteristic.On)!
   .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
@@ -76,7 +71,7 @@ outlet
 
 // We want to intercept requests for our current power state so we can query the hardware itself instead of
 // allowing HAP-NodeJS to return the cached Characteristic.value.
-outlet
+accessory
   .getService(Service.Outlet)!
   .getCharacteristic(Characteristic.On)!
   .on(CharacteristicEventTypes.GET, (callback: NodeCallback<CharacteristicValue>) => {

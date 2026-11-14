@@ -14,8 +14,6 @@ import {
 
 class LightControllerClass {
   name = 'Simple Light' // name of accessory
-  pincode: CharacteristicValue = '031-45-154'
-  username: CharacteristicValue = 'FA:3C:ED:5A:1A:1A' // MAC like address used by HomeKit to differentiate accessories.
   manufacturer: CharacteristicValue = 'HAP-NodeJS' // manufacturer (optional)
   model: CharacteristicValue = 'v1.0' // model (optional)
   serialNumber: CharacteristicValue = 'A12S345KGB' // serial number (optional)
@@ -98,30 +96,25 @@ const LightController = new LightControllerClass()
 const lightUUID = uuid.generate(`hap-nodejs:accessories:light${LightController.name}`)
 
 // This is the Accessory that we'll return to HAP-NodeJS that represents our light.
-const lightAccessory = exports.accessory = new Accessory(LightController.name as string, lightUUID)
+export const accessory = new Accessory(LightController.name as string, lightUUID)
 
-// Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
-// @ts-expect-error: Core/BridgeCore API
-lightAccessory.username = LightController.username
-// @ts-expect-error: Core/BridgeCore API
-lightAccessory.pincode = LightController.pincode
-lightAccessory.category = Categories.LIGHTBULB
+accessory.category = Categories.LIGHTBULB
 
 // set some basic properties (these values are arbitrary and setting them is optional)
-lightAccessory
+accessory
   .getService(Service.AccessoryInformation)!
   .setCharacteristic(Characteristic.Manufacturer, LightController.manufacturer)
   .setCharacteristic(Characteristic.Model, LightController.model)
   .setCharacteristic(Characteristic.SerialNumber, LightController.serialNumber)
 
 // listen for the "identify" event for this Accessory
-lightAccessory.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, callback: VoidCallback) => {
+accessory.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, callback: VoidCallback) => {
   LightController.identify()
   callback()
 })
 
 // services exposed to the user should have "names" like "Light" for this case
-const lightbulb = lightAccessory.addService(Service.Lightbulb, LightController.name)
+const lightbulb = accessory.addService(Service.Lightbulb, LightController.name)
 
 lightbulb.getCharacteristic(Characteristic.On)
   .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
@@ -143,7 +136,7 @@ lightbulb.getCharacteristic(Characteristic.On)
 // To inform HomeKit about changes occurred outside of HomeKit (like user physically turn on the light)
 // Please use Characteristic.updateValue
 //
-// lightAccessory
+// accessory
 //   .getService(Service.Lightbulb)
 //   .getCharacteristic(Characteristic.On)
 //   .updateValue(true);

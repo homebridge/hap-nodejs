@@ -46,13 +46,9 @@ interface MP4Atom {
 }
 
 const cameraUUID = uuid.generate('hap-nodejs:accessories:ip-camera')
-const camera = exports.accessory = new Accessory('IPCamera', cameraUUID)
+export const accessory = new Accessory('IPCamera', cameraUUID)
 
-// @ts-expect-error: Core/BridgeCore API
-camera.username = '9F:B2:46:0C:40:DB'
-// @ts-expect-error: Core/BridgeCore API
-camera.pincode = '948-23-459'
-camera.category = Categories.IP_CAMERA
+accessory.category = Categories.IP_CAMERA
 
 interface SessionInfo {
   address: string // address of the HAP controller
@@ -440,7 +436,7 @@ class ExampleCamera implements CameraStreamingDelegate, CameraRecordingDelegate 
       for await (const box of this.server.generator()) {
         pending.push(box.header, box.data)
 
-        const motionDetected = camera.getService(Service.MotionSensor)?.getCharacteristic(Characteristic.MotionDetected).value
+        const motionDetected = accessory.getService(Service.MotionSensor)?.getCharacteristic(Characteristic.MotionDetected).value
 
         console.log(`mp4 box type ${box.type} and length ${box.length}`)
         if (box.type === 'moov' || box.type === 'mdat') {
@@ -725,12 +721,12 @@ const cameraController = new CameraController({
 })
 streamDelegate.controller = cameraController
 
-camera.configureController(cameraController)
+accessory.configureController(cameraController)
 
 // a service to trigger the motion sensor!
-camera.addService(Service.Switch, 'MOTION TRIGGER')
+accessory.addService(Service.Switch, 'MOTION TRIGGER')
   .getCharacteristic(Characteristic.On)
   .onSet((value) => {
-    camera.getService(Service.MotionSensor)
+    accessory.getService(Service.MotionSensor)
       ?.updateCharacteristic(Characteristic.MotionDetected, value)
   })

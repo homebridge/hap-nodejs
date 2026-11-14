@@ -30,29 +30,24 @@ const ACTest_data: Record<string, CharacteristicValue> = {
 }
 
 // This is the Accessory that we'll return to HAP-NodeJS that represents our fake fan.
-const ACTest = exports.accessory = new Accessory('Air Conditioner', uuid.generate('hap-nodejs:accessories:airconditioner'))
+export const accessory = new Accessory('Air Conditioner', uuid.generate('hap-nodejs:accessories:airconditioner'))
 
-// Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
-// @ts-expect-error: Core/BridgeCore API
-ACTest.username = '1A:2B:3C:4D:5E:FF'
-// @ts-expect-error: Core/BridgeCore API
-ACTest.pincode = '031-45-154'
-ACTest.category = Categories.THERMOSTAT
+accessory.category = Categories.THERMOSTAT
 
 // set some basic properties (these values are arbitrary and setting them is optional)
-ACTest
+accessory
   .getService(Service.AccessoryInformation)!
   .setCharacteristic(Characteristic.Manufacturer, 'Sample Company')
 
 // listen for the "identify" event for this Accessory
-ACTest.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, callback: VoidCallback) => {
+accessory.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, callback: VoidCallback) => {
   console.log('Fan Identified!')
   callback() // success
 })
 
 // Add the actual Fan Service and listen for change events from iOS.
 
-const FanService = ACTest.addService(Service.Fan, 'Blower') // services exposed to the user should have "names" like "Fake Light" for us
+const FanService = accessory.addService(Service.Fan, 'Blower') // services exposed to the user should have "names" like "Fake Light" for us
 FanService.getCharacteristic(Characteristic.On)!
   .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
     console.log(`Fan Power Changed To ${value}`)
@@ -88,7 +83,7 @@ FanService.addCharacteristic(Characteristic.RotationSpeed)
     callback()
   })
 
-const ThermostatService = ACTest.addService(Service.Thermostat, 'Thermostat')
+const ThermostatService = accessory.addService(Service.Thermostat, 'Thermostat')
 ThermostatService.addLinkedService(FanService)
 ThermostatService.setPrimaryService()
 
@@ -143,7 +138,7 @@ ThermostatService.getCharacteristic(Characteristic.TemperatureDisplayUnits)!
     callback()
   })
 
-const LightService = ACTest.addService(Service.Lightbulb, 'AC Light')
+const LightService = accessory.addService(Service.Lightbulb, 'AC Light')
 LightService.getCharacteristic(Characteristic.On)!
   .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
     callback(null, ACTest_data.LightOn)

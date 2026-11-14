@@ -19,17 +19,12 @@ const FAKE_SENSOR = {
 const sensorUUID = uuid.generate('hap-nodejs:accessories:temperature-sensor')
 
 // This is the Accessory that we'll return to HAP-NodeJS that represents our fake lock.
-const sensor = exports.accessory = new Accessory('Temperature Sensor', sensorUUID)
+export const accessory = new Accessory('Temperature Sensor', sensorUUID)
 
-// Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
-// @ts-expect-error: Core/BridgeCore API
-sensor.username = 'C1:5D:3A:AE:5E:FA'
-// @ts-expect-error: Core/BridgeCore API
-sensor.pincode = '031-45-154'
-sensor.category = Categories.SENSOR
+accessory.category = Categories.SENSOR
 
 // Add the actual TemperatureSensor Service.
-sensor
+accessory
   .addService(Service.TemperatureSensor)!
   .getCharacteristic(Characteristic.CurrentTemperature)!
   .on(CharacteristicEventTypes.GET, (callback: NodeCallback<CharacteristicValue>) => {
@@ -42,7 +37,7 @@ setInterval(() => {
   FAKE_SENSOR.randomizeTemperature()
 
   // update the characteristic value so interested iOS devices can get notified
-  sensor
+  accessory
     .getService(Service.TemperatureSensor)!
     .setCharacteristic(Characteristic.CurrentTemperature, FAKE_SENSOR.currentTemperature)
 }, 3000)

@@ -141,6 +141,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): do not prepare a stream for a session which ended while its proxy sockets were bound
 - fix(examples): merge the given options into the gstreamer audio producer instead of crashing
 - fix(examples): list the targets of the apple tv remote example instead of an empty object
+- refactor(examples): export the example accessories as es modules and drop the dead Core.js fields
 
 ### Homebridge Dependencies
 

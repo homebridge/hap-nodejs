@@ -24,7 +24,7 @@ import {
  */
 
 const lightUUID = uuid.generate('hap-nodejs:accessories:light-adaptive-lighting')
-const accessory = exports.accessory = new Accessory('Light Example', lightUUID)
+export const accessory = new Accessory('Light Example', lightUUID)
 
 // this section stores the basic state of the lightbulb
 let on = false
@@ -33,11 +33,6 @@ let colorTemperature = 140 // 140 is the lowest color temperature in mired as by
 let hue = 0 // we start with white color
 let saturation = 0
 
-// Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
-// @ts-expect-error: Core/BridgeCore API
-accessory.username = 'AA:BB:CC:DD:EE:FF'
-// @ts-expect-error: Core/BridgeCore API
-accessory.pincode = '031-45-154'
 accessory.category = Categories.LIGHTBULB
 
 accessory.getService(Service.AccessoryInformation)!

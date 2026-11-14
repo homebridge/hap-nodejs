@@ -29,29 +29,24 @@ const MOTION_SENSOR = {
 const motionSensorUUID = uuid.generate('hap-nodejs:accessories:motionsensor')
 
 // This is the Accessory that we'll return to HAP-NodeJS that represents our fake motionSensor.
-const motionSensor = exports.accessory = new Accessory('Motion Sensor', motionSensorUUID)
+export const accessory = new Accessory('Motion Sensor', motionSensorUUID)
 
-// Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
-// @ts-expect-error: Core/BridgeCore API
-motionSensor.username = '1A:2B:3D:4D:2E:AF'
-// @ts-expect-error: Core/BridgeCore API
-motionSensor.pincode = '031-45-154'
-motionSensor.category = Categories.SENSOR
+accessory.category = Categories.SENSOR
 
 // set some basic properties (these values are arbitrary and setting them is optional)
-motionSensor
+accessory
   .getService(Service.AccessoryInformation)!
   .setCharacteristic(Characteristic.Manufacturer, 'Oltica')
   .setCharacteristic(Characteristic.Model, 'Rev-1')
   .setCharacteristic(Characteristic.SerialNumber, 'A1S2NASF88EW')
 
 // listen for the "identify" event for this Accessory
-motionSensor.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, callback: VoidCallback) => {
+accessory.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, callback: VoidCallback) => {
   MOTION_SENSOR.identify()
   callback() // success
 })
 
-motionSensor
+accessory
   .addService(Service.MotionSensor, 'Fake Motion Sensor') // services exposed to the user should have "names" like "Fake Motion Sensor" for us
   .getCharacteristic(Characteristic.MotionDetected)!
   .on(CharacteristicEventTypes.GET, (callback: NodeCallback<CharacteristicValue>) => {

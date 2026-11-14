@@ -6,13 +6,9 @@ import { Accessory, ButtonState, ButtonType, Categories, RemoteController, uuid 
 import { GStreamerAudioProducer, GStreamerOptions } from './gstreamer-audioProducer.js'
 
 const remoteUUID = uuid.generate('hap-nodejs:accessories:remote')
-const remote = exports.accessory = new Accessory('Remote', remoteUUID)
+export const accessory = new Accessory('Remote', remoteUUID)
 
-// @ts-expect-error: Core/BridgeCore API
-remote.username = 'DB:AF:E0:5C:69:76'
-// @ts-expect-error: Core/BridgeCore API
-remote.pincode = '874-23-897'
-remote.category = Categories.TARGET_CONTROLLER
+accessory.category = Categories.TARGET_CONTROLLER
 
 // ----------------- for siri support -----------------
 // CHANGE this to enable siri support. Read docs in 'gstreamer-audioProducer.ts' for necessary package dependencies
@@ -24,7 +20,7 @@ const gstreamerOptions: Partial<GStreamerOptions> = { // any configuration regar
 const controller = siriSupport
   ? new RemoteController(GStreamerAudioProducer, gstreamerOptions)
   : new RemoteController()
-remote.configureController(controller)
+accessory.configureController(controller)
 
 /*
     This example plugin exposes an simple http api to interact with the remote and play around.
