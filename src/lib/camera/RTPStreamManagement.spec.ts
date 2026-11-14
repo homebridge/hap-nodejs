@@ -420,6 +420,56 @@ describe('rTPStreamManagement', () => {
     })
   })
 
+  describe('handleSetupEndpoints with a session which ends while the proxy sockets are bound', () => {
+    let controller: CameraController
+
+    beforeEach(() => {
+      controller = new CameraController(buildControllerOptions({
+        ...baseStreamingOptions,
+        proxy: true,
+      }))
+      controller.constructServices()
+      controller.configureServices()
+    })
+
+    afterEach(() => {
+      vi.restoreAllMocks()
+      controller.handleFactoryReset()
+    })
+
+    it('should not ask the delegate to prepare the ended session, also when the next session started', async () => {
+      const bound: (() => void)[] = []
+      vi.spyOn(RTPProxy.prototype, 'setup').mockImplementation(() => new Promise<void>(resolve => bound.push(resolve)))
+      vi.spyOn(RTPProxy.prototype, 'incomingRTPPort').mockReturnValue(10000)
+      vi.spyOn(RTPProxy.prototype, 'incomingRTCPPort').mockReturnValue(10001)
+      const prepareStream = vi.spyOn(MockDelegate.prototype, 'prepareStream').mockImplementation(() => undefined)
+
+      const rtp = controller.streamManagements[0] as RTPStreamManagement
+      const first = vi.fn()
+      const second = vi.fn()
+
+      // @ts-expect-error: private method access
+      rtp.handleSetupEndpoints(buildSetupEndpointsTlv(), first, buildMockConnection())
+      // @ts-expect-error: private method access
+      rtp.handleSessionClosed() // e.g. the connection closed
+      // @ts-expect-error: private method access
+      rtp.handleSetupEndpoints(buildSetupEndpointsTlv(true, '22222222-2222-2222-2222-222222222222'), second, buildMockConnection())
+
+      expect(bound).toHaveLength(4) // video and audio of both sessions
+      bound.reverse().forEach(resolve => resolve()) // the sockets of the ended session are ready last
+      await new Promise(resolve => setImmediate(resolve))
+
+      expect(first).toHaveBeenCalledExactlyOnceWith(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
+      expect(prepareStream).toHaveBeenCalledTimes(1)
+      expect((prepareStream.mock.calls[0] as unknown[])[0]).toMatchObject({
+        sessionID: '22222222-2222-2222-2222-222222222222',
+        video: { proxy_rtp: 10000, proxy_rtcp: 10001 },
+        audio: { proxy_rtp: 10000, proxy_rtcp: 10001 },
+      })
+      expect(second).not.toHaveBeenCalled() // still waits for the delegate
+    })
+  })
+
   describe('handleSetupEndpoints malformed TLV', () => {
     let controller: CameraController
 
