@@ -1154,9 +1154,17 @@ export class RTPStreamManagement {
     const promises: Promise<void>[] = []
 
     if (this.requireProxy) {
-      prepareRequest.targetAddress = connection.getLocalAddress(addressVersion === IPAddressVersion.IPV6
-        ? 'ipv6'
-        : 'ipv4') // ip versions must be the same
+      try {
+        prepareRequest.targetAddress = connection.getLocalAddress(addressVersion === IPAddressVersion.IPV6
+          ? 'ipv6'
+          : 'ipv4') // ip versions must be the same
+      } catch (error) {
+        // the stream is marked as in use by now: free it and answer, or it stays blocked until the connection closes
+        debug(`Could not find the local address for the RTP proxy: ${(error as Error).message}`)
+        this.handleSessionClosed()
+        callback(error as Error)
+        return
+      }
 
       this.videoProxy = new RTPProxy({
         outgoingAddress: controllerAddress,

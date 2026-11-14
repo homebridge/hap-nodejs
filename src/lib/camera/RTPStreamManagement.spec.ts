@@ -291,6 +291,25 @@ describe('rTPStreamManagement', () => {
       controller.handleFactoryReset()
     })
 
+    it('should free the stream and answer when the local address can not be found', () => {
+      const rtp = controller.streamManagements[0] as RTPStreamManagement
+      const connection = buildMockConnection()
+      vi.mocked(connection.getLocalAddress).mockImplementation(() => {
+        throw new Error('Could not find ipv4 address for interface en0')
+      })
+      const callback = vi.fn()
+
+      expect(() => {
+        // @ts-expect-error: private method access
+        rtp.handleSetupEndpoints(buildSetupEndpointsTlv(), callback, connection)
+      }).not.toThrow()
+
+      expect(callback).toHaveBeenCalledTimes(1)
+      expect(callback.mock.calls[0][0]).toBeInstanceOf(Error)
+      expect(rtp.streamStatus).toBe(0) // StreamingStatus.AVAILABLE
+      expect(rtp.sessionIdentifier).toBeUndefined()
+    })
+
     it('should fail gracefully when RTPProxy.setup rejects', async () => {
       setupSpy = vi.spyOn(RTPProxy.prototype, 'setup')
         .mockImplementation(() => Promise.reject(new Error('socket creation failed')))
