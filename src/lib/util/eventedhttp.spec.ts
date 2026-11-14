@@ -324,6 +324,75 @@ describe('eventedhttp', () => {
     expect(received.startsWith('EVENT/1.0 200 OK')).toBeTruthy()
   })
 
+  describe('events and requests which do not come one at a time', () => {
+    // a plain socket, to write bytes no well-behaved client would send
+    function rawClient(): Promise<{ socket: net.Socket, received: () => string }> {
+      return new Promise((resolve) => {
+        const address = server.address()
+        const host = ['0.0.0.0', '::'].includes(address.address)
+          ? (address.family === 'IPv6'
+              ? '::1'
+              : '127.0.0.1')
+          : address.address
+        let data = ''
+        const socket = net.connect(address.port, host, () => resolve({
+          socket,
+          received: () => data,
+        }))
+        socket.on('data', chunk => data += chunk.toString())
+        socket.on('error', () => undefined)
+      })
+    }
+
+    it('should still deliver events after stray bytes which are not a request', async () => {
+      let connection: HAPConnection | undefined
+      server.on(EventedHTTPServerEvent.REQUEST, (hapConnection: HAPConnection, request: IncomingMessage, response: ServerResponse) => {
+        connection = hapConnection
+        hapConnection.enableEventNotifications(1, 1)
+        defaultRequestHandler(hapConnection, request, response)
+      })
+      const { socket, received } = await rawClient()
+      try {
+        socket.write('GET /a HTTP/1.1\r\nHost: test\r\n\r\n')
+        await vi.waitFor(() => expect(received()).toContain('Hello World'))
+
+        socket.write('\r\n') // the http parser skips an empty line: no request, so no response either
+        await PromiseTimeout(50)
+        connection!.sendEvent(1, 1, true, true)
+
+        await vi.waitFor(() => expect(received()).toContain('EVENT/1.0 200 OK'), { timeout: 3000 })
+      } finally {
+        socket.destroy()
+      }
+    })
+
+    it('should not write an event between two requests sent together and the second response', async () => {
+      let connection: HAPConnection | undefined
+      server.on(EventedHTTPServerEvent.REQUEST, (hapConnection: HAPConnection, request: IncomingMessage, response: ServerResponse) => {
+        connection = hapConnection
+        hapConnection.enableEventNotifications(1, 1)
+        response.writeHead(HAPHTTPCode.OK, { 'Content-Type': 'plain/text' })
+        if (request.url === '/a') {
+          response.end('first')
+        } else {
+          setTimeout(() => response.end('second'), 300)
+        }
+      })
+      const { socket, received } = await rawClient()
+      try {
+        socket.write('GET /a HTTP/1.1\r\nHost: test\r\n\r\nGET /b HTTP/1.1\r\nHost: test\r\n\r\n')
+        await vi.waitFor(() => expect(received()).toContain('first'))
+        connection!.sendEvent(1, 1, true, true)
+
+        await vi.waitFor(() => expect(received()).toContain('EVENT/1.0 200 OK'), { timeout: 3000 })
+        expect(received().indexOf('second')).toBeGreaterThan(-1)
+        expect(received().indexOf('second')).toBeLessThan(received().indexOf('EVENT/1.0'))
+      } finally {
+        socket.destroy()
+      }
+    })
+  })
+
   describe('internal HTTP server', () => {
     // a local process connecting to the internal loopback port must not be able to send requests as this connection
     it('should reject a socket which is not the proxy socket', async () => {

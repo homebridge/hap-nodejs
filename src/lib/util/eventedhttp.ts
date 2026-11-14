@@ -365,6 +365,12 @@ export class HAPConnection extends EventEmitter {
   static readonly EVENT_COALESCING_DELAY = 250
 
   /**
+   * Time in milliseconds after which data received from the controller, which did not turn into a request by then,
+   * no longer holds back event notifications.
+   */
+  static readonly INCOMING_DATA_TIMEOUT = 500
+
+  /**
    * Local addresses {@link getLocalNetworkInterface} has already warned about. An address can stay unmatchable for
    * good - Node.js leaves out interfaces that are up but have no link, like an unused docker0 bridge - and then
    * every connection to it would repeat the same warning.
@@ -393,6 +399,14 @@ export class HAPConnection extends EventEmitter {
 
   private pendingClientSocketData?: Buffer = Buffer.alloc(0) // data received from client before HTTP proxy is fully setup
   private handlingRequest = false // true while we are composing an HTTP response (so events can wait)
+  /**
+   * The number of requests which arrived at the internal http server and were not answered yet.
+   */
+  private pendingRequests = 0
+  /**
+   * Runs out when data arrived which did not turn into a request, see {@link onTCPSocketData}.
+   */
+  private incomingDataTimeout?: NodeJS.Timeout
   /**
    * Byte offset in the stream read by {@link httpSocket} at which the last finished HTTP response ends.
    * The internal HTTP server hands us a response in chunks of at most 64 KiB, so the first chunk is not the whole response.
@@ -756,7 +770,22 @@ export class HAPConnection extends EventEmitter {
       return
     }
 
-    this.handlingRequest = true // reverted to false once response was sent out
+    // Events wait from here on, so that none is written between a request and its response. It is reverted once the
+    // response was sent out. Data which never becomes a request (stray bytes, a request which stalls half way) gets
+    // no response though, so the events are let go again when no request came out of it in time.
+    this.handlingRequest = true
+    if (this.incomingDataTimeout) {
+      clearTimeout(this.incomingDataTimeout)
+    }
+    if (this.pendingRequests === 0) {
+      this.incomingDataTimeout = setTimeout(() => {
+        this.incomingDataTimeout = undefined
+        if (this.pendingRequests === 0 && this.httpResponseEnd === undefined) {
+          this.requestHandlingFinished()
+        }
+      }, HAPConnection.INCOMING_DATA_TIMEOUT)
+      this.incomingDataTimeout.unref()
+    }
     this.lastSocketOperation = Date.now()
 
     try {
@@ -815,7 +844,15 @@ export class HAPConnection extends EventEmitter {
 
     request.socket.setNoDelay(true)
 
+    this.handlingRequest = true
+    this.pendingRequests++
+    if (this.incomingDataTimeout) {
+      clearTimeout(this.incomingDataTimeout)
+      this.incomingDataTimeout = undefined
+    }
+
     response.once('finish', () => {
+      this.pendingRequests--
       // the response was handed to the server side of the proxy socket: it ends at the bytes written so far
       this.httpResponseEnd = request.socket.bytesWritten
       this.handleHttpResponseCompleteIfReceived()
@@ -848,6 +885,17 @@ export class HAPConnection extends EventEmitter {
     this.httpResponseEnd = undefined
 
     debugCon('[%s] HTTP Response is finished', this.remoteAddress)
+    if (this.pendingRequests > 0) {
+      return // another request, sent along with this one, is still waiting for its response
+    }
+
+    this.requestHandlingFinished()
+  }
+
+  /**
+   * Called once no request is left to answer: the events which had to wait may be written now.
+   */
+  private requestHandlingFinished(): void {
     this.handlingRequest = false
 
     if (this.state === HAPConnectionState.TO_BE_TEARED_DOWN) {
@@ -879,6 +927,10 @@ export class HAPConnection extends EventEmitter {
       clearTimeout(this.timedWriteTimeout)
       this.timedWriteTimeout = undefined
       this.timedWritePid = undefined
+    }
+    if (this.incomingDataTimeout) {
+      clearTimeout(this.incomingDataTimeout)
+      this.incomingDataTimeout = undefined
     }
 
     if (this.httpSocket) {
