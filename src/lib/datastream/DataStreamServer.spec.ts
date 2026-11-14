@@ -92,6 +92,64 @@ describe('dataStreamServer', () => {
     vi.useRealTimers()
   })
 
+  describe('tcp server errors', () => {
+    function hapConnection(): HAPConnection {
+      return {
+        sessionID: 'test-session',
+        encryption: {
+          sharedSecret: crypto.randomBytes(32),
+        },
+      } as unknown as HAPConnection
+    }
+
+    it('should answer the waiting sessions with the error when the server can not listen', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+      try {
+        const server = new DataStreamServer()
+        const first = vi.fn()
+        const second = vi.fn()
+        server.prepareSession(hapConnection(), crypto.randomBytes(32), first)
+        server.prepareSession(hapConnection(), crypto.randomBytes(32), second)
+        const tcpServer = (server as any).tcpServer
+
+        const error = new Error('listen EMFILE: too many open files')
+        expect(() => tcpServer.emit('error', error)).not.toThrow()
+
+        expect(first).toHaveBeenCalledExactlyOnceWith(error)
+        expect(second).toHaveBeenCalledExactlyOnceWith(error)
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining('listen EMFILE'))
+        expect((server as any).preparedSessions).toHaveLength(0)
+        expect((server as any).tcpServer).toBeUndefined() // the next attempt starts a new server
+        expect((server as any).state).toBe(0)
+      } finally {
+        warn.mockRestore()
+      }
+    })
+
+    it('should keep running when the listening server reports an error', async () => {
+      vi.useRealTimers()
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+      try {
+        const server = new DataStreamServer()
+        const session = await new Promise<PreparedDataStreamSession | undefined>((resolve, reject) => {
+          server.prepareSession(hapConnection(), crypto.randomBytes(32), (error, prepared) => error
+            ? reject(error)
+            : resolve(prepared))
+        })
+        const tcpServer = (server as any).tcpServer
+
+        expect(session?.port).toBeGreaterThan(0)
+        expect(() => tcpServer.emit('error', new Error('accept EMFILE'))).not.toThrow()
+        expect((server as any).tcpServer).toBe(tcpServer)
+
+        server.destroy()
+        clearTimeout(session?.connectTimeout)
+      } finally {
+        warn.mockRestore()
+      }
+    })
+  })
+
   describe('connection identification', () => {
     it('should close an unidentified connection without crashing on its undecryptable first frame', () => {
       const { socket } = setupSession()

@@ -240,6 +240,10 @@ export class DataStreamServer extends EventEmitter {
 
   private tcpServer?: net.Server
   private tcpPort?: number
+  /**
+   * The prepared sessions which wait for the TCP server to start listening.
+   */
+  private readonly pendingBinds: { preparedSession: PreparedDataStreamSession, callback: (error?: Error) => void }[] = []
 
   preparedSessions: PreparedDataStreamSession[] = []
   private readonly connections: DataStreamConnection[] = []
@@ -358,16 +362,18 @@ export class DataStreamServer extends EventEmitter {
         debug('Starting up TCP server.')
         this.tcpServer = net.createServer()
 
-        this.tcpServer.once('listening', this.listening.bind(this, preparedSession, callback))
+        this.tcpServer.once('listening', this.listening.bind(this))
         this.tcpServer.on('connection', this.onConnection.bind(this))
         this.tcpServer.on('close', this.closed.bind(this))
+        this.tcpServer.on('error', this.onServerError.bind(this, this.tcpServer))
 
+        this.pendingBinds.push({ preparedSession, callback })
         this.tcpServer.listen()
         this.state = ServerState.BINDING
         break
       case ServerState.BINDING:
         debug('TCP server already running. Waiting for it to bind.')
-        this.tcpServer!.once('listening', this.listening.bind(this, preparedSession, callback))
+        this.pendingBinds.push({ preparedSession, callback })
         break
       case ServerState.LISTENING:
         debug('Instructing client to connect to already running TCP server')
@@ -381,16 +387,49 @@ export class DataStreamServer extends EventEmitter {
     }
   }
 
-  private listening(preparedSession: PreparedDataStreamSession, callback: (error?: Error) => void) {
+  private listening() {
     this.state = ServerState.LISTENING
 
     const address = this.tcpServer!.address()
     if (address && typeof address !== 'string') { // address is only typeof string when listening to a pipe or unix socket
       this.tcpPort = address.port
-      preparedSession.port = address.port
-
       debug('TCP server is now listening for new data stream connections on port %s', address.port)
-      callback()
+
+      for (const { preparedSession, callback } of this.pendingBinds.splice(0)) {
+        preparedSession.port = address.port
+        callback()
+      }
+    }
+  }
+
+  /**
+   * Without a listener, an `error` event of the TCP server (it can't listen, or it can't accept a connection,
+   * e.g. because the process ran out of file descriptors) is an uncaught exception.
+   */
+  private onServerError(server: net.Server, error: Error) {
+    console.warn(`The HomeKit Data Stream server reported an error: ${error.message}`)
+
+    if (this.state !== ServerState.BINDING || server !== this.tcpServer) {
+      return
+    }
+
+    // The server never started to listen, so neither `listening` nor `close` will follow.
+    // Answer everybody who waits for it and start with a new server on the next attempt.
+    server.removeAllListeners()
+    server.on('error', () => undefined)
+    server.close()
+
+    this.tcpServer = undefined
+    this.tcpPort = undefined
+    this.state = ServerState.UNINITIALIZED
+
+    for (const { preparedSession, callback } of this.pendingBinds.splice(0)) {
+      clearTimeout(preparedSession.connectTimeout)
+      const index = this.preparedSessions.indexOf(preparedSession)
+      if (index >= 0) {
+        this.preparedSessions.splice(index, 1)
+      }
+      callback(error)
     }
   }
 
