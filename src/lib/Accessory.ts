@@ -1447,9 +1447,18 @@ export class Accessory extends EventEmitter {
         // get our accessory information in HAP format and determine if our configuration (that is, our
         // Accessories/Services/Characteristics) has changed since the last time we were published. make
         // sure to omit actual values since these are not part of the "configuration".
-        const config = this.internalHAPRepresentation() // TODO ensure this stuff is ordered
-        if (this._accessoryInfo?.checkForCurrentConfigurationNumberIncrement(config)) {
-          this._advertiser.updateAdvertisement()
+        try {
+          const config = this.internalHAPRepresentation() // TODO ensure this stuff is ordered
+          if (this._accessoryInfo?.checkForCurrentConfigurationNumberIncrement(config)) {
+            this._advertiser.updateAdvertisement()
+          }
+        } catch (error) {
+          // e.g. a service without characteristics or with an invalid UUID was added after publish.
+          // Nothing can catch what is thrown out of a timer, so it would end the process.
+          console.error(`[${this.displayName}] The changed accessory configuration is invalid and was not announced: ${error?.message ?? error}`)
+          if (error?.stack) {
+            debug(`Detailed error: ${error.stack}`)
+          }
         }
       }
     }, 1000)
