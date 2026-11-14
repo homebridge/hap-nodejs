@@ -559,11 +559,11 @@ export class HAPServer extends EventEmitter {
     }
     const sequence = tlvData[TLVValues.SEQUENCE_NUM][0] // value is single byte with sequence number
     if (sequence === PairingStates.M1 && !connection._pairSetupState) {
-      this.handlePairSetupM1(connection, request, response)
+      this.handlePairSetupM1(connection, response)
     } else if (sequence === PairingStates.M3 && connection._pairSetupState === PairingStates.M2) {
-      this.handlePairSetupM3(connection, request, response, tlvData)
+      this.handlePairSetupM3(connection, response, tlvData)
     } else if (sequence === PairingStates.M5 && connection._pairSetupState === PairingStates.M4) {
-      this.handlePairSetupM5(connection, request, response, tlvData)
+      this.handlePairSetupM5(connection, response, tlvData)
     } else {
       // Invalid state/sequence number
       response.writeHead(HAPPairingHTTPCode.BAD_REQUEST, { 'Content-Type': 'application/pairing+tlv8' })
@@ -571,7 +571,7 @@ export class HAPServer extends EventEmitter {
     }
   }
 
-  private handlePairSetupM1(connection: HAPConnection, request: IncomingMessage, response: ServerResponse): void {
+  private handlePairSetupM1(connection: HAPConnection, response: ServerResponse): void {
     debug('[%s] Pair step 1/5', this.accessoryInfo.username)
     const salt = crypto.randomBytes(16)
 
@@ -592,7 +592,7 @@ export class HAPServer extends EventEmitter {
     })
   }
 
-  private handlePairSetupM3(connection: HAPConnection, request: IncomingMessage, response: ServerResponse, tlvData: Record<number, Buffer>): void {
+  private handlePairSetupM3(connection: HAPConnection, response: ServerResponse, tlvData: Record<number, Buffer>): void {
     debug('[%s] Pair step 2/5', this.accessoryInfo.username)
     const A = tlvData[TLVValues.PUBLIC_KEY] // "A is a public key that exists only for a single login session."
     const M1 = tlvData[TLVValues.PASSWORD_PROOF] // "M1 is the proof that you actually know your own password."
@@ -628,7 +628,7 @@ export class HAPServer extends EventEmitter {
     connection._pairSetupState = PairingStates.M4
   }
 
-  private handlePairSetupM5(connection: HAPConnection, request: IncomingMessage, response: ServerResponse, tlvData: Record<number, Buffer>): void {
+  private handlePairSetupM5(connection: HAPConnection, response: ServerResponse, tlvData: Record<number, Buffer>): void {
     debug('[%s] Pair step 3/5', this.accessoryInfo.username)
     // pull the SRP server we created in handlePairSetupM1 out of the current session
     const srpServer = connection.srpServer!
@@ -680,13 +680,12 @@ export class HAPServer extends EventEmitter {
       connection._pairSetupState = undefined
       return
     }
-    this.handlePairSetupM5_2(connection, request, response, clientUsername, clientLTPK, clientProof, outputKey)
+    this.handlePairSetupM5_2(connection, response, clientUsername, clientLTPK, clientProof, outputKey)
   }
 
   // M5-2
   private handlePairSetupM5_2(
     connection: HAPConnection,
-    request: IncomingMessage,
     response: ServerResponse,
     clientUsername: Buffer,
     clientLTPK: Buffer,
@@ -706,13 +705,12 @@ export class HAPServer extends EventEmitter {
       connection._pairSetupState = undefined
       return
     }
-    this.handlePairSetupM5_3(connection, request, response, clientUsername, clientLTPK, hkdfEncKey)
+    this.handlePairSetupM5_3(connection, response, clientUsername, clientLTPK, hkdfEncKey)
   }
 
   // M5 - F + M6
   private handlePairSetupM5_3(
     connection: HAPConnection,
-    request: IncomingMessage,
     response: ServerResponse,
     clientUsername: Buffer,
     clientLTPK: Buffer,
@@ -775,9 +773,9 @@ export class HAPServer extends EventEmitter {
     }
 
     if (sequence === PairingStates.M1) {
-      this.handlePairVerifyM1(connection, request, response, tlvData)
+      this.handlePairVerifyM1(connection, response, tlvData)
     } else if (sequence === PairingStates.M3 && connection._pairVerifyState === PairingStates.M2) {
-      this.handlePairVerifyM3(connection, request, response, tlvData)
+      this.handlePairVerifyM3(connection, response, tlvData)
     } else {
       // Invalid state/sequence number
       response.writeHead(HAPPairingHTTPCode.BAD_REQUEST, { 'Content-Type': 'application/pairing+tlv8' })
@@ -785,7 +783,7 @@ export class HAPServer extends EventEmitter {
     }
   }
 
-  private handlePairVerifyM1(connection: HAPConnection, request: IncomingMessage, response: ServerResponse, tlvData: Record<number, Buffer>): void {
+  private handlePairVerifyM1(connection: HAPConnection, response: ServerResponse, tlvData: Record<number, Buffer>): void {
     debug('[%s] Pair verify step 1/2', this.accessoryInfo.username)
     const clientPublicKey = tlvData[TLVValues.PUBLIC_KEY] // Buffer
     if (!clientPublicKey || clientPublicKey.length !== 32) {
@@ -824,7 +822,7 @@ export class HAPServer extends EventEmitter {
     connection._pairVerifyState = PairingStates.M2
   }
 
-  private handlePairVerifyM3(connection: HAPConnection, request: IncomingMessage, response: ServerResponse, objects: Record<number, Buffer>): void {
+  private handlePairVerifyM3(connection: HAPConnection, response: ServerResponse, objects: Record<number, Buffer>): void {
     debug('[%s] Pair verify step 2/2', this.accessoryInfo.username)
     const encryptedData = objects[TLVValues.ENCRYPTED_DATA]
     if (!encryptedData || encryptedData.length < 16) {

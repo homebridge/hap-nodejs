@@ -131,7 +131,7 @@ export function ed25519Verify(message: Uint8Array, signature: Uint8Array, public
   }
   try {
     return crypto.verify(null, message, publicKeyObject(ED25519_SPKI_PREFIX, publicKey), signature)
-  } catch (error) {
+  } catch {
     return false
   }
 }
