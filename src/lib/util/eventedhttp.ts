@@ -91,7 +91,7 @@ export declare interface EventedHTTPServer {
  *
  * Implementation
  * --------------
- * In order to implement the "custom HTTP" server required by the HAP protocol (see HAPServer.js) without completely
+ * In order to implement the "custom HTTP" server required by the HAP protocol (see HAPServer.ts) without completely
  * reinventing the wheel, we create both a generic TCP socket server and a standard Node HTTP server.
  * The TCP socket server acts as a proxy, allowing users of this class to transform data (for encryption) as necessary
  * and passing through bytes directly to the HTTP server for processing. This way we get Node to do all
@@ -410,7 +410,7 @@ export class HAPConnection extends EventEmitter {
   private httpResponseEnd?: number
 
   username?: HAPUsername // username is unique to every user in the home, basically identifies an Apple ID
-  encryption?: HAPEncryption // created in handlePairVerifyStepOne
+  encryption?: HAPEncryption // created in handlePairVerifyM1
   srpServer?: SrpServer
   _pairSetupState?: PairingStates
   _pairVerifyState?: PairingStates
@@ -642,8 +642,7 @@ export class HAPConnection extends EventEmitter {
 
   /**
    * This will create an EVENT/1.0 notification header with the provided event notification.
-   * If currently an HTTP request is in progress the assembled packet will be
-   * added to the pending events list.
+   * It must not be called while an HTTP request is in progress: the events wait in the queue until the response went out.
    *
    * @param notification - The event which should be sent out
    */
@@ -708,7 +707,7 @@ export class HAPConnection extends EventEmitter {
 
   private encrypt(data: Buffer): Buffer {
     // if accessoryToControllerKey is not empty, then encryption is enabled for this connection. However, we'll
-    // need to be careful to ensure that we don't encrypt the last few bytes of the response from handlePairVerifyStepTwo.
+    // need to be careful to ensure that we don't encrypt the last few bytes of the response from handlePairVerifyM3.
     // Since all communication calls are asynchronous, we could easily receive this 'encrypt' event for those bytes.
     // So we want to make sure that we aren't encrypting data until we have *received* some encrypted data from the client first.
     if (this.encryption && this.encryption.accessoryToControllerKey.length > 0 && this.encryption.controllerToAccessoryCount > 0) {

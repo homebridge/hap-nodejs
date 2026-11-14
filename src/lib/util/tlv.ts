@@ -18,7 +18,6 @@ export type TLVEncodable = Buffer | number | string
 /**
  * @group TLV8
  */
-
 export function encode(type: number, data: TLVEncodable | TLVEncodable[], ...args: (number | TLVEncodable | TLVEncodable[])[]): Buffer {
   const encodedTLVBuffers: Buffer[] = []
 
@@ -259,9 +258,10 @@ export function decodeList(data: Buffer, entryStartId: number): Record<number, B
     leftLength -= 2 + length
   }
 
+  // push last entry
   if (objects !== undefined) {
     objectsList.push(objects)
-  } // push last entry
+  }
 
   return objectsList
 }
@@ -350,6 +350,7 @@ export function readVariableUIntLE(buffer: Buffer): number {
  * - `UInt8`
  * - `UInt16LE`
  * - `UInt32LE`
+ * - `UInt64LE`
  * @param number
  * @group TLV8
  */

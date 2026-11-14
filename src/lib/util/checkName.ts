@@ -5,7 +5,6 @@ import { CharacteristicValue, Nullable } from '../../types.js'
  * https://developer.apple.com/design/human-interface-guidelines/homekit#Help-people-choose-useful-names
  * @private
  */
-
 export function checkName(displayName: string, name: string, value: Nullable<CharacteristicValue>): void {
   // Ensure the string starts and ends with a Unicode letter or number.
   // Allow letters, numbers, space-like characters, apostrophes, and

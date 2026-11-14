@@ -5,7 +5,7 @@ import { HAPStatus, IsKnownHAPStatusError } from '../HAPServer.js'
 /**
  * Prepares the characteristic value to be sent to the HomeKit controller.
  * This includes changing booleans to 0 or 1 (for lower bandwidth) and converting
- * numbers to the desired minStep (by converting them to a string).
+ * numbers to the desired minStep.
  * The minStep conversion only happens for minStep < 1
  *
  * @param value - The value which should be formatted

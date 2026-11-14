@@ -348,7 +348,7 @@ export class HAPServer extends EventEmitter {
    */
   private static readonly MAX_TIMED_WRITE_TTL = 0x7FFFFFFF
 
-  private unsuccessfulPairAttempts = 0 // after 100 unsuccessful attempts the server won't accept any further attempts. Will currently be reset on a reboot
+  private unsuccessfulPairAttempts = 0 // after more than 100 unsuccessful attempts the server won't accept any further attempts. Will currently be reset on a reboot
 
   allowInsecureRequest: boolean
 
@@ -596,7 +596,7 @@ export class HAPServer extends EventEmitter {
     debug('[%s] Pair step 2/5', this.accessoryInfo.username)
     const A = tlvData[TLVValues.PUBLIC_KEY] // "A is a public key that exists only for a single login session."
     const M1 = tlvData[TLVValues.PASSWORD_PROOF] // "M1 is the proof that you actually know your own password."
-    // pull the SRP server we created in stepOne out of the current session
+    // pull the SRP server we created in handlePairSetupM1 out of the current session
     const srpServer = connection.srpServer!
     try {
       if (!A || !M1) {
@@ -630,7 +630,7 @@ export class HAPServer extends EventEmitter {
 
   private handlePairSetupM5(connection: HAPConnection, request: IncomingMessage, response: ServerResponse, tlvData: Record<number, Buffer>): void {
     debug('[%s] Pair step 3/5', this.accessoryInfo.username)
-    // pull the SRP server we created in stepOne out of the current session
+    // pull the SRP server we created in handlePairSetupM1 out of the current session
     const srpServer = connection.srpServer!
     const encryptedData = tlvData[TLVValues.ENCRYPTED_DATA]
     if (!encryptedData || encryptedData.length < 16) {
@@ -839,7 +839,7 @@ export class HAPServer extends EventEmitter {
     encryptedData.copy(messageData, 0, 0, encryptedData.length - 16)
     encryptedData.copy(authTagData, 0, encryptedData.length - 16, encryptedData.length)
 
-    // instance of HAPEncryption (created in handlePairVerifyStepOne)
+    // instance of HAPEncryption (created in handlePairVerifyM1)
     const enc = connection.encryption!
 
     let plaintext
@@ -896,14 +896,13 @@ export class HAPServer extends EventEmitter {
     response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M4))
     // now that the client has been verified, we must "upgrade" our pseudo-HTTP connection to include
     // TCP-level encryption. We'll do this by adding some more encryption vars to the session, and using them
-    // in future calls to onEncrypt, onDecrypt.
+    // in future calls to encrypt and decrypt of the HAPConnection.
     const encSalt = Buffer.from('Control-Salt')
     const infoRead = Buffer.from('Control-Read-Encryption-Key')
     const infoWrite = Buffer.from('Control-Write-Encryption-Key')
     enc.accessoryToControllerKey = hapCrypto.HKDF('sha512', encSalt, enc.sharedSecret, infoRead, 32)
     enc.controllerToAccessoryKey = hapCrypto.HKDF('sha512', encSalt, enc.sharedSecret, infoWrite, 32)
-    // Our connection is now completely setup. We now want to subscribe this connection to special
-
+    // Our connection is now completely set up.
     connection.connectionAuthenticated(clientUsername.toString())
     connection._pairVerifyState = undefined
   }
