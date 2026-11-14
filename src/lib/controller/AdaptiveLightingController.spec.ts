@@ -152,6 +152,21 @@ describe('adaptiveLightingController', () => {
     }
   })
 
+  it('should keep the listeners of the plugin when the controller is removed', () => {
+    const { controller } = createController(AdaptiveLightingControllerMode.MANUAL)
+    const update = vi.fn()
+    const disable = vi.fn()
+    controller.on(AdaptiveLightingControllerEvents.UPDATE, update)
+    controller.on(AdaptiveLightingControllerEvents.DISABLED, disable)
+
+    // what Accessory.removeController() does
+    controller.handleFactoryReset()
+    controller.handleControllerRemoved()
+
+    expect(controller.listenerCount(AdaptiveLightingControllerEvents.UPDATE)).toBe(1)
+    expect(controller.listenerCount(AdaptiveLightingControllerEvents.DISABLED)).toBe(1)
+  })
+
   describe('a time before the first point of the curve', () => {
     it('should stay active and readable when the clock is set back', async () => {
       const { lightbulb, controller } = createController()
