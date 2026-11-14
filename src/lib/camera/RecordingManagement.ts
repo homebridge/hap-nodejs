@@ -309,7 +309,9 @@ export const enum PacketDataType {
   MEDIA_FRAGMENT = 'mediaFragment',
 }
 
-interface DataSendDataEvent {
+// a type and not an interface, as only a type is accepted where a dictionary of unknown values (HDSMessage) is expected
+// eslint-disable-next-line ts/consistent-type-definitions
+type DataSendDataEvent = {
   streamId: number
   packets: {
     data: Buffer
@@ -556,10 +558,11 @@ export class RecordingManagement {
 
   private handleDataSendOpen(connection: DataStreamConnection, id: number, message: HDSMessage) {
     // for message fields see https://github.com/Supereg/secure-video-specification#41-start
-    const streamId: number = message.streamId
-    const type: string = message.type
-    const target: string = message.target
-    const reason: string = message.reason
+    // the message is sent by the controller, so no field is known to have the expected type before it is checked
+    const streamId = message.streamId
+    const type = message.type
+    const target = message.target
+    const reason = message.reason
 
     if (typeof streamId !== 'number') {
       debug('[HDS %s] Received data send without a numeric streamId: %o. Rejecting...', connection.remoteAddress, streamId)
@@ -1164,8 +1167,8 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
   }
 
   private handleDataSendAck(message: HDSMessage) {
-    const streamId: number = message.streamId
-    const endOfStream: boolean = message.endOfStream
+    const streamId = message.streamId
+    const endOfStream = message.endOfStream
 
     if (streamId !== this.streamId) {
       return // an acknowledgment for another stream, like handleDataSendClose checks
@@ -1182,15 +1185,20 @@ class CameraRecordingStream extends EventEmitter implements DataStreamProtocolHa
 
   private handleDataSendClose(message: HDSMessage) {
     // see https://github.com/Supereg/secure-video-specification#43-close
-    const streamId: number = message.streamId
-    const reason: HDSProtocolSpecificErrorReason = message.reason
+    const streamId = message.streamId
+    // a reason which is not a number is handled like a missing one
+    const reason: HDSProtocolSpecificErrorReason | undefined = typeof message.reason === 'number'
+      ? message.reason
+      : undefined
 
     if (streamId !== this.streamId) {
       return
     }
 
     debug('[HDS %s] Received DATA_SEND CLOSE for streamId %d with reason %s',
-      this.connection.remoteAddress, streamId, HDSProtocolSpecificErrorReason[reason])
+      this.connection.remoteAddress, streamId, reason !== undefined
+        ? HDSProtocolSpecificErrorReason[reason]
+        : reason)
 
     this.handleClosed(() => this.delegate.closeRecordingStream(streamId, reason))
   }

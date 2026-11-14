@@ -232,6 +232,36 @@ describe('recordingManagement', () => {
       expect((management as any).recordingStream).toBeUndefined()
     })
 
+    it('should hand a close reason which is not a number to the delegate as a missing reason', async () => {
+      class WaitingDelegate extends MockDelegate {
+        closeRecordingStream = vi.fn()
+
+        async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
+          yield {
+            data: Buffer.alloc(10, 1),
+            isLast: false,
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000)) // still recording
+        }
+      }
+      const delegate = new WaitingDelegate()
+      const management = managementReadyToRecord(delegate)
+      const connection = fakeConnection(() => undefined)
+
+      ;(management as any).handleDataSendOpen(connection, 1, {
+        streamId: 5,
+        type: 'ipcamera.recording',
+        target: 'controller',
+        reason: 'record',
+      })
+      await new Promise(resolve => setTimeout(resolve, 10))
+
+      ;(management as any).recordingStream.handleDataSendClose({ streamId: 5, reason: 'because' })
+
+      expect(delegate.closeRecordingStream).toHaveBeenCalledExactlyOnceWith(5, undefined)
+      expect((management as any).recordingStream).toBeUndefined()
+    })
+
     it('should reject an open without a numeric stream id', () => {
       const management = managementReadyToRecord()
       const connection = fakeConnection(() => undefined)
