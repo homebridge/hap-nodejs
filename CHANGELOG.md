@@ -171,6 +171,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(definitions): drop a leftover variable and an unused parameter in the generator
 - test: restore names in test titles which a lint autofix had lower-cased and drop commit hashes
 - docs(readme): add install, node.js version and es module notes and drop the intel edison mentions
+- docs(typedoc): hide the default export so the api documentation lists everything only once
 
 ### Homebridge Dependencies
 
