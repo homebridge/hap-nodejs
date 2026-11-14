@@ -91,6 +91,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(storage): type stored controller data as unknown instead of any
 - refactor(storage): type the file storage's internal values as unknown instead of any
 - fix(camera): reject a selected recording configuration which is not a string as an invalid value
+- fix(remote): reject target control and audio configuration writes which are not a string
 
 ### Homebridge Dependencies
 

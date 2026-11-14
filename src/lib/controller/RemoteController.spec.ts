@@ -129,6 +129,32 @@ describe('remoteController', () => {
     })
   })
 
+  describe('writes which are not a string', () => {
+    it('should reject a target control write as an invalid value', () => {
+      const controller = createController()
+      const callback = vi.fn()
+
+      // @ts-expect-error: private access
+      controller.handleTargetControlWrite(5, callback)
+
+      expect(callback).toHaveBeenCalledExactlyOnceWith(HAPStatus.INVALID_VALUE_IN_REQUEST)
+    })
+
+    it('should reject a selected audio configuration write as an invalid value', () => {
+      const controller = createController()
+      const callback = vi.fn()
+      // @ts-expect-error: private access
+      const before = controller.selectedAudioConfigurationString
+
+      // @ts-expect-error: private access
+      controller.handleSelectedAudioConfigurationWrite(5, callback)
+
+      expect(callback).toHaveBeenCalledExactlyOnceWith(HAPStatus.INVALID_VALUE_IN_REQUEST)
+      // @ts-expect-error: private access
+      expect(controller.selectedAudioConfigurationString).toBe(before)
+    })
+  })
+
   describe('target removal and updates', () => {
     async function createControllerWithTargets(): Promise<RemoteController> {
       const controller = createController()
