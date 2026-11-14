@@ -80,6 +80,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(controller-storage): drop a queued save when the accessory is destroyed
 - chore(lint): allow const enums in the lint config instead of in 136 disable comments
 - chore(lint): allow typed event interfaces in the lint config instead of in 28 disable comments
+- refactor: add helpers to read the message and stack of a caught value
 
 ### Homebridge Dependencies
 
