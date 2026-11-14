@@ -70,7 +70,6 @@ export const enum EventedHTTPServerEvent {
   CONNECTION_CLOSED = 'connection-closed',
 }
 
-// eslint-disable-next-line ts/no-unsafe-declaration-merging
 export declare interface EventedHTTPServer {
 
   on(event: 'listening', listener: (port: number, address: string) => void): this
@@ -104,7 +103,6 @@ export declare interface EventedHTTPServer {
  *
  * @group HAP Accessory Server
  */
-// eslint-disable-next-line ts/no-unsafe-declaration-merging
 export class EventedHTTPServer extends EventEmitter {
   private static readonly CONNECTION_TIMEOUT_LIMIT = 16 // if we have more (or equal) # connections we start the timeout
   private static readonly MAX_CONNECTION_IDLE_TIME = 60 * 60 * 1000 // 1h
@@ -337,7 +335,6 @@ export const enum HAPConnectionEvent {
   CLOSED = 'closed',
 }
 
-// eslint-disable-next-line ts/no-unsafe-declaration-merging
 export declare interface HAPConnection {
   on(event: 'request', listener: (request: IncomingMessage, response: ServerResponse) => void): this
   on(event: 'authenticated', listener: (username: HAPUsername) => void): this
@@ -352,7 +349,6 @@ export declare interface HAPConnection {
  * Manages a single iOS-initiated HTTP connection during its lifetime.
  * @group HAP Accessory Server
  */
-// eslint-disable-next-line ts/no-unsafe-declaration-merging
 export class HAPConnection extends EventEmitter {
   /**
    * Delay in milliseconds before queued (non-immediate) characteristic event notifications are coalesced and flushed on

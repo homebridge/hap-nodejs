@@ -79,6 +79,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(accessory-info): count an admin once when the same pairing is added again
 - fix(controller-storage): drop a queued save when the accessory is destroyed
 - chore(lint): allow const enums in the lint config instead of in 136 disable comments
+- chore(lint): allow typed event interfaces in the lint config instead of in 28 disable comments
 
 ### Homebridge Dependencies
 

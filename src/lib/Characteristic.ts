@@ -606,7 +606,6 @@ export type CharacteristicSetHandler = (value: CharacteristicValue, context: Cha
  */
 export type AdditionalAuthorizationHandler = (additionalAuthorizationData: string | undefined) => boolean
 
-// eslint-disable-next-line ts/no-unsafe-declaration-merging
 export declare interface Characteristic {
 
   on(event: 'get', listener: (callback: CharacteristicGetCallback, context: CharacteristicContext, connection?: HAPConnection) => void): this
@@ -745,7 +744,6 @@ function minWithUndefined(a?: number, b?: number): number | undefined {
  *
  * @group Characteristic
  */
-// eslint-disable-next-line ts/no-unsafe-declaration-merging
 export class Characteristic extends EventEmitter {
   // Pattern below is for automatic detection of the section of defined characteristics. Used by the generator
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-

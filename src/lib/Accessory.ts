@@ -361,7 +361,6 @@ export const enum AccessoryEventTypes {
   CHARACTERISTIC_WARNING = 'characteristic-warning',
 }
 
-// eslint-disable-next-line ts/no-unsafe-declaration-merging
 export declare interface Accessory {
   on(event: 'identify', listener: (paired: boolean, callback: VoidCallback) => void): this
   on(event: 'listening', listener: (port: number, address: string) => void): this
@@ -405,7 +404,6 @@ interface BridgedAccessoryListeners {
  *
  * @group Accessory
  */
-// eslint-disable-next-line ts/no-unsafe-declaration-merging
 export class Accessory extends EventEmitter {
   // Timeout in milliseconds until a characteristic warning is issue
   private static readonly TIMEOUT_WARNING = 3000
