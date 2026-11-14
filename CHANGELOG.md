@@ -74,6 +74,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(characteristic): copy the props in replaceBy instead of sharing them
 - fix(characteristic): leave the object passed to setProps unchanged
 - fix(accessory): keep the listeners of the plugin when a bridged accessory is removed
+- test: assert on two displayName checks which had no matcher and enforce it with the lint rule
 
 ### Homebridge Dependencies
 
