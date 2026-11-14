@@ -119,6 +119,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(camera): use the HDSMessage type in the recording management
 - refactor(remote): use the HDSMessage type in the remote controller
 - fix(tlv): type the further arguments of encode and reject a type which is not a number
+- fix(uuid): refuse to read a uuid from a buffer which is too short or from a string
 
 ### Homebridge Dependencies
 
