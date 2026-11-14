@@ -92,7 +92,7 @@ const MAX_SERVICES = 100
  *
  * @group Accessory
  */
-export const enum Categories {
+export enum Categories {
   // noinspection JSUnusedGlobalSymbols
   OTHER = 1,
   BRIDGE = 2,
@@ -174,7 +174,7 @@ export interface ControllerContext {
 /**
  * @group Accessory
  */
-export const enum CharacteristicWarningType {
+export enum CharacteristicWarningType {
   SLOW_WRITE = 'slow-write',
   TIMEOUT_WRITE = 'timeout-write',
   SLOW_READ = 'slow-read',
@@ -283,7 +283,7 @@ export interface PublishInfo {
 /**
  * @group Accessory
  */
-export const enum MDNSAdvertiser {
+export enum MDNSAdvertiser {
   /**
    * Use the `@homebridge/ciao` module as advertiser.
    */
@@ -320,7 +320,7 @@ export interface ServiceConfigurationChange {
   service: Service
 }
 
-const enum WriteRequestState {
+enum WriteRequestState {
   REGULAR_REQUEST,
   TIMED_WRITE_AUTHENTICATED,
   TIMED_WRITE_REJECTED,
@@ -338,7 +338,7 @@ interface PermsViolation {
 /**
  * @group Accessory
  */
-export const enum AccessoryEventTypes {
+export enum AccessoryEventTypes {
   /**
    * Emitted when an iOS device wishes for this Accessory to identify itself. If `paired` is false, then
    * this device is currently browsing for Accessories in the system-provided "Add Accessory" screen. If

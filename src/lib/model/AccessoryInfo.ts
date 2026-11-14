@@ -25,7 +25,7 @@ function getVersion(): string {
 /**
  * @group Model
  */
-export const enum PermissionTypes {
+export enum PermissionTypes {
   // noinspection JSUnusedGlobalSymbols
   USER = 0x00,
   ADMIN = 0x01, // admins are the only ones who can add/remove/list pairings (additionally some characteristics are restricted)
