@@ -232,6 +232,13 @@ export class ControllerStorage {
         this.restoring = wasRestoring
       }
       controllerData.purgeOnNextLoad = undefined
+
+      // State changes are ignored while restoring, so a controller which found its stored data to be of no use any
+      // more (like an adaptive lighting schedule which ran out while the accessory was off) could not have it removed.
+      if (controller.serialize() === undefined && this.controllerData[controller.controllerId()] === controllerData) {
+        delete this.controllerData[controller.controllerId()]
+        this.enqueueSaveRequest(100)
+      }
     }
   }
 
