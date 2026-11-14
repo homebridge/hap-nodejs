@@ -43,6 +43,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(adaptive-lighting): stay active when the clock is set back before the start of the curve
 - fix(adaptive-lighting): emit disable in manual mode when a malformed request turns it off
 - fix(adaptive-lighting): keep the listeners of the plugin when the controller is removed
+- fix(adaptive-lighting): accept a transition curve of a single entry
 
 ### Homebridge Dependencies
 

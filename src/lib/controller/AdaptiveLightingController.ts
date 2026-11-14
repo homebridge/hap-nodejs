@@ -1251,7 +1251,8 @@ export class AdaptiveLightingController
     const transitionCurve: AdaptiveLightingTransitionCurveEntry[] = []
     let previous: AdaptiveLightingTransitionCurveEntry | undefined
 
-    const transitions = curveConfiguration[TransitionCurveConfigurationTypes.TRANSITION_ENTRY] as Buffer[]
+    // decodeWithLists() only returns a list when the type occurred more than once: a curve of one entry is a plain Buffer
+    const transitions: Buffer[] = [curveConfiguration[TransitionCurveConfigurationTypes.TRANSITION_ENTRY]].flat()
     for (const entry of transitions) {
       const tlvEntry = tlv.decode(entry)
 
