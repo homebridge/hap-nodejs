@@ -687,6 +687,17 @@ describe('RTPStreamManagement', () => {
       controller.handleFactoryReset()
     })
 
+    it('should answer a setup with an error when the delegate gives neither an error nor a response', async () => {
+      const rtp = controller.streamManagements[0] as RTPStreamManagement
+      vi.spyOn(MockDelegate.prototype, 'prepareStream').mockImplementation(((_request: unknown, callback: PrepareStreamCallback) => {
+        callback()
+      }) as () => void)
+
+      const result = await new Promise(resolve => (rtp as any).handleSetupEndpoints(buildSetupEndpointsTlv(), (error: unknown) => resolve(error), buildMockConnection()))
+      expect(result).toBe(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
+      expect(rtp.sessionIdentifier).toBeUndefined()
+    })
+
     it.each([
       [
         'an error',

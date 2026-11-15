@@ -1213,7 +1213,8 @@ export class RTPStreamManagement {
           ).toString('base64')
 
           this.handleSessionClosed()
-          callback(error)
+          // an answer with neither an error nor a response must not tell the controller that the setup worked
+          callback(error ?? HAPStatus.SERVICE_COMMUNICATION_FAILURE)
         } else {
           try {
             this.generateSetupEndpointResponse(connection, sessionIdentifier, prepareRequest, response, callback)
