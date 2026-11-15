@@ -71,7 +71,7 @@ export enum PairMethods {
 }
 
 /**
- * Pairing states (pair-setup or pair-verify). Encoded in {@link TLVValues.SEQUENCE_NUM}.
+ * Pairing states (pair-setup or pair-verify). Encoded in the TLV value `SEQUENCE_NUM` (0x06).
  *
  * @group HAP Accessory Server
  */
