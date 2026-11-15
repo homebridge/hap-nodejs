@@ -44,7 +44,7 @@ accessory
   .setCharacteristic(Characteristic.Model, 'Rev-1')
   .setCharacteristic(Characteristic.SerialNumber, 'TW000165')
 
-accessory.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, callback: VoidCallback) => {
+accessory.on(AccessoryEventTypes.IDENTIFY, (_paired: boolean, callback: VoidCallback) => {
   FAKE_GARAGE.identify()
   callback()
 })

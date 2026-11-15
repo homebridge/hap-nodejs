@@ -41,7 +41,7 @@ accessory
   .setCharacteristic(Characteristic.SerialNumber, 'A1S2NASF88EW')
 
 // listen for the "identify" event for this Accessory
-accessory.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, callback: VoidCallback) => {
+accessory.on(AccessoryEventTypes.IDENTIFY, (_paired: boolean, callback: VoidCallback) => {
   MOTION_SENSOR.identify()
   callback() // success
 })

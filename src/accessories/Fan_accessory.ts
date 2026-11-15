@@ -44,7 +44,7 @@ accessory
   .setCharacteristic(Characteristic.Manufacturer, 'Sample Company')
 
 // listen for the "identify" event for this Accessory
-accessory.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, callback: VoidCallback) => {
+accessory.on(AccessoryEventTypes.IDENTIFY, (_paired: boolean, callback: VoidCallback) => {
   FAKE_FAN.identify()
   callback() // success
 })

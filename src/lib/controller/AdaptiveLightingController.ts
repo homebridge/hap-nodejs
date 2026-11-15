@@ -975,7 +975,7 @@ export class AdaptiveLightingController
    */
 
   // eslint-disable-next-line unused-imports/no-unused-vars
-  initWithServices(serviceMap: ControllerServiceMap): void | ControllerServiceMap {
+  initWithServices(_serviceMap: ControllerServiceMap): void | ControllerServiceMap {
     // do nothing
   }
 

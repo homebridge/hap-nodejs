@@ -716,7 +716,7 @@ export class RTPStreamManagement {
         // a connection which was told that the stream is busy reads that answer, everybody else the one of the session
         callback(null, (connection && this.busySetupEndpointsResponses.get(connection)) ?? this.setupEndpointsResponse)
       })
-      .on(CharacteristicEventTypes.SET, (value, callback, context, connection) => {
+      .on(CharacteristicEventTypes.SET, (value, callback, _context, connection) => {
         if (!connection) {
           debug('Set event handler for SetupEndpoints cannot be called from plugin. Connection undefined!')
           callback(HAPStatus.INVALID_VALUE_IN_REQUEST)

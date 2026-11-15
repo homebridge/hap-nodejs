@@ -518,7 +518,7 @@ export class HAPServer extends EventEmitter {
   /**
    * UNPAIRED Accessory identification.
    */
-  private handleIdentifyRequest(connection: HAPConnection, url: URL, request: IncomingMessage, data: Buffer, response: ServerResponse): void {
+  private handleIdentifyRequest(_connection: HAPConnection, _url: URL, _request: IncomingMessage, _data: Buffer, response: ServerResponse): void {
     // POST body is empty
     if (this.accessoryInfo.paired() && !this.allowInsecureRequest) {
       response.writeHead(HAPHTTPCode.BAD_REQUEST, { 'Content-Type': HAPMimeTypes.HAP_JSON })
@@ -539,7 +539,7 @@ export class HAPServer extends EventEmitter {
     }))
   }
 
-  private handlePairSetup(connection: HAPConnection, url: URL, request: IncomingMessage, data: Buffer, response: ServerResponse): void {
+  private handlePairSetup(connection: HAPConnection, _url: URL, _request: IncomingMessage, data: Buffer, response: ServerResponse): void {
     // Can only be directly paired with one iOS device
     if (!this.allowInsecureRequest && this.accessoryInfo.paired()) {
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
@@ -756,7 +756,7 @@ export class HAPServer extends EventEmitter {
     }))
   }
 
-  private handlePairVerify(connection: HAPConnection, url: URL, request: IncomingMessage, data: Buffer, response: ServerResponse): void {
+  private handlePairVerify(connection: HAPConnection, _url: URL, _request: IncomingMessage, data: Buffer, response: ServerResponse): void {
     let tlvData: Record<number, Buffer>
     try {
       tlvData = tlv.decode(data)
@@ -915,7 +915,7 @@ export class HAPServer extends EventEmitter {
     connection._pairVerifyState = undefined
   }
 
-  private handlePairings(connection: HAPConnection, url: URL, request: IncomingMessage, data: Buffer, response: ServerResponse): void {
+  private handlePairings(connection: HAPConnection, _url: URL, _request: IncomingMessage, data: Buffer, response: ServerResponse): void {
     // Only accept a /pairings request if there is a secure session
     if (!this.allowInsecureRequest && !connection.isAuthenticated()) {
       response.writeHead(HAPPairingHTTPCode.CONNECTION_AUTHORIZATION_REQUIRED, { 'Content-Type': HAPMimeTypes.HAP_JSON })
@@ -1023,7 +1023,7 @@ export class HAPServer extends EventEmitter {
     }
   }
 
-  private handleAccessories(connection: HAPConnection, url: URL, request: IncomingMessage, data: Buffer, response: ServerResponse): void {
+  private handleAccessories(connection: HAPConnection, _url: URL, _request: IncomingMessage, _data: Buffer, response: ServerResponse): void {
     if (!this.allowInsecureRequest && !connection.isAuthenticated()) {
       response.writeHead(HAPPairingHTTPCode.CONNECTION_AUTHORIZATION_REQUIRED, { 'Content-Type': HAPMimeTypes.HAP_JSON })
       response.end(JSON.stringify({ status: HAPStatus.INSUFFICIENT_PRIVILEGES }))
@@ -1175,7 +1175,7 @@ export class HAPServer extends EventEmitter {
     }
   }
 
-  private handlePrepareWrite(connection: HAPConnection, url: URL, request: IncomingMessage, data: Buffer, response: ServerResponse): void {
+  private handlePrepareWrite(connection: HAPConnection, _url: URL, request: IncomingMessage, data: Buffer, response: ServerResponse): void {
     if (!this.allowInsecureRequest && !connection.isAuthenticated()) {
       response.writeHead(HAPPairingHTTPCode.CONNECTION_AUTHORIZATION_REQUIRED, { 'Content-Type': HAPMimeTypes.HAP_JSON })
       response.end(JSON.stringify({ status: HAPStatus.INSUFFICIENT_PRIVILEGES }))
@@ -1219,7 +1219,7 @@ export class HAPServer extends EventEmitter {
     }
   }
 
-  private handleResource(connection: HAPConnection, url: URL, request: IncomingMessage, data: Buffer, response: ServerResponse): void {
+  private handleResource(connection: HAPConnection, _url: URL, request: IncomingMessage, data: Buffer, response: ServerResponse): void {
     if (!connection.isAuthenticated()) {
       const authorization = request.headers?.authorization
       const authorizationBuffer = authorization

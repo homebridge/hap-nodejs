@@ -2643,7 +2643,7 @@ describe('Accessory', () => {
         accessory.on(AccessoryEventTypes.CHARACTERISTIC_WARNING, warning => warnings.push(warning.message))
         const onSet = vi.fn()
         accessory.getService(Service.AccessoryInformation)!.getCharacteristic(Characteristic.Identify).onSet(onSet)
-        accessory.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, identified: IdentifyCallback) => identified())
+        accessory.on(AccessoryEventTypes.IDENTIFY, (_paired: boolean, identified: IdentifyCallback) => identified())
 
         await testRequestResponse({
           characteristics: [
@@ -2660,7 +2660,7 @@ describe('Accessory', () => {
       })
 
       it('identify Write answers with the status the identify listener reports', async () => {
-        accessory.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, identified: IdentifyCallback) => {
+        accessory.on(AccessoryEventTypes.IDENTIFY, (_paired: boolean, identified: IdentifyCallback) => {
           identified(new HapStatusError(HAPStatus.RESOURCE_BUSY))
         })
 

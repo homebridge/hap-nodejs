@@ -1403,7 +1403,7 @@ export class RemoteController<O = unknown> extends EventEmitter
       .on(CharacteristicEventTypes.GET, (callback) => {
         callback(undefined, this.isActive())
       })
-      .on(CharacteristicEventTypes.SET, (value, callback, context, connection) => {
+      .on(CharacteristicEventTypes.SET, (value, callback, _context, connection) => {
         if (!connection) {
           debug('Set event handler for Remote.Active cannot be called from plugin. Connection undefined!')
           callback(HAPStatus.INVALID_VALUE_IN_REQUEST)
