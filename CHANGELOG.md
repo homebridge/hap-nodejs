@@ -200,6 +200,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): reject the rtp proxy setup once every port failed to bind instead of trying for ever
 - fix(controller): read the adaptive lighting update and notify intervals by the length that was sent
 - fix(controller): unref the release timer of a pushed remote button and cancel it on removal/reset
+- test(tv): add a spec for the access control management of televisions and speakers
 
 ### Homebridge Dependencies
 
