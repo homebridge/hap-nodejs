@@ -126,7 +126,8 @@ export class AccessControlManagement extends EventEmitter {
   private handleAccessLevelChange(value: number) {
     this.accessLevel = value
     setTimeout(() => { // timeout this so any action won't be executed on sync to the HAP request
-      this.emit(AccessControlEvent.ACCESS_LEVEL_UPDATED, this.accessLevel)
+      // the value of this write, not the state at the time the timer fires: another write may have followed by then
+      this.emit(AccessControlEvent.ACCESS_LEVEL_UPDATED, value)
     }, 0).unref()
   }
 
@@ -134,16 +135,15 @@ export class AccessControlManagement extends EventEmitter {
     const data = Buffer.from(value, 'base64')
     const objects = tlv.decode(data)
 
-    if (objects[AccessControlTypes.PASSWORD]) {
-      this.password = objects[AccessControlTypes.PASSWORD].toString('utf8')
-    } else {
-      this.password = undefined
-    }
+    const password = objects[AccessControlTypes.PASSWORD]?.toString('utf8')
+    const passwordRequired = !!objects[AccessControlTypes.PASSWORD_REQUIRED][0]
 
-    this.passwordRequired = !!objects[AccessControlTypes.PASSWORD_REQUIRED][0]
+    this.password = password
+    this.passwordRequired = passwordRequired
 
     setTimeout(() => { // timeout this so any action won't be executed on sync to the HAP request
-      this.emit(AccessControlEvent.PASSWORD_SETTING_UPDATED, this.password, this.passwordRequired)
+      // the values of this write, not the state at the time the timer fires: another write may have followed by then
+      this.emit(AccessControlEvent.PASSWORD_SETTING_UPDATED, password, passwordRequired)
     }, 0).unref()
   }
 
