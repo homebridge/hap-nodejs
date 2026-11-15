@@ -226,6 +226,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(service): answer /accessories with an error instead of crashing on a bad characteristic
 - fix(server): hold events until a request which arrived during a stalled event loop is answered
 - fix(server): refuse an add pairing request whose permission or public key is malformed
+- test: restore the name of the PUT /prepare test which a lint autofix had lower-cased
 
 ### Homebridge Dependencies
 

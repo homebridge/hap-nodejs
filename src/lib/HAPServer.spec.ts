@@ -605,7 +605,7 @@ describe('HAPServer', () => {
       [0, HAPHTTPCode.OK, HAPStatus.SUCCESS],
       [11122333, HAPHTTPCode.OK, HAPStatus.SUCCESS],
       ['11122333', HAPHTTPCode.BAD_REQUEST, HAPStatus.INVALID_VALUE_IN_REQUEST],
-    ])('pUT /prepare with pid %j should be answered with %d', async (pid, httpCode, status) => {
+    ])('PUT /prepare with pid %j should be answered with %d', async (pid, httpCode, status) => {
       server = new HAPServer(accessoryInfoUnpaired)
       server.allowInsecureRequest = true
       const [port] = await bindServer(server)
