@@ -19,6 +19,7 @@ import {
   RecordingPacket,
   VideoCodecType,
 } from '../camera/index.js'
+import { Characteristic } from '../Characteristic.js'
 import {
   CameraController,
   CameraControllerOptions,
@@ -505,6 +506,77 @@ describe('RTPStreamManagement', () => {
       const decoded = tlv.decode(Buffer.from((rtp as any).setupEndpointsResponse as string, 'base64'))
       // SetupEndpointsResponseTypes.STATUS = 0x02; SetupEndpointsStatus.BUSY = 0x01
       expect(decoded[0x02].readUInt8(0)).not.toBe(0x01)
+    })
+  })
+
+  describe('handleSetupEndpoints while another session holds the stream', () => {
+    let controller: CameraController
+
+    beforeEach(() => {
+      controller = new CameraController(buildControllerOptions(baseStreamingOptions))
+      controller.constructServices()
+      controller.configureServices()
+    })
+
+    afterEach(() => {
+      vi.restoreAllMocks()
+      controller.handleFactoryReset()
+    })
+
+    it('should answer busy to the connection which asked and keep the response of the active session', async () => {
+      const rtp = controller.streamManagements[0] as RTPStreamManagement
+      vi.spyOn(MockDelegate.prototype, 'prepareStream').mockImplementation(((_request: unknown, callback: PrepareStreamCallback) => callback(undefined, {
+        video: {
+          port: 5000,
+          ssrc: 1,
+          srtp_key: Buffer.alloc(16),
+          srtp_salt: Buffer.alloc(14),
+        },
+        audio: {
+          port: 5001,
+          ssrc: 2,
+          srtp_key: Buffer.alloc(16),
+          srtp_salt: Buffer.alloc(14),
+        },
+      })) as () => void)
+      const characteristic = rtp.getService().getCharacteristic(Characteristic.SetupEndpoints)
+      const read = async (connection: HAPConnection) => tlv.decode(Buffer.from(await characteristic.handleGetRequest(connection) as string, 'base64'))
+      const sessionA = '11111111-1111-1111-1111-111111111111'
+      const sessionB = '22222222-2222-2222-2222-222222222222'
+      const connectionA = buildMockConnection()
+      const connectionB = buildMockConnection()
+
+      await new Promise<void>((resolve) => {
+        // @ts-expect-error: private method access
+        rtp.handleSetupEndpoints(buildSetupEndpointsTlv(true, sessionA), () => resolve(), connectionA)
+      })
+      const responseA = await read(connectionA)
+      // SetupEndpointsResponseTypes: SESSION_ID = 0x01, STATUS = 0x02; SetupEndpointsStatus: SUCCESS = 0x00, BUSY = 0x01
+      expect(uuid.unparse(responseA[0x01])).toBe(sessionA)
+      expect(responseA[0x02].readUInt8(0)).toBe(0x00)
+
+      const callbackB = vi.fn()
+      // @ts-expect-error: private method access
+      rtp.handleSetupEndpoints(buildSetupEndpointsTlv(true, sessionB), callbackB, connectionB)
+      expect(callbackB).toHaveBeenCalledExactlyOnceWith()
+
+      // the controller which asked reads the answer for its own request, like before
+      const responseB = await read(connectionB)
+      expect(uuid.unparse(responseB[0x01])).toBe(sessionB)
+      expect(responseB[0x02].readUInt8(0)).toBe(0x01)
+      expect(Object.keys(responseB)).toEqual(['1', '2'])
+
+      // the session which holds the stream still has its response
+      expect(await read(connectionA)).toEqual(responseA)
+      expect(tlv.decode(Buffer.from(rtp.setupEndpointsResponse, 'base64'))).toEqual(responseA)
+      expect(await read(connectionB)).toEqual(responseB)
+
+      // once the stream is free again, everybody reads the default response, like before
+      // @ts-expect-error: private method access
+      rtp.handleSessionClosed()
+      const idle = tlv.decode(Buffer.from(rtp.setupEndpointsResponse, 'base64'))
+      expect(await read(connectionB)).toEqual(idle)
+      expect(await read(connectionA)).toEqual(idle)
     })
   })
 
