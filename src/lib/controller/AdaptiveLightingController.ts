@@ -1224,8 +1224,12 @@ export class AdaptiveLightingController
 
     const parametersTLV = tlv.decode(transitionConfiguration[ValueTransitionConfigurationTypes.TRANSITION_PARAMETERS])
     const curveConfiguration = tlv.decodeWithLists(transitionConfiguration[ValueTransitionConfigurationTypes.TRANSITION_CURVE_CONFIGURATION])
-    const updateInterval = transitionConfiguration[ValueTransitionConfigurationTypes.UPDATE_INTERVAL]?.readUInt16LE(0)
-    const notifyIntervalThreshold = transitionConfiguration[ValueTransitionConfigurationTypes.NOTIFY_INTERVAL_THRESHOLD].readUInt32LE(0)
+    // both are integers of variable size (and we answer a read with one): read them by the length which was sent
+    const updateIntervalBuffer = transitionConfiguration[ValueTransitionConfigurationTypes.UPDATE_INTERVAL]
+    const updateInterval = updateIntervalBuffer
+      ? tlv.readVariableUIntLE(updateIntervalBuffer)
+      : undefined
+    const notifyIntervalThreshold = tlv.readVariableUIntLE(transitionConfiguration[ValueTransitionConfigurationTypes.NOTIFY_INTERVAL_THRESHOLD])
 
     const transitionId = parametersTLV[ValueTransitionParametersTypes.TRANSITION_ID]
     const startTime = parametersTLV[ValueTransitionParametersTypes.START_TIME]
