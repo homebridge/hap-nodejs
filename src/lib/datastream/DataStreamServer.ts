@@ -836,11 +836,14 @@ export class DataStreamConnection extends EventEmitter {
   /**
    * Sends a new request message to the connected client.
    *
+   * Throws an {@link HDSConnectionError} when the connection is closing or closed, is not identified yet, or the message is
+   * too large. The callback is not called for such a request.
+   *
    * @param protocol - name of the protocol
    * @param request - name of the request (also referred to as topic. See {@link Topics} for some known ones)
    * @param message - message dictionary which gets sent along the request
-   * @param callback - handler which gets supplied with an error object if the response didn't
-   * arrive in time or the status and the message dictionary from the response
+   * @param callback - handler which gets supplied with the status and the message dictionary of the response, or with an
+   * error when the response did not arrive within 10 seconds or the connection closed before it arrived
    */
 
   sendRequest(protocol: string | Protocols, request: string | Topics, message: HDSMessage = {}, callback: ResponseHandler): void {
@@ -851,7 +854,7 @@ export class DataStreamConnection extends EventEmitter {
 
     let requestId: number
     do { // generate unused requestId
-      // currently writing int64 to data stream is not really supported, so 32-bit int will be the max
+      // 32 bits are plenty for the requests waiting at one time (the writer could encode up to 64 bits)
       requestId = Math.floor(Math.random() * 4294967295)
     } while (this.responseHandlers[requestId] !== undefined)
 
