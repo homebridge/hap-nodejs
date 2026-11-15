@@ -969,6 +969,10 @@ export class DataStreamConnection extends EventEmitter {
     }
 
     messages.forEach((message) => {
+      if (this.state >= ConnectionState.CLOSING) {
+        return // a handler of an earlier message in this chunk closed the connection: the rest is not for anybody anymore
+      }
+
       if (message.type === MessageType.RESPONSE) {
         // protocol and topic are currently not tested here; just assumed they are correct;
         // probably they are as the requestId is unique per connection no matter what protocol is used

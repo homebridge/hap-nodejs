@@ -234,6 +234,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(accessory): keep tlv8 values, which can hold the camera stream keys, out of the debug log
 - fix(camera): answer a stream setup with an error when the plugin gives no error and no response
 - refactor(camera): drop three error answers which are overwritten by the session reset at once
+- fix(datastream): stop handing on the messages of a chunk once a handler closed the connection
 
 ### Homebridge Dependencies
 

@@ -405,6 +405,30 @@ describe('DataStreamServer', () => {
     })
   })
 
+  describe('messages after a close', () => {
+    it('should not hand on the messages which follow a close in the same chunk', () => {
+      const session = setupSession()
+      session.socket.emit('data', encryptedFrame(session, messagePayload({ protocol: 'control', request: 'hello', id: 1 })))
+      const seen: string[] = []
+      session.connection.addProtocolHandler('test', {
+        eventHandler: {
+          first: () => {
+            seen.push('first')
+            session.connection.close()
+          },
+          second: () => seen.push('second'),
+        },
+      })
+
+      session.socket.emit('data', Buffer.concat([
+        encryptedFrame(session, messagePayload({ protocol: 'test', event: 'first' })),
+        encryptedFrame(session, messagePayload({ protocol: 'test', event: 'second' })),
+      ]))
+
+      expect(seen).toEqual(['first'])
+    })
+  })
+
   describe('unknown frame types', () => {
     it('should skip a frame of an unknown type without allocating a buffer for its payload', () => {
       const { socket } = setupSession()
