@@ -3089,7 +3089,7 @@ export class Characteristic extends EventEmitter {
    * @param event
    * @private
    */
-  removeAllListeners(event?: string | symbol): this {
+  override removeAllListeners(event?: string | symbol): this {
     if (!event) {
       this.removeOnGet()
       this.removeOnSet()

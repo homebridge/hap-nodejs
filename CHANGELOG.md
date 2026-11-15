@@ -208,6 +208,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(accessory): end the event subscriptions of clients to a removed service or characteristic
 - fix(model): warn with the file path when a storage file does not hold valid json
 - fix(accessory): stop publish writing the advertiser it chose into the publish info of the caller
+- refactor: mark members which replace an inherited one with override and turn on noImplicitOverride
 
 ### Homebridge Dependencies
 

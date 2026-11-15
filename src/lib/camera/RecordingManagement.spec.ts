@@ -155,7 +155,7 @@ describe('RecordingManagement', () => {
 
     it('should signal the end of the stream when the last packet has no data', async () => {
       class EmptyLastPacketDelegate extends MockDelegate {
-        async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
+        override async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
           yield {
             data: Buffer.alloc(100, 1),
             isLast: false,
@@ -202,7 +202,7 @@ describe('RecordingManagement', () => {
       class WaitingDelegate extends MockDelegate {
         acknowledgeStream = vi.fn()
 
-        async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
+        override async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
           yield {
             data: Buffer.alloc(10, 1),
             isLast: false,
@@ -234,7 +234,7 @@ describe('RecordingManagement', () => {
 
     it('should not keep the process alive while it waits for the home hub to close a finished stream', async () => {
       class FinishedDelegate extends MockDelegate {
-        async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
+        override async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
           yield {
             data: Buffer.alloc(10, 1),
             isLast: true,
@@ -260,7 +260,7 @@ describe('RecordingManagement', () => {
     it('should not keep the process alive while it waits for the generator of a closed stream', async () => {
       let finish = (): void => undefined
       class WaitingDelegate extends MockDelegate {
-        async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
+        override async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
           yield {
             data: Buffer.alloc(10, 1),
             isLast: false,
@@ -288,9 +288,9 @@ describe('RecordingManagement', () => {
 
     it('should hand a close reason which is not a number to the delegate as a missing reason', async () => {
       class WaitingDelegate extends MockDelegate {
-        closeRecordingStream = vi.fn()
+        override closeRecordingStream = vi.fn()
 
-        async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
+        override async* handleRecordingStreamRequest(): AsyncGenerator<RecordingPacket> {
           yield {
             data: Buffer.alloc(10, 1),
             isLast: false,
