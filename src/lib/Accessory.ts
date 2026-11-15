@@ -806,6 +806,8 @@ export class Accessory extends EventEmitter {
         return characteristic
       }
     }
+
+    return undefined
   }
 
   protected getAccessoryByAID(aid: number): Accessory | undefined {
