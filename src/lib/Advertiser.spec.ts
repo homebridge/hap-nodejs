@@ -314,6 +314,7 @@ describe('D-Bus advertisers', () => {
         if (msg.member === 'AddService' && failAddService) {
           throw dbusError('org.freedesktop.Avahi.CollisionError', 'Local name collision')
         }
+        return undefined
       }
       const advertiser = new AvahiAdvertiser(AccessoryInfo.create('AA:BB:CC:DD:EE:FF'))
       advertiser.initPort(51826)
@@ -363,6 +364,7 @@ describe('D-Bus advertisers', () => {
         return `p${registered}`
       }
       calls.push(`unregister ${msg.body[0]}`)
+      return undefined
     }
     const advertiser = new ResolvedAdvertiser(AccessoryInfo.create('AA:BB:CC:DD:EE:FF'))
     advertiser.initPort(51826)

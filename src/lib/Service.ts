@@ -660,6 +660,8 @@ export class Service extends EventEmitter {
 
       return instance
     }
+
+    return undefined
   }
 
   public testCharacteristic<T extends WithUUID<typeof Characteristic>>(name: string | T): boolean {
@@ -816,6 +818,8 @@ export class Service extends EventEmitter {
         return characteristic
       }
     }
+
+    return undefined
   }
 
   /**
