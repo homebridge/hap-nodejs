@@ -100,9 +100,31 @@ describe('HAPFileStorage', () => {
     })
 
     it('should treat files with invalid JSON as undefined instead of throwing', () => {
-      fs.writeFileSync(path.join(dir, 'corrupt.json'), '{ not json !')
-      expect(() => storage.initSync({ dir })).not.toThrow()
-      expect(storage.getItem('corrupt.json')).toBeUndefined()
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      try {
+        fs.writeFileSync(path.join(dir, 'corrupt.json'), '{ not json !')
+        expect(() => storage.initSync({ dir })).not.toThrow()
+        expect(storage.getItem('corrupt.json')).toBeUndefined()
+      } finally {
+        warn.mockRestore()
+      }
+    })
+
+    it('should name a file with invalid JSON in a warning, without printing what it holds', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      try {
+        fs.writeFileSync(path.join(dir, 'AccessoryInfo.AABBCCDDEEFF.json'), '{"signSk":"53CR3T-K3Y"')
+        fs.writeFileSync(path.join(dir, 'valid.json'), '{"a":1}')
+        storage.initSync({ dir })
+
+        expect(warn).toHaveBeenCalledTimes(1) // not for the valid file
+        const message: string = warn.mock.calls[0].join(' ')
+        expect(message).toContain(path.join(dir, 'AccessoryInfo.AABBCCDDEEFF.json'))
+        expect(message).not.toContain('53CR3T')
+        expect(message).not.toContain('signSk')
+      } finally {
+        warn.mockRestore()
+      }
     })
 
     it('should default to the relative directory \'persist\' like node-persist 0.0.12', () => {

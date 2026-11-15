@@ -130,7 +130,7 @@ export class HAPFileStorage {
           continue
         }
 
-        this.data.set(entry.name, HAPFileStorage.parse(fs.readFileSync(file, 'utf8')))
+        this.data.set(entry.name, HAPFileStorage.parse(file, fs.readFileSync(file, 'utf8')))
       }
     } else {
       fs.mkdirSync(this.dir, { recursive: true })
@@ -238,11 +238,14 @@ export class HAPFileStorage {
     }
   }
 
-  private static parse(json: string): unknown {
+  private static parse(file: string, json: string): unknown {
     try {
       return JSON.parse(json)
     } catch {
-      // node-persist 0.0.12 swallowed unparseable files, leaving the value undefined
+      // node-persist 0.0.12 swallowed unparseable files, leaving the value undefined. That stays, but not in silence: an accessory
+      // whose file reads as nothing starts as a new, unpaired one. Only the path is printed: the file can hold keys, and the
+      // message of the parse error quotes a piece of it.
+      console.warn(`HAP-NodeJS WARNING: The storage file '${file}' does not hold valid JSON and was ignored. What it stored is treated as missing.`)
       return undefined
     }
   }

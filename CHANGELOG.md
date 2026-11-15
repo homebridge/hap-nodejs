@@ -206,6 +206,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(server): name the accessory and the port in the error when the hap server can not start
 - fix(accessory): stop a controller reading or writing an accessory excluded for invalid permissions
 - fix(accessory): end the event subscriptions of clients to a removed service or characteristic
+- fix(model): warn with the file path when a storage file does not hold valid json
 
 ### Homebridge Dependencies
 
