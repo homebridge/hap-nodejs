@@ -210,6 +210,25 @@ describe('HAPFileStorage', () => {
       expect(fs.readdirSync(dir)).toEqual(['key.json'])
     })
 
+    // Windows has no owner, group and other permission bits for a file
+    it.skipIf(process.platform === 'win32')('should keep a file private to its owner, as AccessoryInfo holds the pairing keys', () => {
+      // the usual umask, which leaves a new file readable by everyone (0644)
+      const previous = process.umask(0o022)
+      try {
+        storage.setItemSync('AccessoryInfo.CC223DE3CEF3.json', { signSk: 'secret' })
+        const first = fs.statSync(path.join(dir, 'AccessoryInfo.CC223DE3CEF3.json')).mode & 0o777
+
+        // a file saved by an older version is readable by everyone: the next save makes it private
+        fs.chmodSync(path.join(dir, 'AccessoryInfo.CC223DE3CEF3.json'), 0o644)
+        storage.setItemSync('AccessoryInfo.CC223DE3CEF3.json', { signSk: 'secret' })
+
+        expect(first).toBe(0o600)
+        expect(fs.statSync(path.join(dir, 'AccessoryInfo.CC223DE3CEF3.json')).mode & 0o777).toBe(0o600)
+      } finally {
+        process.umask(previous)
+      }
+    })
+
     it('should keep the previous contents intact when serializing the new value fails', () => {
       storage.setItemSync('key.json', { a: 1 })
       const circular: Record<string, unknown> = {}

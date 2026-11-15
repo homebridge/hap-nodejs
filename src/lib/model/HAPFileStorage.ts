@@ -177,7 +177,9 @@ export class HAPFileStorage {
     const temporaryFile = path.join(this.dir, `.${key}.${process.pid}.tmp`)
 
     try {
-      fs.writeFileSync(temporaryFile, JSON.stringify(value))
+      // 0600: AccessoryInfo holds the accessory's private key and the keys of its paired controllers, so no other
+      // user of the system may read it. The temporary file is new every time, so the mode always applies
+      fs.writeFileSync(temporaryFile, JSON.stringify(value), { mode: 0o600 })
       fs.renameSync(temporaryFile, file)
     } catch (error) {
       try {
