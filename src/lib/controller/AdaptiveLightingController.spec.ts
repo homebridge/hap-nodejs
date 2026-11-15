@@ -210,19 +210,27 @@ describe('AdaptiveLightingController', () => {
     expect(controller.listenerCount(AdaptiveLightingControllerEvents.DISABLED)).toBe(1)
   })
 
-  it('should accept a curve of a single entry', async () => {
-    const { lightbulb, controller } = createController()
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    try {
-      await expect(writeTransitionControl(lightbulb, buildUpdateTransition(lightbulb, Date.now(), curve(1))))
-        .resolves
-        .toEqual(expect.any(String))
-      expect(warn).not.toHaveBeenCalled()
-    } finally {
-      warn.mockRestore()
-      controller.disableAdaptiveLighting()
-    }
-  })
+  it.each([AdaptiveLightingControllerMode.AUTOMATIC, AdaptiveLightingControllerMode.MANUAL])(
+    'should refuse a curve of a single entry and keep the running transition in mode %d',
+    async (mode) => {
+      const { lightbulb, controller } = createController(mode)
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      try {
+        await writeTransitionControl(lightbulb, buildUpdateTransition(lightbulb, Date.now(), curve(3)))
+        const running = controller.getAdaptiveLightingTransitionCurve()
+
+        await expect(writeTransitionControl(lightbulb, buildUpdateTransition(lightbulb, Date.now(), curve(1))))
+          .rejects
+          .toEqual(HAPStatus.INVALID_VALUE_IN_REQUEST)
+        expect(controller.isAdaptiveLightingActive()).toBe(true)
+        expect(controller.getAdaptiveLightingTransitionCurve()).toBe(running)
+        expect(warn).not.toHaveBeenCalled()
+      } finally {
+        warn.mockRestore()
+        controller.disableAdaptiveLighting()
+      }
+    },
+  )
 
   describe('the width of the interval values', () => {
     it.each([

@@ -1260,6 +1260,11 @@ export class AdaptiveLightingController
 
     // decodeWithLists() only returns a list when the type occurred more than once: a curve of one entry is a plain Buffer
     const transitions: Buffer[] = [curveConfiguration[TransitionCurveConfigurationTypes.TRANSITION_ENTRY]].flat()
+    if (transitions.length < 2) {
+      // a curve needs two points to go from one to the next. With one, AUTOMATIC mode would answer the write with success
+      // and turn Adaptive Lighting off at once: refuse it and keep the transition which is running
+      throw new HapStatusError(HAPStatus.INVALID_VALUE_IN_REQUEST)
+    }
     for (const entry of transitions) {
       const tlvEntry = tlv.decode(entry)
 
