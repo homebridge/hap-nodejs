@@ -1385,19 +1385,20 @@ export class Accessory extends EventEmitter {
     // create our Advertiser which broadcasts our presence over mdns
     const parsed = Accessory.parseBindOption(info)
 
-    info.advertiser ??= MDNSAdvertiser.CIAO
+    // a variable of our own: the object belongs to the caller, who may publish with it again
+    let advertiser = info.advertiser ?? MDNSAdvertiser.CIAO
     if (
-      (info.advertiser === MDNSAdvertiser.AVAHI && !await AvahiAdvertiser.isAvailable())
-      || (info.advertiser === MDNSAdvertiser.RESOLVED && !await ResolvedAdvertiser.isAvailable())
+      (advertiser === MDNSAdvertiser.AVAHI && !await AvahiAdvertiser.isAvailable())
+      || (advertiser === MDNSAdvertiser.RESOLVED && !await ResolvedAdvertiser.isAvailable())
     ) {
       console.error(
-        `[${this.displayName}] The selected advertiser, "${info.advertiser}", isn't available on this platform. `
+        `[${this.displayName}] The selected advertiser, "${advertiser}", isn't available on this platform. `
         + `Reverting to "${MDNSAdvertiser.CIAO}"`,
       )
-      info.advertiser = MDNSAdvertiser.CIAO
+      advertiser = MDNSAdvertiser.CIAO
     }
 
-    switch (info.advertiser) {
+    switch (advertiser) {
       case MDNSAdvertiser.CIAO:
         this._advertiser = new CiaoAdvertiser(this._accessoryInfo, {
           interface: parsed.advertiserAddress,
@@ -1419,7 +1420,7 @@ export class Accessory extends EventEmitter {
         this._advertiser = new ResolvedAdvertiser(this._accessoryInfo)
         break
       default:
-        throw new Error(`Unsupported advertiser setting: '${info.advertiser}'`)
+        throw new Error(`Unsupported advertiser setting: '${advertiser}'`)
     }
     this._advertiser.on(AdvertiserEvent.UPDATED_NAME, (name) => {
       this.displayName = name
