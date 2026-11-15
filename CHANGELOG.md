@@ -242,6 +242,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - docs(datastream): fix two comments about request ids and what sendRequest answers
 - fix(remote): forget every target of a data stream connection which closed, not only the first
 - fix(remote): cap the time of pushAndReleaseButton so a long one does not release after 1 ms
+- fix(adaptive-lighting): refuse a transition curve of fewer than two entries, keep the running one
 
 ### Homebridge Dependencies
 
