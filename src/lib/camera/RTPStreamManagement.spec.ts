@@ -193,6 +193,52 @@ function buildMockConnection(): HAPConnection {
   } as unknown as HAPConnection
 }
 
+function prepareOk(_request: unknown, callback: PrepareStreamCallback) {
+  callback(undefined, {
+    video: {
+      port: 5000,
+      ssrc: 1,
+      srtp_key: Buffer.alloc(16),
+      srtp_salt: Buffer.alloc(14),
+    },
+    audio: {
+      port: 5001,
+      ssrc: 2,
+      srtp_key: Buffer.alloc(16),
+      srtp_salt: Buffer.alloc(14),
+    },
+  })
+}
+
+function buildClosableConnection() {
+  const listeners: Record<string, ((...a: unknown[]) => void)[]> = {}
+  const c = {
+    localAddress: '127.0.0.1',
+    getLocalAddress: vi.fn().mockReturnValue('127.0.0.1'),
+    setMaxListeners: vi.fn(),
+    getMaxListeners: vi.fn().mockReturnValue(10),
+    on: vi.fn((e: string, l: (...a: unknown[]) => void) => {
+      (listeners[e] ??= []).push(l)
+    }),
+    removeListener: vi.fn((e: string, l: (...a: unknown[]) => void) => {
+      listeners[e] = (listeners[e] ?? []).filter(x => x !== l)
+    }),
+    close: () => {
+      for (const l of [
+        ...(listeners.closed ?? []),
+      ]) {
+        l()
+      }
+    },
+  }
+  return c as unknown as HAPConnection & { close: () => void }
+}
+
+function startTlv(sessionId: string, command = 0x01): string {
+  // only session control matters for END; START with garbage parameters fails synchronously, so we use END/START via delegate
+  return tlv.encode(0x01, tlv.encode(0x01, uuid.write(sessionId), 0x02, command)).toString('base64')
+}
+
 describe('RTPStreamManagement', () => {
   describe('streaming options shared by all streams', () => {
     it('should leave the lists of the plugin alone', () => {
@@ -690,6 +736,80 @@ describe('RTPStreamManagement', () => {
       const decoded = tlv.decode(Buffer.from((rtp as any).setupEndpointsResponse as string, 'base64'))
       // SetupEndpointsResponseTypes.STATUS = 0x02; SetupEndpointsStatus.ERROR = 0x02
       expect(decoded[0x02].readUInt8(0)).toBe(0x02)
+    })
+  })
+
+  describe('a late error answer of a session which already ended', () => {
+    it('should leave the next session alone when the stop of an ended session fails late', async () => {
+      const controller = new CameraController(buildControllerOptions(baseStreamingOptions))
+      controller.constructServices()
+      controller.configureServices()
+      const rtp = controller.streamManagements[0] as RTPStreamManagement
+      vi.spyOn(MockDelegate.prototype, 'prepareStream').mockImplementation(prepareOk as () => void)
+      const pending: ((e?: Error) => void)[] = []
+      const requests: string[] = []
+      vi.spyOn(MockDelegate.prototype, 'handleStreamRequest').mockImplementation(((req: { type: string, sessionID: string }, cb: (e?: Error) => void) => {
+        requests.push(`${req.type}:${req.sessionID.slice(0, 4)}`)
+        pending.push(cb)
+      }) as () => void)
+      const A = '11111111-1111-1111-1111-111111111111'
+      const B = '22222222-2222-2222-2222-222222222222'
+      const connA = buildClosableConnection()
+      const connB = buildClosableConnection()
+      try {
+        await new Promise<void>(r => (rtp as any).handleSetupEndpoints(buildSetupEndpointsTlv(true, A), () => r(), connA))
+        const endCb = vi.fn();
+        (rtp as any)._handleSelectedStreamConfigurationWrite(startTlv(A, 0x00), endCb) // END_SESSION
+        expect(rtp.sessionIdentifier).toBeUndefined()
+        await new Promise<void>(r => (rtp as any).handleSetupEndpoints(buildSetupEndpointsTlv(true, B), () => r(), connB))
+        expect(rtp.sessionIdentifier, 'after B setup').toBe(B)
+        pending[0](new Error('ffmpeg kill failed')) // the delegate answers A's stop late, with an error
+        expect(endCb).toHaveBeenCalledTimes(1)
+        expect(requests).toEqual(['stop:1111'])
+        expect(rtp.sessionIdentifier, 'final').toBe(B)
+      } finally {
+        vi.restoreAllMocks()
+        controller.handleFactoryReset()
+      }
+    })
+
+    it('should leave the next session alone when the start of an ended session fails late', async () => {
+      const controller = new CameraController(buildControllerOptions(baseStreamingOptions))
+      controller.constructServices()
+      controller.configureServices()
+      const rtp = controller.streamManagements[0] as RTPStreamManagement
+      vi.spyOn(MockDelegate.prototype, 'prepareStream').mockImplementation(prepareOk as () => void)
+      const pending: ((e?: Error) => void)[] = []
+      const requests: string[] = []
+      vi.spyOn(MockDelegate.prototype, 'handleStreamRequest').mockImplementation(((req: { type: string, sessionID: string }, cb: (e?: Error) => void) => {
+        requests.push(`${req.type}:${req.sessionID.slice(0, 4)}`)
+        pending.push(cb)
+      }) as () => void)
+      const A = '11111111-1111-1111-1111-111111111111'
+      const B = '22222222-2222-2222-2222-222222222222'
+      const connA = buildClosableConnection()
+      const connB = buildClosableConnection()
+      try {
+        await new Promise<void>(r => (rtp as any).handleSetupEndpoints(buildSetupEndpointsTlv(true, A), () => r(), connA))
+        // START reaches the delegate: call the private start with a stub to bypass the parameter parsing
+        const startCb = vi.fn()
+        const streamCallbackHolder: { cb?: (e?: Error) => void } = {}
+        vi.spyOn(rtp as any, '_handleStartStream').mockImplementation(((_v: unknown, _a: unknown, cb: (e?: Error) => void) => {
+          (MockDelegate.prototype.handleStreamRequest as any)({ type: 'start', sessionID: A }, cb)
+          streamCallbackHolder.cb = cb
+        }) as () => void)
+        const startValue = tlv.encode(0x01, tlv.encode(0x01, uuid.write(A), 0x02, 0x01), 0x02, Buffer.alloc(0), 0x03, Buffer.alloc(0)).toString('base64');
+        (rtp as any)._handleSelectedStreamConfigurationWrite(startValue, startCb)
+        connA.close() // controller goes away: stop:1111
+        await new Promise<void>(r => (rtp as any).handleSetupEndpoints(buildSetupEndpointsTlv(true, B), () => r(), connB))
+        expect(rtp.sessionIdentifier, 'after B setup').toBe(B)
+        pending[0](new Error('ffmpeg failed to start')) // late start error for A
+        expect(requests).toEqual(['start:1111', 'stop:1111'])
+        expect(rtp.sessionIdentifier, 'final').toBe(B)
+      } finally {
+        vi.restoreAllMocks()
+        controller.handleFactoryReset()
+      }
     })
   })
 })

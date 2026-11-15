@@ -794,8 +794,9 @@ export class RTPStreamManagement {
     // intercept the callback chain to check if an error occurred.
     const streamCallback: CharacteristicSetCallback = (error, writeResponse) => {
       callback(error, writeResponse) // does not support writeResponse, but who knows what comes in the future.
-      if (error) {
-        if (requestType !== SessionControlCommand.END_SESSION && this.sessionIdentifier === sessionIdentifier) {
+      // a late answer for a session which already ended must leave the session which came after it alone
+      if (error && this.sessionIdentifier === sessionIdentifier) {
+        if (requestType !== SessionControlCommand.END_SESSION) {
           // The session is given up, but the delegate may still be streaming for it (it does after a failed
           // reconfigure). The controller's END_SESSION won't reach it anymore, so it is told to stop here.
           try {
