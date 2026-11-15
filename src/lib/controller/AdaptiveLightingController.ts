@@ -47,6 +47,10 @@ const debug = createDebug('HAP-NodeJS:Controller:TransitionControl')
 
 // lower bound for the update timer, an update interval of zero sent by the controller would otherwise result in a busy loop
 const MINIMUM_UPDATE_INTERVAL = 1000
+/**
+ * The longest delay a node.js timer holds (about 24.8 days). Node.js fires a timer with a longer delay after 1 ms.
+ */
+const MAXIMUM_TIMER_DELAY = 2 ** 31 - 1
 
 enum SupportedCharacteristicValueTransitionConfigurationsTypes {
   SUPPORTED_TRANSITION_CONFIGURATION = 0x01,
@@ -827,6 +831,14 @@ export class AdaptiveLightingController
     }
   }
 
+  /**
+   * The update interval is sent by the controller and may be any number up to 2^64. It is kept as sent, as the
+   * controller reads it back, but the timer waits at most {@link MAXIMUM_TIMER_DELAY}.
+   */
+  private nextUpdateDelay(updateInterval: number): number {
+    return Math.min(MAXIMUM_TIMER_DELAY, Math.max(MINIMUM_UPDATE_INTERVAL, updateInterval))
+  }
+
   private scheduleNextUpdate(dryRun = false): void {
     if (!this.activeTransition) {
       throw new Error('tried scheduling transition when no transition was active!')
@@ -887,7 +899,7 @@ export class AdaptiveLightingController
       debug('[%s] Skipping adaptive lighting update as the calculated temperature is %d (for brightness %d)',
         this.lightbulb.displayName, temperature, adjustmentMultiplier)
       if (!dryRun) {
-        this.updateTimeout = setTimeout(this.scheduleNextUpdate.bind(this), Math.max(MINIMUM_UPDATE_INTERVAL, this.activeTransition.updateInterval))
+        this.updateTimeout = setTimeout(this.scheduleNextUpdate.bind(this), this.nextUpdateDelay(this.activeTransition.updateInterval))
         this.updateTimeout.unref()
       }
       return
@@ -963,7 +975,7 @@ export class AdaptiveLightingController
     }
 
     if (!dryRun) {
-      this.updateTimeout = setTimeout(this.scheduleNextUpdate.bind(this), Math.max(MINIMUM_UPDATE_INTERVAL, this.activeTransition.updateInterval))
+      this.updateTimeout = setTimeout(this.scheduleNextUpdate.bind(this), this.nextUpdateDelay(this.activeTransition.updateInterval))
       this.updateTimeout.unref() // the next update must not keep the process alive
     }
   }
