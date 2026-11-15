@@ -79,6 +79,22 @@ describe('AccessControlManagement', () => {
       expect(listener).toHaveBeenCalledExactlyOnceWith(AccessLevel.HOME_MEMBERS_ONLY)
     })
 
+    it('should report every level in the order it was written when two writes arrive before the first event', async () => {
+      const management = new AccessControlManagement()
+      const listener = vi.fn()
+      management.on(AccessControlEvent.ACCESS_LEVEL_UPDATED, listener)
+
+      await writeAccessLevel(management, AccessLevel.HOME_MEMBERS_ONLY)
+      await writeAccessLevel(management, AccessLevel.ANYONE)
+      vi.runAllTimers()
+
+      expect(listener.mock.calls).toEqual([
+        [AccessLevel.HOME_MEMBERS_ONLY],
+        [AccessLevel.ANYONE],
+      ])
+      expect(management.getAccessLevel()).toBe(AccessLevel.ANYONE)
+    })
+
     it('should not keep the process alive with the timer of the event', async () => {
       const management = new AccessControlManagement()
       const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout')
@@ -132,6 +148,22 @@ describe('AccessControlManagement', () => {
 
       expect(management.getPassword()).toBeUndefined()
       expect(listener).toHaveBeenCalledExactlyOnceWith(undefined, false)
+    })
+
+    it('should report every setting in the order it was written when two writes arrive before the first event', async () => {
+      const management = new AccessControlManagement(true)
+      const listener = vi.fn()
+      management.on(AccessControlEvent.PASSWORD_SETTING_UPDATED, listener)
+
+      await writePasswordSetting(management, 'first', true)
+      await writePasswordSetting(management, undefined, false)
+      vi.runAllTimers()
+
+      expect(listener.mock.calls).toEqual([
+        ['first', true],
+        [undefined, false],
+      ])
+      expect(management.getPassword()).toBeUndefined()
     })
 
     it('should read a password with characters of more than one byte', async () => {
