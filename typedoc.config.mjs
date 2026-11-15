@@ -20,7 +20,7 @@ const config = {
   },
   validation: {
     invalidLink: true,
-    notExported: false,
+    notExported: true,
   },
   blockTags: [
     '@deprecated',

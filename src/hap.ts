@@ -13,6 +13,8 @@ import './lib/definitions/index.js'
  * @group Utils
  */
 export * as LegacyTypes from './accessories/types.js'
+
+export { PairingStates } from './internal-types.js'
 export * from './lib/Accessory.js'
 export * from './lib/Bridge.js'
 export * from './lib/camera/index.js'

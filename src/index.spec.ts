@@ -11,6 +11,12 @@ describe('index', () => {
     expect(true).toBeTruthy()
   })
 
+  it('should export PairingStates, the type of the pairing state fields of a connection', async () => {
+    const index = await import('./index.js')
+    expect(index.PairingStates.M1).toBe(1)
+    expect(index.PairingStates.M6).toBe(6)
+  })
+
   it('should not read package.json again for every call of HAPLibraryVersion', () => {
     const readFileSync = vi.spyOn(fs, 'readFileSync')
     syncBuiltinESMExports() // makes the spy visible to the named import in hap.ts
