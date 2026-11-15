@@ -202,6 +202,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(controller): unref the release timer of a pushed remote button and cancel it on removal/reset
 - test(tv): add a spec for the access control management of televisions and speakers
 - fix(tv): send the access control events with the values of their own write, not a later one
+- refactor(controller): import the camera controller from its own file so it loads on its own
 
 ### Homebridge Dependencies
 

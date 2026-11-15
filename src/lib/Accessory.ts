@@ -38,14 +38,14 @@ import {
   isValidPerms,
   Perms,
 } from './Characteristic.js'
+import { CameraController } from './controller/CameraController.js'
 import {
-  CameraController,
   Controller,
   ControllerConstructor,
   ControllerIdentifier,
   ControllerServiceMap,
   isSerializableController,
-} from './controller/index.js'
+} from './controller/Controller.js'
 import {
   AccessoriesCallback,
   AddPairingCallback,
