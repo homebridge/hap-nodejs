@@ -137,7 +137,7 @@ export class HAPFileStorage {
         }
 
         // a file which cannot be read at all (EIO, EACCES) still fails the start: only invalid JSON is let through
-        const json = fs.readFileSync(file, 'utf8')
+        const json = HAPFileStorage.read(file)
         try {
           this.data.set(entry.name, JSON.parse(json))
         } catch {
@@ -249,6 +249,25 @@ export class HAPFileStorage {
       throw new Error(`HAP-NodeJS's storage requires a key which is a plain filename, got ${JSON.stringify(key)}! `
         + 'One file is kept per key inside the storage directory, so a key can neither name a subdirectory, escape it, '
         + 'nor start with a dot, which would be skipped the next time the directory is loaded.')
+    }
+  }
+
+  /**
+   * Reads a storage file. A file which is not readable for this user gets an error which says how to fix it: the files are
+   * readable by their owner only (they hold the pairing keys), so one start as another user, like root with sudo, leaves
+   * files which the usual user cannot read anymore.
+   */
+  private static read(file: string): string {
+    try {
+      return fs.readFileSync(file, 'utf8')
+    } catch (error) {
+      const code = (error as { code?: unknown }).code
+      if (code === 'EACCES' || code === 'EPERM') {
+        throw Object.assign(new Error(`HAP-NodeJS's storage file '${file}' cannot be read by this user (${code}). It is only `
+          + 'readable by its owner, so it was probably saved by a start as another user (like root with sudo). Give it back '
+          + 'to the user which runs HAP-NodeJS, for example with chown.', { cause: error }), { code })
+      }
+      throw error
     }
   }
 

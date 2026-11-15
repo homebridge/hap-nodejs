@@ -109,6 +109,17 @@ describe('HAPFileStorage', () => {
       expectTypeOf(storage.getItem<{ a: number }>('key.json')).toEqualTypeOf<{ a: number } | undefined>()
     })
 
+    it.skipIf(process.getuid?.() === 0)('should say how to fix a file which this user can not read', () => {
+      const file = path.join(dir, 'AccessoryInfo.AABBCCDDEEFF.json')
+      fs.writeFileSync(file, '{}', { mode: 0o000 }) // like a file saved by root with sudo, readable by its owner only
+      try {
+        expect(() => storage.initSync({ dir })).toThrow(`'${file}' cannot be read by this user (EACCES)`)
+        expect(() => storage.initSync({ dir })).toThrow('chown')
+      } finally {
+        fs.chmodSync(file, 0o600)
+      }
+    })
+
     it('should treat files with invalid JSON as undefined instead of throwing', () => {
       const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
       try {
