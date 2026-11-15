@@ -132,14 +132,50 @@ describe('HAPFileStorage', () => {
       }
     })
 
+    it('should leave a file which is not JSON alone while its key is not used, like the certificate of a plugin', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      try {
+        // homebridge-govee keeps a binary certificate in the same persist folder
+        const certificate = Buffer.from([0x30, 0x82, 0x0A, 0xFF, 0x00, 0x01])
+        fs.writeFileSync(path.join(dir, 'govee.pfx'), certificate)
+        storage.initSync({ dir })
+        storage.setItemSync('AccessoryInfo.AABBCCDDEEFF.json', { signSk: 'new' })
+        storage.removeItemSync('IdentifierCache.AABBCCDDEEFF.json')
+
+        expect(fs.readFileSync(path.join(dir, 'govee.pfx'))).toEqual(certificate)
+        expect(fs.readdirSync(dir).filter(name => name.includes('corrupt'))).toEqual([])
+        expect(warn).not.toHaveBeenCalled()
+      } finally {
+        warn.mockRestore()
+      }
+    })
+
+    it('should set a file with invalid JSON aside before its key is removed', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      try {
+        fs.writeFileSync(path.join(dir, 'AccessoryInfo.AABBCCDDEEFF.json'), '{"signSk":"53CR3T-K3Y"')
+        storage.initSync({ dir })
+        storage.removeItemSync('AccessoryInfo.AABBCCDDEEFF.json')
+
+        const asideName = fs.readdirSync(dir).find(name => name.startsWith('.AccessoryInfo.AABBCCDDEEFF.json.corrupt-'))
+        expect(asideName).toBeDefined()
+        expect(fs.readFileSync(path.join(dir, asideName!), 'utf8')).toBe('{"signSk":"53CR3T-K3Y"')
+      } finally {
+        warn.mockRestore()
+      }
+    })
+
     it('should name a file with invalid JSON in a warning, without printing what it holds', () => {
       const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
       try {
         fs.writeFileSync(path.join(dir, 'AccessoryInfo.AABBCCDDEEFF.json'), '{"signSk":"53CR3T-K3Y"')
         fs.writeFileSync(path.join(dir, 'valid.json'), '{"a":1}')
         storage.initSync({ dir })
+        storage.getItem('valid.json')
+        storage.getItem('AccessoryInfo.AABBCCDDEEFF.json')
+        storage.getItem('AccessoryInfo.AABBCCDDEEFF.json')
 
-        expect(warn).toHaveBeenCalledTimes(1) // not for the valid file
+        expect(warn).toHaveBeenCalledTimes(1) // not for the valid file, and once only
         const message: string = warn.mock.calls[0].join(' ')
         expect(message).toContain(path.join(dir, 'AccessoryInfo.AABBCCDDEEFF.json'))
         expect(message).not.toContain('53CR3T')
