@@ -123,9 +123,53 @@ export class EventedHTTPServer extends EventEmitter {
   private connectionIdleTimeout?: NodeJS.Timeout
   private connectionLoggingInterval?: NodeJS.Timeout
 
-  constructor() {
+  /**
+   * The port {@link listen} was asked for, to name it when the server fails before it has an address.
+   */
+  private requestedPort?: number
+
+  /**
+   * @param owner - Names who the server belongs to, like the accessory. It is put in front of an error of the server.
+   */
+  constructor(private readonly owner?: () => string) {
     super()
     this.tcpServer = net.createServer()
+    this.tcpServer.on('error', this.onServerError.bind(this))
+  }
+
+  /**
+   * An error of the server itself, like a port which is in use, ends the process: nothing can serve the accessory without it.
+   * Without a listener Node.js throws the bare error, which names neither the accessory nor the server it came from.
+   * This throws as well, so it reaches the same `uncaughtException` handler, but with a message which says whose server failed.
+   */
+  private onServerError(error: NodeJS.ErrnoException): never {
+    const address = this.tcpServer.address() as AddressInfo | null
+    const port = address?.port ?? this.requestedPort
+    const owner = this.owner?.()
+
+    const failure: NodeJS.ErrnoException & { address?: unknown, port?: unknown } = new Error(
+      `${owner
+        ? `[${owner}] `
+        : ''}The HAP server ${address ? 'failed' : 'could not start'}${port != null
+        ? ` on port ${port}`
+        : ''}: ${error.message}`,
+      { cause: error },
+    )
+    // what code looking at the error of a server reads, like `code === 'EADDRINUSE'`
+    for (const key of [
+      'code',
+      'errno',
+      'syscall',
+      'address',
+      'port',
+    ] as const) {
+      const value = (error as typeof failure)[key]
+      if (value !== undefined) {
+        Object.assign(failure, { [key]: value })
+      }
+    }
+
+    throw failure
   }
 
   private scheduleNextConnectionIdleTimeout(): void {
@@ -163,6 +207,7 @@ export class EventedHTTPServer extends EventEmitter {
   }
 
   public listen(targetPort: number, hostname?: string): void {
+    this.requestedPort = targetPort
     this.tcpServer.listen(targetPort, hostname, () => {
       const address = this.tcpServer.address() as AddressInfo // address() is only a string when listening to unix domain sockets
 
