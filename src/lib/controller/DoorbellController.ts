@@ -64,7 +64,14 @@ export class DoorbellController extends CameraController {
    * Call this method to signal a doorbell button press.
    */
   public ringDoorbell(): void {
-    this.doorbellService!.updateCharacteristic(Characteristic.ProgrammableSwitchEvent, Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS)
+    if (!this.doorbellService) {
+      // a ring from a plugin event (a webhook, a push) can come before configureController or after the controller was
+      // removed. Throwing here would end the process of a plugin which does not expect it
+      console.warn('HAP-NodeJS WARNING: ringDoorbell() was called while the doorbell controller is not added to an accessory. The ring was ignored.')
+      return
+    }
+
+    this.doorbellService.updateCharacteristic(Characteristic.ProgrammableSwitchEvent, Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS)
   }
 
   override constructServices(): CameraControllerServiceMap {
