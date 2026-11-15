@@ -110,6 +110,28 @@ describe('HAPFileStorage', () => {
       }
     })
 
+    it('should set a file with invalid JSON aside, so the next save does not overwrite what is left of it', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      try {
+        fs.writeFileSync(path.join(dir, 'AccessoryInfo.AABBCCDDEEFF.json'), '{"signSk":"53CR3T-K3Y"')
+        storage.initSync({ dir })
+        // what HAP-NodeJS does next for an accessory whose file reads as nothing
+        storage.setItemSync('AccessoryInfo.AABBCCDDEEFF.json', { signSk: 'new' })
+
+        const asideName = fs.readdirSync(dir).find(name => name.startsWith('.AccessoryInfo.AABBCCDDEEFF.json.corrupt-'))
+        expect(asideName).toBeDefined()
+        expect(fs.readFileSync(path.join(dir, asideName!), 'utf8')).toBe('{"signSk":"53CR3T-K3Y"')
+        expect(warn.mock.calls[0].join(' ')).toContain(path.join(dir, asideName!))
+
+        // the dot keeps the copy from being loaded, and set aside again, at the next start
+        warn.mockClear()
+        new HAPFileStorage().initSync({ dir })
+        expect(warn).not.toHaveBeenCalled()
+      } finally {
+        warn.mockRestore()
+      }
+    })
+
     it('should name a file with invalid JSON in a warning, without printing what it holds', () => {
       const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
       try {
