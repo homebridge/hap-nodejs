@@ -863,8 +863,13 @@ export class DataStreamConnection extends EventEmitter {
       delete this.responseHandlers[requestId]
       delete this.responseTimers[requestId]
 
-      // handlers should be able to clean up their stuff
-      handler(new Error('timeout'), undefined, {})
+      // handlers should be able to clean up their stuff. Thrown inside a timer, an error would end the process
+      try {
+        handler(new Error('timeout'), undefined, {})
+      } catch (error) {
+        debug('[%s] Error occurred while dispatching the timeout of request %d to its response handler', this.remoteAddress, requestId)
+        debug(errorStack(error) ?? errorMessage(error))
+      }
     }, 10000) // 10s timer
 
     const header: HDSMessage = {}
