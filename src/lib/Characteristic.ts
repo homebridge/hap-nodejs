@@ -2028,12 +2028,11 @@ export class Characteristic extends EventEmitter {
           `Characteristic Property \`minStep\` must be a number above 0, but ${JSON.stringify(props.minStep)} was supplied. It is ignored.`,
           CharacteristicWarningType.ERROR_MESSAGE,
         )
+      } else if (isIntegerNumericFormat(this.props.format) && !Number.isInteger(props.minStep)) {
+        // published, a step of 0.5 lets the Home app write 21.5, which an integer format refuses
+        this.characteristicWarning(`Characteristic Property \`minStep\` must be a whole number for format \`${this.props.format}\`, `
+          + `but ${props.minStep} was supplied. It is ignored.`)
       } else {
-        if (props.minStep < 1 && isIntegerNumericFormat(this.props.format)) {
-          this.characteristicWarning('Characteristic Property `minStep` was set to a value lower than 1, '
-            + `this will have no effect on format \`${this.props.format}\``)
-        }
-
         this.props.minStep = props.minStep
       }
     }

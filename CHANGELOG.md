@@ -244,6 +244,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(remote): cap the time of pushAndReleaseButton so a long one does not release after 1 ms
 - fix(adaptive-lighting): refuse a transition curve of fewer than two entries, keep the running one
 - docs(accessory): say which controllers keep the event handlers of the plugin on removeController
+- fix(characteristic): ignore a minStep which is not a whole number for an integer format
 
 ### Homebridge Dependencies
 
