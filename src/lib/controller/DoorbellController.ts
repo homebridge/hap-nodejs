@@ -66,7 +66,7 @@ export class DoorbellController extends CameraController {
     this.doorbellService!.updateCharacteristic(Characteristic.ProgrammableSwitchEvent, Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS)
   }
 
-  constructServices(): CameraControllerServiceMap {
+  override constructServices(): CameraControllerServiceMap {
     if (this.doorbellOptions?.externalDoorbellService) {
       this.doorbellService = this.doorbellOptions.externalDoorbellService
       this.doorbellServiceExternallySupplied = true
@@ -82,7 +82,7 @@ export class DoorbellController extends CameraController {
     return serviceMap
   }
 
-  initWithServices(serviceMap: CameraControllerServiceMap): void | CameraControllerServiceMap {
+  override initWithServices(serviceMap: CameraControllerServiceMap): void | CameraControllerServiceMap {
     const result = super._initWithServices(serviceMap)
 
     if (this.doorbellOptions?.externalDoorbellService) {
@@ -112,23 +112,23 @@ export class DoorbellController extends CameraController {
   }
 
   // eslint-disable-next-line unused-imports/no-unused-vars
-  protected migrateFromDoorbell(serviceMap: ControllerServiceMap): boolean {
+  protected override migrateFromDoorbell(serviceMap: ControllerServiceMap): boolean {
     return false
   }
 
-  protected retrieveEventTriggerOptions(): Set<EventTriggerOption> {
+  protected override retrieveEventTriggerOptions(): Set<EventTriggerOption> {
     const result = super.retrieveEventTriggerOptions()
     result.add(EventTriggerOption.DOORBELL)
     return result
   }
 
-  handleControllerRemoved(): void {
+  override handleControllerRemoved(): void {
     super.handleControllerRemoved()
 
     this.doorbellService = undefined
   }
 
-  configureServices(): void {
+  override configureServices(): void {
     super.configureServices()
 
     this.doorbellService!.getCharacteristic(Characteristic.ProgrammableSwitchEvent)

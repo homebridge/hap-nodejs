@@ -63,15 +63,15 @@ class SteppedController implements SerializableController<ControllerServiceMap, 
 
 // can't read its stored data and reports the reset, like the adaptive lighting controller
 class UnreadableController extends SteppedController {
-  controllerId(): ControllerIdentifier {
+  override controllerId(): ControllerIdentifier {
     return 'unreadable'
   }
 
-  deserialize(): void {
+  override deserialize(): void {
     throw new Error('unreadable')
   }
 
-  handleFactoryReset(): void {
+  override handleFactoryReset(): void {
     super.handleFactoryReset()
     this.stateChangeDelegate?.()
   }

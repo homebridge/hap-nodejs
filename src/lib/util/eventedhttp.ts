@@ -538,26 +538,26 @@ export class HAPConnection extends EventEmitter {
       : ''}) ${tabs2}${stackTrace}`)
   }
 
-  on(event: string | symbol, listener: (...args: any[]) => void): this {
+  override on(event: string | symbol, listener: (...args: any[]) => void): this {
     const result = super.on(event, listener)
     this.debugListenerRegistration(event)
     return result
   }
 
-  addListener(event: string | symbol, listener: (...args: any[]) => void): this {
+  override addListener(event: string | symbol, listener: (...args: any[]) => void): this {
     const result = super.addListener(event, listener)
     this.debugListenerRegistration(event)
     return result
   }
 
-  removeListener(event: string | symbol, listener: (...args: any[]) => void): this {
+  override removeListener(event: string | symbol, listener: (...args: any[]) => void): this {
     const beforeCount = this.listenerCount(event)
     const result = super.removeListener(event, listener)
     this.debugListenerRegistration(event, false, beforeCount)
     return result
   }
 
-  off(event: string | symbol, listener: (...args: any[]) => void): this {
+  override off(event: string | symbol, listener: (...args: any[]) => void): this {
     const beforeCount = this.listenerCount(event)
     const result = super.off(event, listener)
     this.debugListenerRegistration(event, false, beforeCount)
