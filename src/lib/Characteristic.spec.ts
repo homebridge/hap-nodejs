@@ -751,6 +751,24 @@ describe('Characteristic', () => {
       expect(warning.mock.calls[0][1]).toContain('`minStep` must be a number above 0')
     })
 
+    it.each([0.5, 1.5])('should warn about and not publish a minStep of %d for an integer format', (minStep) => {
+      const characteristic = createCharacteristicWithProps({
+        format: Formats.UINT8,
+        perms: [Perms.PAIRED_READ, Perms.PAIRED_WRITE],
+        minValue: 0,
+        maxValue: 100,
+      })
+      const warning = vi.fn()
+      characteristic.on(CharacteristicEventTypes.CHARACTERISTIC_WARNING, warning)
+
+      characteristic.setProps({ minStep })
+
+      // a published step of 0.5 lets the Home app write 21.5, which the integer format refuses
+      expect(characteristic.props.minStep).toBeUndefined()
+      expect(warning).toHaveBeenCalledTimes(1)
+      expect(warning.mock.calls[0][1]).toContain('must be a whole number')
+    })
+
     it ('should iterate over validValues array definition', () => {
       const validValues = [1, 3, 4, 5, 8]
       const characteristic = createCharacteristicWithProps({
@@ -2758,7 +2776,11 @@ describe('Characteristic', () => {
 
       expect(characteristic.displayName).toEqual(json.displayName)
       expect(characteristic.UUID).toEqual(json.UUID)
-      expect(characteristic.props).toEqual(json.props)
+      // a minStep which is not a whole number is not restored for an integer format: published, it let the Home app write
+      // values the format refuses
+      const { minStep, ...props } = json.props
+      expect(minStep).toBe(0.1)
+      expect(characteristic.props).toEqual(props)
       expect(characteristic.value).toEqual(json.value)
     })
 
