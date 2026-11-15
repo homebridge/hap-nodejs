@@ -1,13 +1,4 @@
-/* global NodeJS */
-import assert from 'node:assert'
-import { Buffer } from 'node:buffer'
-import crypto from 'node:crypto'
-import { EventEmitter } from 'node:events'
-import net from 'node:net'
-
-import createDebug from 'debug'
-
-import {
+import type {
   AccessoryJsonObject,
   CharacteristicId,
   CharacteristicsReadRequest,
@@ -23,54 +14,72 @@ import {
   PartialCharacteristicReadData,
   PartialCharacteristicWriteData,
   ResourceRequest,
-  ResourceRequestType,
   VoidCallback,
   WithUUID,
 } from '../types.js'
-import { Advertiser, AdvertiserEvent, AvahiAdvertiser, BonjourHAPAdvertiser, CiaoAdvertiser, ResolvedAdvertiser } from './Advertiser.js'
+import type { Advertiser } from './Advertiser.js'
 // noinspection JSDeprecatedSymbols
-import {
-  Access,
-  ChangeReason,
-  Characteristic,
-  CharacteristicOperationContext,
-  describePerms,
-  isValidPerms,
-  Perms,
-} from './Characteristic.js'
-import { CameraController } from './controller/CameraController.js'
-import {
+import type { CharacteristicOperationContext } from './Characteristic.js'
+import type {
   Controller,
   ControllerConstructor,
   ControllerIdentifier,
   ControllerServiceMap,
-  isSerializableController,
 } from './controller/Controller.js'
-import {
+import type {
   AccessoriesCallback,
   AddPairingCallback,
-  HAPHTTPCode,
   HAPHttpError,
-  HAPServer,
-  HAPServerEventTypes,
-  HAPStatus,
   IdentifyCallback,
   ListPairingsCallback,
   PairCallback,
   ReadCharacteristicsCallback,
   RemovePairingCallback,
   ResourceRequestCallback,
-  TLVErrorCode,
   WriteCharacteristicsCallback,
+} from './HAPServer.js'
+import type { SerializedService, ServiceCharacteristicChange, ServiceId } from './Service.js'
+import type { EventName, HAPConnection, HAPUsername } from './util/eventedhttp.js'
+
+/* global NodeJS */
+import assert from 'node:assert'
+import { Buffer } from 'node:buffer'
+import crypto from 'node:crypto'
+import { EventEmitter } from 'node:events'
+import net from 'node:net'
+
+import createDebug from 'debug'
+
+import {
+  ResourceRequestType,
+} from '../types.js'
+import { AdvertiserEvent, AvahiAdvertiser, BonjourHAPAdvertiser, CiaoAdvertiser, ResolvedAdvertiser } from './Advertiser.js'
+import {
+  Access,
+  ChangeReason,
+  Characteristic,
+  describePerms,
+  isValidPerms,
+  Perms,
+} from './Characteristic.js'
+import { CameraController } from './controller/CameraController.js'
+import {
+  isSerializableController,
+} from './controller/Controller.js'
+import {
+  HAPHTTPCode,
+  HAPServer,
+  HAPServerEventTypes,
+  HAPStatus,
+  TLVErrorCode,
 } from './HAPServer.js'
 import { AccessoryInfo, PermissionTypes } from './model/AccessoryInfo.js'
 import { ControllerStorage } from './model/ControllerStorage.js'
 import { IdentifierCache } from './model/IdentifierCache.js'
-import { SerializedService, Service, ServiceCharacteristicChange, ServiceEventTypes, ServiceId } from './Service.js'
+import { Service, ServiceEventTypes } from './Service.js'
 import { checkName } from './util/checkName.js'
 import { clone } from './util/clone.js'
 import { errorMessage, errorStack } from './util/errors.js'
-import { EventName, HAPConnection, HAPUsername } from './util/eventedhttp.js'
 import { HapStatusError } from './util/hapStatusError.js'
 import { once } from './util/once.js'
 import { extractHAPStatusFromError, formatOutgoingCharacteristicValue } from './util/request-util.js'

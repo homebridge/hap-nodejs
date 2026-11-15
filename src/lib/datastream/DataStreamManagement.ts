@@ -1,21 +1,23 @@
+import type { CharacteristicValue } from '../../types.js'
+import type { CharacteristicSetCallback } from '../Characteristic.js'
 import type { DataStreamTransportManagement } from '../definitions/index.js'
+import type { HAPConnection } from '../util/eventedhttp.js'
+import type {
+  DataStreamConnection,
+  GlobalEventHandler,
+  GlobalRequestHandler, Protocols, Topics } from './DataStreamServer.js'
 
 import { Buffer } from 'node:buffer'
 
 import createDebug from 'debug'
 
-import { CharacteristicValue } from '../../types.js'
-import { Characteristic, CharacteristicEventTypes, CharacteristicSetCallback } from '../Characteristic.js'
+import { Characteristic, CharacteristicEventTypes } from '../Characteristic.js'
 import { HAPStatus } from '../HAPServer.js'
 import { Service } from '../Service.js'
-import { HAPConnection } from '../util/eventedhttp.js'
 import * as tlv from '../util/tlv.js'
 import {
-  DataStreamConnection,
   DataStreamServer,
   DataStreamServerEvent,
-  GlobalEventHandler,
-  GlobalRequestHandler, Protocols, Topics,
 } from './DataStreamServer.js'
 
 const debug = createDebug('HAP-NodeJS:DataStream:Management')

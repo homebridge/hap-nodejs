@@ -1,15 +1,20 @@
+import type { CiaoService, MDNSServerOptions, Responder, ServiceTxt } from '@homebridge/ciao'
+import type { InterfaceName, IPAddress } from '@homebridge/ciao/lib/NetworkManager.js'
+import type { Advertisement, Bonjour } from 'bonjour-hap'
+import type { DBusInterface, Message, MessageBus } from 'dbus-native'
+
+import type { AccessoryInfo } from './model/AccessoryInfo.js'
+
 import assert from 'node:assert'
 import { Buffer } from 'node:buffer'
 import crypto from 'node:crypto'
 import { EventEmitter } from 'node:events'
 
-import ciao, { CiaoService, MDNSServerOptions, Responder, ServiceEvent, ServiceTxt, ServiceType } from '@homebridge/ciao'
-import { InterfaceName, IPAddress } from '@homebridge/ciao/lib/NetworkManager.js'
-import bonjour, { Advertisement, Bonjour } from 'bonjour-hap'
-import dbus, { DBusInterface, Message, MessageBus, variantValue } from 'dbus-native'
+import ciao, { ServiceEvent, ServiceType } from '@homebridge/ciao'
+import bonjour from 'bonjour-hap'
+import dbus, { variantValue } from 'dbus-native'
 import createDebug from 'debug'
 
-import { AccessoryInfo } from './model/AccessoryInfo.js'
 import { errorStack } from './util/errors.js'
 import { PromiseTimeout } from './util/promise-utils.js'
 

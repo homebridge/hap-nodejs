@@ -1,5 +1,21 @@
 import type { MockInstance } from 'vitest'
 
+import type {
+  CameraRecordingOptions,
+  RecordingPacket,
+} from '../camera/index.js'
+import type {
+  CameraControllerOptions,
+  CameraRecordingDelegate,
+  CameraStreamingDelegate,
+  PrepareStreamCallback,
+} from '../controller/index.js'
+import type { HAPConnection } from '../util/eventedhttp.js'
+import type {
+  CameraStreamingOptions,
+  RTPStreamManagement,
+} from './RTPStreamManagement.js'
+
 import { Buffer } from 'node:buffer'
 import util from 'node:util'
 
@@ -12,29 +28,20 @@ import {
   AudioRecordingSamplerate,
   AudioStreamingCodecType,
   AudioStreamingSamplerate,
-  CameraRecordingOptions,
   H264Level,
   H264Profile,
   MediaContainerType,
-  RecordingPacket,
   VideoCodecType,
 } from '../camera/index.js'
 import { Characteristic } from '../Characteristic.js'
 import {
   CameraController,
-  CameraControllerOptions,
-  CameraRecordingDelegate,
-  CameraStreamingDelegate,
-  PrepareStreamCallback,
 } from '../controller/index.js'
 import { HAPStatus } from '../HAPServer.js'
-import { HAPConnection } from '../util/eventedhttp.js'
 import * as tlv from '../util/tlv.js'
 import * as uuid from '../util/uuid.js'
 import RTPProxy from './RTPProxy.js'
 import {
-  CameraStreamingOptions,
-  RTPStreamManagement,
   SRTPCryptoSuites,
 } from './RTPStreamManagement.js'
 

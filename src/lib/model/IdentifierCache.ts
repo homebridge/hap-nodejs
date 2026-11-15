@@ -1,6 +1,7 @@
+import type { MacAddress } from '../../types.js'
+
 import util from 'node:util'
 
-import { MacAddress } from '../../types.js'
 import { HAPStorage } from './HAPStorage.js'
 
 /**

@@ -42,7 +42,6 @@ export default antfu(
       'style/brace-style': ['error', '1tbs'],
       'style/quote-props': ['error', 'consistent-as-needed'],
       'test/no-only-tests': 'error',
-      'ts/consistent-type-imports': 'off',
       // the events of the EventEmitter classes are typed with an interface of the same name as the class
       'ts/no-unsafe-declaration-merging': 'off',
       // a public library: exported functions and methods declare their types

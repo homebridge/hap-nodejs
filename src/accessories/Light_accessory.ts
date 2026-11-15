@@ -1,15 +1,18 @@
+import type {
+  CharacteristicSetCallback,
+  CharacteristicValue,
+  NodeCallback,
+  VoidCallback,
+} from '../index.js'
+
 import {
   Accessory,
   AccessoryEventTypes,
   Categories,
   Characteristic,
   CharacteristicEventTypes,
-  CharacteristicSetCallback,
-  CharacteristicValue,
-  NodeCallback,
   Service,
   uuid,
-  VoidCallback,
 } from '../index.js'
 
 class LightControllerClass {

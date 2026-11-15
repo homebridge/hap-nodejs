@@ -1,6 +1,6 @@
-import { Formats, Perms, Units } from './lib/Characteristic.js'
-import { ResourceRequestReason } from './lib/controller/index.js'
-import { HAPStatus } from './lib/HAPServer.js'
+import type { Formats, Perms, Units } from './lib/Characteristic.js'
+import type { ResourceRequestReason } from './lib/controller/index.js'
+import type { HAPStatus } from './lib/HAPServer.js'
 
 /**
  * @group Utils

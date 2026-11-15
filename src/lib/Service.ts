@@ -1,3 +1,6 @@
+import type { CharacteristicValue, Nullable, ServiceJsonObject, WithUUID } from '../types.js'
+import type { CharacteristicWarning } from './Accessory.js'
+import type { CharacteristicChange, SerializedCharacteristic } from './Characteristic.js'
 /* global NodeJS */
 import type {
   AccessCode,
@@ -76,19 +79,18 @@ import type {
   Window,
   WindowCovering,
 } from './definitions/index.js'
+import type { IdentifierCache } from './model/IdentifierCache.js'
+import type { HAPConnection } from './util/eventedhttp.js'
+import type { HapStatusError } from './util/hapStatusError.js'
 
 import assert from 'node:assert'
 import { EventEmitter } from 'node:events'
 
 import createDebug from 'debug'
 
-import { CharacteristicValue, Nullable, ServiceJsonObject, WithUUID } from '../types.js'
-import { CharacteristicWarning, CharacteristicWarningType } from './Accessory.js'
-import { Characteristic, CharacteristicChange, CharacteristicEventTypes, SerializedCharacteristic } from './Characteristic.js'
-import { IdentifierCache } from './model/IdentifierCache.js'
+import { CharacteristicWarningType } from './Accessory.js'
+import { Characteristic, CharacteristicEventTypes } from './Characteristic.js'
 import { checkName } from './util/checkName.js'
-import { HAPConnection } from './util/eventedhttp.js'
-import { HapStatusError } from './util/hapStatusError.js'
 import { toShortForm } from './util/uuid.js'
 
 const debug = createDebug('HAP-NodeJS:Service')

@@ -1,3 +1,6 @@
+import type { EncryptedData } from '../lib/util/hapCrypto.js'
+import type { HAPHTTPClient, HTTPResponse } from './HAPHTTPClient.js'
+
 import { Buffer } from 'node:buffer'
 
 import { SRP, SrpClient } from 'fast-srp-hap'
@@ -7,9 +10,7 @@ import { expect } from 'vitest'
 import { HAPMimeTypes, PairingStates, PairMethods, TLVValues } from '../internal-types.js'
 import { HAPPairingHTTPCode } from '../lib/HAPServer.js'
 import * as hapCrypto from '../lib/util/hapCrypto.js'
-import { EncryptedData } from '../lib/util/hapCrypto.js'
 import * as tlv from '../lib/util/tlv.js'
-import { HAPHTTPClient, HTTPResponse } from './HAPHTTPClient.js'
 
 export interface PairSetupM2 {
   serverPublicKey: Buffer

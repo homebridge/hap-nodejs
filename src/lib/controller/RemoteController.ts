@@ -1,3 +1,14 @@
+import type { CharacteristicValue } from '../../types.js'
+import type {
+  CharacteristicGetCallback,
+  CharacteristicSetCallback,
+} from '../Characteristic.js'
+import type {
+  DataStreamConnection,
+  DataStreamProtocolHandler,
+  EventHandler,
+  HDSMessage,
+} from '../datastream/index.js'
 /* global NodeJS */
 import type {
   AudioStreamManagement,
@@ -6,6 +17,13 @@ import type {
   TargetControl,
   TargetControlManagement,
 } from '../definitions/index.js'
+import type { HAPConnection } from '../util/eventedhttp.js'
+import type {
+  ControllerIdentifier,
+  ControllerServiceMap,
+  SerializableController,
+  StateChangeDelegate,
+} from './Controller.js'
 
 import assert from 'node:assert'
 import { Buffer } from 'node:buffer'
@@ -13,23 +31,16 @@ import { EventEmitter } from 'node:events'
 
 import createDebug from 'debug'
 
-import { CharacteristicValue } from '../../types.js'
 import { AudioBitrate, AudioSamplerate } from '../camera/index.js'
 import {
   Characteristic,
   CharacteristicEventTypes,
-  CharacteristicGetCallback,
-  CharacteristicSetCallback,
 } from '../Characteristic.js'
 import {
-  DataStreamConnection,
   DataStreamConnectionEvent,
   DataStreamManagement,
-  DataStreamProtocolHandler,
   DataStreamServerEvent,
-  EventHandler,
   Float32,
-  HDSMessage,
   HDSProtocolSpecificErrorReason,
   HDSStatus,
   Int64,
@@ -39,14 +50,10 @@ import {
 import { HAPStatus } from '../HAPServer.js'
 import { Service } from '../Service.js'
 import { errorMessage } from '../util/errors.js'
-import { HAPConnection, HAPConnectionEvent } from '../util/eventedhttp.js'
+import { HAPConnectionEvent } from '../util/eventedhttp.js'
 import * as tlv from '../util/tlv.js'
 import {
-  ControllerIdentifier,
-  ControllerServiceMap,
   DefaultControllerType,
-  SerializableController,
-  StateChangeDelegate,
 } from './Controller.js'
 
 const debug = createDebug('HAP-NodeJS:Remote:Controller')

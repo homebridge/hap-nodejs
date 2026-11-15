@@ -1,14 +1,16 @@
 // here's a fake hardware device that we'll expose to HomeKit
+import type {
+  CharacteristicValue,
+  NodeCallback, VoidCallback } from '../index.js'
+
 import {
   Accessory,
   AccessoryEventTypes,
   Categories,
   Characteristic,
   CharacteristicEventTypes,
-  CharacteristicValue,
-  NodeCallback,
   Service,
-  uuid, VoidCallback,
+  uuid,
 } from '../index.js'
 
 const MOTION_SENSOR = {

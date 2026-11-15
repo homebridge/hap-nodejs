@@ -4,19 +4,22 @@
 // The linking and hiding does NOT appear to be reflected in Home
 
 // here's a fake hardware device that we'll expose to HomeKit
+import type {
+  CharacteristicGetCallback,
+  CharacteristicSetCallback,
+  CharacteristicValue,
+} from '../index.js'
+import type { VoidCallback } from '../types.js'
+
 import {
   Accessory,
   AccessoryEventTypes,
   Categories,
   Characteristic,
   CharacteristicEventTypes,
-  CharacteristicGetCallback,
-  CharacteristicSetCallback,
-  CharacteristicValue,
   Service,
   uuid,
 } from '../index.js'
-import { VoidCallback } from '../types.js'
 
 const ACTest_data: Record<string, CharacteristicValue> = {
   fanPowerOn: false,

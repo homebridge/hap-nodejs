@@ -1,10 +1,11 @@
+import type { ControllerIdentifier, ControllerServiceMap, SerializableController, StateChangeDelegate } from '../controller/index.js'
+
 import { describe, expect, it, vi } from 'vitest'
 
 import { Accessory } from '../Accessory.js'
 import { Bridge } from '../Bridge.js'
 import { Characteristic } from '../Characteristic.js'
 import { AdaptiveLightingController } from '../controller/AdaptiveLightingController.js'
-import { ControllerIdentifier, ControllerServiceMap, SerializableController, StateChangeDelegate } from '../controller/index.js'
 import { Service } from '../Service.js'
 import * as uuid from '../util/uuid.js'
 import { AccessoryInfo } from './AccessoryInfo.js'

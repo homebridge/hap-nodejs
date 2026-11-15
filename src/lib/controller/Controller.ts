@@ -1,4 +1,4 @@
-import { Service } from '../Service.js'
+import type { Service } from '../Service.js'
 
 /**
  * A ControllerServiceMap represents all services used by a Controller.

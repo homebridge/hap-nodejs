@@ -1,4 +1,4 @@
-import { CharacteristicValue, Nullable } from './types.js'
+import type { CharacteristicValue, Nullable } from './types.js'
 
 /**
  * @group HAP Accessory Server

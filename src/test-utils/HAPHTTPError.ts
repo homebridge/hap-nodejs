@@ -1,4 +1,4 @@
-import { HAPHTTPCode, HAPStatus } from '../lib/HAPServer.js'
+import type { HAPHTTPCode, HAPStatus } from '../lib/HAPServer.js'
 
 /**
  * Encapsulates a {@link HAPHTTPCode} and a {@link HAPStatus}

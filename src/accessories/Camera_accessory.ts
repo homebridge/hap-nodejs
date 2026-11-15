@@ -1,8 +1,28 @@
+import type { ChildProcess } from 'node:child_process'
+import type { AddressInfo, Server, Socket } from 'node:net'
+
+import type {
+  CameraRecordingConfiguration,
+  CameraRecordingDelegate,
+  CameraStreamingDelegate,
+  HDSProtocolSpecificErrorReason,
+  PrepareStreamCallback,
+  PrepareStreamRequest,
+  PrepareStreamResponse,
+  RecordingPacket,
+  SnapshotRequest,
+  SnapshotRequestCallback,
+  StreamingRequest,
+  StreamRequestCallback,
+  StreamSessionIdentifier,
+  VideoInfo,
+} from '../index.js'
+
 import assert from 'node:assert'
 import { Buffer } from 'node:buffer'
-import { ChildProcess, spawn } from 'node:child_process'
+import { spawn } from 'node:child_process'
 import { once } from 'node:events'
-import { AddressInfo, createServer, Server, Socket } from 'node:net'
+import { createServer } from 'node:net'
 import process from 'node:process'
 
 import {
@@ -11,30 +31,16 @@ import {
   AudioRecordingCodecType,
   AudioRecordingSamplerate,
   CameraController,
-  CameraRecordingConfiguration,
-  CameraRecordingDelegate,
-  CameraStreamingDelegate,
   Categories,
   Characteristic,
   H264Level,
   H264Profile,
-  HDSProtocolSpecificErrorReason,
   MediaContainerType,
-  PrepareStreamCallback,
-  PrepareStreamRequest,
-  PrepareStreamResponse,
-  RecordingPacket,
   Service,
-  SnapshotRequest,
-  SnapshotRequestCallback,
   SRTPCryptoSuites,
-  StreamingRequest,
-  StreamRequestCallback,
   StreamRequestTypes,
-  StreamSessionIdentifier,
   uuid,
   VideoCodecType,
-  VideoInfo,
 } from '../index.js'
 import { errorMessage, errorStack } from '../lib/util/errors.js'
 

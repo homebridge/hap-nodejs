@@ -1,4 +1,4 @@
-import { CharacteristicValue, Nullable } from '../../types.js'
+import type { CharacteristicValue, Nullable } from '../../types.js'
 
 /**
  * Checks that supplied field meets Apple HomeKit naming rules

@@ -1,3 +1,6 @@
+import type { AccessoryJsonObject, CharacteristicJsonObject, MacAddress, ServiceJsonObject } from '../../types.js'
+import type { HAPConnection, HAPUsername } from '../util/eventedhttp.js'
+
 import assert from 'node:assert'
 import { Buffer } from 'node:buffer'
 import crypto from 'node:crypto'
@@ -6,9 +9,8 @@ import util from 'node:util'
 
 import createDebug from 'debug'
 
-import { AccessoryJsonObject, CharacteristicJsonObject, MacAddress, ServiceJsonObject } from '../../types.js'
 import { Categories } from '../Accessory.js'
-import { EventedHTTPServer, HAPConnection, HAPUsername } from '../util/eventedhttp.js'
+import { EventedHTTPServer } from '../util/eventedhttp.js'
 import { generateEd25519KeyPair } from '../util/hapCrypto.js'
 import { HAPStorage } from './HAPStorage.js'
 

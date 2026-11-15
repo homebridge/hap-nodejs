@@ -1,13 +1,16 @@
+import type {
+  AccessLevel,
+  CharacteristicSetCallback,
+  CharacteristicValue,
+} from '../index.js'
+
 import {
   AccessControlEvent,
   AccessControlManagement,
-  AccessLevel,
   Accessory,
   Categories,
   Characteristic,
   CharacteristicEventTypes,
-  CharacteristicSetCallback,
-  CharacteristicValue,
   Service,
   uuid,
 } from '../index.js'

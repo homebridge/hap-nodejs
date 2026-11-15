@@ -1,3 +1,4 @@
+import type { CharacteristicJsonObject, CharacteristicValue, Nullable, PartialAllowingNull, VoidCallback } from '../types.js'
 import type {
   AccessCodeControlPoint,
   AccessCodeSupportedConfiguration,
@@ -258,6 +259,8 @@ import type {
   WiFiConfigurationControl,
   WiFiSatelliteStatus,
 } from './definitions/index.js'
+import type { IdentifierCache } from './model/IdentifierCache.js'
+import type { HAPConnection } from './util/eventedhttp.js'
 
 import assert from 'node:assert'
 import { EventEmitter } from 'node:events'
@@ -265,13 +268,10 @@ import { inspect } from 'node:util'
 
 import createDebug from 'debug'
 
-import { CharacteristicJsonObject, CharacteristicValue, Nullable, PartialAllowingNull, VoidCallback } from '../types.js'
 import { CharacteristicWarningType } from './Accessory.js'
 import { HAPStatus } from './HAPServer.js'
-import { IdentifierCache } from './model/IdentifierCache.js'
 import { clone } from './util/clone.js'
 import { errorMessage, errorStack } from './util/errors.js'
-import { HAPConnection } from './util/eventedhttp.js'
 import { HapStatusError } from './util/hapStatusError.js'
 import { once } from './util/once.js'
 import {

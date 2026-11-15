@@ -1,5 +1,7 @@
+import type { Socket, SocketType } from 'node:dgram'
+
 import { Buffer } from 'node:buffer'
-import dgram, { Socket, SocketType } from 'node:dgram'
+import dgram from 'node:dgram'
 
 import createDebug from 'debug'
 

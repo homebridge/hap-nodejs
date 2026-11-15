@@ -1,15 +1,18 @@
+import type { BoxKeyPair } from 'tweetnacl'
+
+import type { EncryptedData } from '../lib/util/hapCrypto.js'
+import type { HAPHTTPClient, HTTPResponse } from './HAPHTTPClient.js'
+
 import { Buffer } from 'node:buffer'
 
-import tweetnacl, { BoxKeyPair } from 'tweetnacl'
+import tweetnacl from 'tweetnacl'
 import { expect } from 'vitest'
 
 import { HAPMimeTypes, PairingStates, TLVValues } from '../internal-types.js'
 import { HAPPairingHTTPCode } from '../lib/HAPServer.js'
 import { HAPEncryption } from '../lib/util/eventedhttp.js'
 import * as hapCrypto from '../lib/util/hapCrypto.js'
-import { EncryptedData } from '../lib/util/hapCrypto.js'
 import * as tlv from '../lib/util/tlv.js'
-import { HAPHTTPClient, HTTPResponse } from './HAPHTTPClient.js'
 
 export interface PairVerifyM2 {
   sharedSecret: Buffer

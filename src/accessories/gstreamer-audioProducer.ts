@@ -1,19 +1,24 @@
+import type { Buffer } from 'node:buffer'
+import type { ChildProcess } from 'node:child_process'
+
+import type {
+  AudioCodecConfiguration,
+  ErrorHandler,
+  FrameHandler,
+  SiriAudioStreamProducer,
+} from '../index.js'
+
 import assert from 'node:assert'
-import { Buffer } from 'node:buffer'
-import { ChildProcess, spawn } from 'node:child_process'
+import { spawn } from 'node:child_process'
 import process from 'node:process'
 
 import createDebug from 'debug'
 
 import {
   AudioBitrate,
-  AudioCodecConfiguration,
   AudioCodecTypes,
   AudioSamplerate,
-  ErrorHandler,
-  FrameHandler,
   HDSProtocolSpecificErrorReason,
-  SiriAudioStreamProducer,
 } from '../index.js'
 
 const debug = createDebug('HAP-NodeJS:Remote:GStreamer')

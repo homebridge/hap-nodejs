@@ -1,13 +1,16 @@
 // here's a fake hardware device that we'll expose to HomeKit
+import type {
+  CharacteristicValue,
+  VoidCallback,
+} from '../index.js'
+
 import {
   Accessory,
   AccessoryEventTypes,
   Categories,
   Characteristic,
-  CharacteristicValue,
   Service,
   uuid,
-  VoidCallback,
 } from '../index.js'
 
 const FAKE_FAN: Record<string, any> = {

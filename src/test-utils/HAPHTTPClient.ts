@@ -1,19 +1,9 @@
-/* global NodeJS */
-import assert from 'node:assert'
-import { Buffer } from 'node:buffer'
-import { once } from 'node:events'
-import { createConnection, Socket } from 'node:net'
+import type { HeaderObject } from 'http-parser-js'
+import type { Socket } from 'node:net'
 
-import { HeaderObject, HTTPParser } from 'http-parser-js'
-import { expect } from 'vitest'
-
-import { HAPMimeTypes, PairingStates, PairMethods, TLVValues } from '../internal-types.js'
-import { HAPHTTPCode, HAPPairingHTTPCode } from '../lib/HAPServer.js'
-import { PairingInformation, PermissionTypes } from '../lib/model/AccessoryInfo.js'
-import { HAPEncryption, HAPUsername } from '../lib/util/eventedhttp.js'
-import * as hapCrypto from '../lib/util/hapCrypto.js'
-import * as tlv from '../lib/util/tlv.js'
-import {
+import type { PairingInformation, PermissionTypes } from '../lib/model/AccessoryInfo.js'
+import type { HAPEncryption, HAPUsername } from '../lib/util/eventedhttp.js'
+import type {
   AccessoriesResponse,
   CharacteristicId,
   CharacteristicsReadResponse,
@@ -22,6 +12,20 @@ import {
   PrepareWriteRequest,
   ResourceRequest,
 } from '../types.js'
+
+/* global NodeJS */
+import assert from 'node:assert'
+import { Buffer } from 'node:buffer'
+import { once } from 'node:events'
+import { createConnection } from 'node:net'
+
+import { HTTPParser } from 'http-parser-js'
+import { expect } from 'vitest'
+
+import { HAPMimeTypes, PairingStates, PairMethods, TLVValues } from '../internal-types.js'
+import { HAPHTTPCode, HAPPairingHTTPCode } from '../lib/HAPServer.js'
+import * as hapCrypto from '../lib/util/hapCrypto.js'
+import * as tlv from '../lib/util/tlv.js'
 import { HAPHTTPError } from './HAPHTTPError.js'
 import { TLVError } from './tlvError.js'
 

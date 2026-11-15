@@ -1,5 +1,5 @@
 /* global NodeJS */
-import { EventEmitter } from 'node:events'
+import type { EventEmitter } from 'node:events'
 
 /**
  * @group Utils

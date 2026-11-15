@@ -1,5 +1,7 @@
 // here's a fake temperature sensor device that we'll expose to HomeKit
-import { Accessory, Categories, Characteristic, CharacteristicEventTypes, CharacteristicValue, NodeCallback, Service, uuid } from '../index.js'
+import type { CharacteristicValue, NodeCallback } from '../index.js'
+
+import { Accessory, Categories, Characteristic, CharacteristicEventTypes, Service, uuid } from '../index.js'
 
 const FAKE_SENSOR = {
   currentTemperature: 50,
