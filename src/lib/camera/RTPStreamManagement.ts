@@ -572,6 +572,11 @@ export class RTPStreamManagement {
 
   selectedConfiguration = '' // base64 representation of the currently selected configuration
   setupEndpointsResponse = '' // response of the SetupEndpoints Characteristic
+  /**
+   * The BUSY answers for the connections which asked for a stream while another session held it.
+   * They are kept apart from {@link setupEndpointsResponse}, which belongs to the session which holds the stream.
+   */
+  private busySetupEndpointsResponses = new WeakMap<HAPConnection, string>()
 
   /**
    * @private
@@ -699,7 +704,7 @@ export class RTPStreamManagement {
       .on(CharacteristicEventTypes.SET, this._handleSelectedStreamConfigurationWrite.bind(this))
 
     this.service.getCharacteristic(Characteristic.SetupEndpoints)
-      .on(CharacteristicEventTypes.GET, (callback) => {
+      .on(CharacteristicEventTypes.GET, (callback, _context, connection) => {
         if (this.streamingIsDisabled()) {
           callback(null, tlv.encode(
             SetupEndpointsResponseTypes.STATUS, SetupEndpointsStatus.ERROR,
@@ -707,7 +712,8 @@ export class RTPStreamManagement {
           return
         }
 
-        callback(null, this.setupEndpointsResponse)
+        // a connection which was told that the stream is busy reads that answer, everybody else the one of the session
+        callback(null, (connection && this.busySetupEndpointsResponses.get(connection)) ?? this.setupEndpointsResponse)
       })
       .on(CharacteristicEventTypes.SET, (value, callback, context, connection) => {
         if (!connection) {
@@ -1073,10 +1079,11 @@ export class RTPStreamManagement {
     } = request
 
     if (this.streamStatus !== StreamingStatus.AVAILABLE) {
-      this.setupEndpointsResponse = tlv.encode(
+      // only the connection which asked reads this answer: the response of the session which holds the stream stays
+      this.busySetupEndpointsResponses.set(connection, tlv.encode(
         SetupEndpointsResponseTypes.SESSION_ID, uuid.write(sessionIdentifier),
         SetupEndpointsResponseTypes.STATUS, SetupEndpointsStatus.BUSY,
-      ).toString('base64')
+      ).toString('base64'))
       callback()
       return
     }
@@ -1421,6 +1428,7 @@ export class RTPStreamManagement {
       SRTPParametersTypes.MASTER_SALT, audioSRTPSalt,
     )
 
+    this.busySetupEndpointsResponses.delete(connection) // it reads the response of its session from now on
     this.setupEndpointsResponse = tlv.encode(
       SetupEndpointsResponseTypes.SESSION_ID, uuid.write(identifier),
       SetupEndpointsResponseTypes.STATUS, SetupEndpointsStatus.SUCCESS,
@@ -1618,6 +1626,7 @@ export class RTPStreamManagement {
   }
 
   private resetSetupEndpointsResponse(): void {
+    this.busySetupEndpointsResponses = new WeakMap() // every connection reads the default response again
     this.setupEndpointsResponse = tlv.encode(
       SetupEndpointsResponseTypes.STATUS, SetupEndpointsStatus.ERROR,
     ).toString('base64')
