@@ -718,11 +718,13 @@ export class DataStreamConnection extends EventEmitter {
   private controllerToAccessoryNonce: number
   private readonly controllerToAccessoryNonceBuffer: Buffer
 
-  // The chunks of an incomplete HDS frame. They are only joined once all bytes of the frame are there:
-  // joining them on every chunk would copy a large frame which arrives in small chunks over and over again.
-  private frameChunks: Buffer[] = []
-  private frameChunksLength = 0
-  private frameChunksNeeded = 0 // the total length the chunks need before there is something new to decode
+  // The received bytes of an HDS frame which is not complete yet, at the start of incompleteFrame. It grows by doubling: joining
+  // every chunk with what is there already would copy a large frame which arrives in small chunks over and over again, and a
+  // list of the chunks costs an object for every chunk, which a sender of tiny chunks turns into hundreds of bytes per byte.
+  // This way every byte is copied a few times at most, and it never holds more than twice what arrived
+  private incompleteFrame: Buffer = Buffer.alloc(0)
+  private incompleteFrameLength = 0
+  private incompleteFrameNeeded = 0 // the total length the bytes need before there is something new to decode
 
   private readonly hapConnectionClosedListener: () => void
   private protocolHandlers: Record<string, DataStreamProtocolHandler> = {} // used to store protocolHandlers identified by their protocol name
@@ -1051,16 +1053,22 @@ export class DataStreamConnection extends EventEmitter {
   }
 
   private decodeHDSFrames(data: Buffer) {
-    if (this.frameChunks.length > 0) {
-      this.frameChunks.push(data)
-      this.frameChunksLength += data.length
-      if (this.frameChunksLength < this.frameChunksNeeded) {
+    if (this.incompleteFrameLength > 0) {
+      const length = this.incompleteFrameLength + data.length
+      if (length > this.incompleteFrame.length) {
+        const grown = Buffer.allocUnsafe(Math.max(length, 2 * this.incompleteFrame.length))
+        this.incompleteFrame.copy(grown, 0, 0, this.incompleteFrameLength)
+        this.incompleteFrame = grown
+      }
+      data.copy(this.incompleteFrame, this.incompleteFrameLength)
+      this.incompleteFrameLength = length
+      if (length < this.incompleteFrameNeeded) {
         return [] // still not enough data for the frame header, or for the frame
       }
 
-      data = Buffer.concat(this.frameChunks, this.frameChunksLength)
-      this.frameChunks = []
-      this.frameChunksLength = 0
+      data = this.incompleteFrame.subarray(0, length)
+      this.incompleteFrame = Buffer.alloc(0)
+      this.incompleteFrameLength = 0
     }
 
     const totalBufferLength = data.length
@@ -1115,9 +1123,9 @@ export class DataStreamConnection extends EventEmitter {
   }
 
   private keepIncompleteFrame(data: Buffer, neededLength: number) {
-    this.frameChunks = [data]
-    this.frameChunksLength = data.length
-    this.frameChunksNeeded = neededLength
+    this.incompleteFrame = data // kept as it is: it is only copied once more data arrives
+    this.incompleteFrameLength = data.length
+    this.incompleteFrameNeeded = neededLength
   }
 
   /**
