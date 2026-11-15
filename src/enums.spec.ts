@@ -13,10 +13,6 @@ const IGNORED = [
   'lib/definitions/generator-configuration.ts',
 ]
 
-// CameraController and DoorbellController import each other, and DoorbellController extends CameraController while it loads.
-// That only works when something else is loaded first, as src/index.ts does. It is not about enums and is older than this test.
-const KNOWN_CYCLES = ['lib/controller/CameraController.ts']
-
 function listModules(): string[] {
   return fs.readdirSync(SRC, { recursive: true, encoding: 'utf8' })
     .map(file => file.split(path.sep).join('/'))
@@ -42,17 +38,11 @@ describe('enums', () => {
     expect(modules.length).toBeGreaterThan(40)
   })
 
-  it.each(modules.filter(file => !KNOWN_CYCLES.includes(file)))('%s loads on its own with every export defined', async (file) => {
+  it.each(modules)('%s loads on its own with every export defined', async (file) => {
     vi.resetModules()
     const loaded: Record<string, unknown> = await import(/* @vite-ignore */ path.join(SRC, file))
 
     const missing = Object.keys(loaded).filter(name => loaded[name] === undefined)
     expect(missing).toEqual([])
-  })
-
-  it.each(KNOWN_CYCLES)('%s still needs another module loaded first', async (file) => {
-    // when this starts to fail the cycle is gone: remove the file from KNOWN_CYCLES
-    vi.resetModules()
-    await expect(import(/* @vite-ignore */ path.join(SRC, file))).rejects.toThrow()
   })
 })
