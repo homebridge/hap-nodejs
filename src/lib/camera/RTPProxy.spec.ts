@@ -1,6 +1,10 @@
-import { Buffer } from 'node:buffer'
+import type { Socket } from 'node:dgram'
 
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { Buffer } from 'node:buffer'
+import dgram from 'node:dgram'
+import { EventEmitter } from 'node:events'
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import RTPProxy from './RTPProxy.js'
 
@@ -27,6 +31,86 @@ describe('RTPProxy', () => {
       expect(() => socket.address()).toThrow() // a closed socket has no address
     }
     expect(() => proxy!.destroy()).not.toThrow()
+  })
+
+  describe('binds which always fail', () => {
+    const bindError = new Error('bind EACCES 0.0.0.0')
+    let sockets: FailingSocket[]
+    let gaveUp: Promise<string>
+    let stopTest: (reason: string) => void
+
+    // a socket which can never be bound, like when the system forbids it
+    class FailingSocket extends EventEmitter {
+      port?: number
+      close = vi.fn()
+
+      bind(port: number): void {
+        this.port = port
+        if (sockets.length > 200000) {
+          stopTest('still trying after 200000 sockets') // the test must end, also when the binds are tried for ever
+          return
+        }
+        queueMicrotask(() => this.emit('error', bindError))
+      }
+    }
+
+    beforeEach(() => {
+      sockets = []
+      gaveUp = new Promise(resolve => stopTest = resolve)
+      vi.spyOn(dgram, 'createSocket').mockImplementation(() => {
+        const socket = new FailingSocket()
+        sockets.push(socket)
+        return socket as unknown as Socket
+      })
+    })
+
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    function failingProxy(): RTPProxy {
+      return new RTPProxy({
+        outgoingAddress: '127.0.0.1',
+        outgoingPort: 5000,
+        outgoingSSRC: 1,
+        disabled: false,
+      })
+    }
+
+    function outcome(promise: Promise<unknown>): Promise<unknown> {
+      return Promise.race([
+        promise.then(() => 'resolved', error => error),
+        gaveUp,
+      ])
+    }
+
+    it('should reject the single socket once every port was tried', async () => {
+      const result = await outcome(failingProxy().createSocket('udp4'))
+
+      expect(result).toBeInstanceOf(Error)
+      expect((result as Error).message).toContain(bindError.message)
+      expect(sockets).toHaveLength(65535 - 10000 + 1)
+      expect(new Set(sockets.map(socket => socket.port)).size).toBe(sockets.length) // no port was tried twice
+      expect(sockets.every(socket => socket.close.mock.calls.length === 1)).toBe(true)
+    })
+
+    it('should reject the socket pair once every pair of ports was tried', async () => {
+      const result = await outcome(failingProxy().createSocketPair('udp4'))
+
+      expect(result).toBeInstanceOf(Error)
+      expect((result as Error).message).toContain(bindError.message)
+      expect(sockets).toHaveLength(2 * (65535 - 10000))
+      expect(Math.min(...sockets.map(socket => socket.port!))).toBe(10000)
+      expect(Math.max(...sockets.map(socket => socket.port!))).toBe(65535)
+      expect(sockets.every(socket => socket.close.mock.calls.length === 1)).toBe(true)
+    })
+
+    it('should reject the setup', async () => {
+      const result = await outcome(failingProxy().setup())
+
+      expect(result).toBeInstanceOf(Error)
+      expect((result as Error).message).toContain(bindError.message)
+    })
   })
 
   describe('packets', () => {

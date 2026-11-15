@@ -11,6 +11,14 @@ function logSocketError(error: Error): void {
   debug('Encountered socket error: %s', error.message)
 }
 
+// the ports which are tried go from 10000 to 65535. Once every one of them failed, trying them again won't help.
+const FIRST_PORT = 10000
+const LAST_PORT = 65535
+
+function bindFailure(error: Error | undefined): Error {
+  return new Error(`Could not bind a UDP socket for the RTP proxy on any port from ${FIRST_PORT} to ${LAST_PORT}: ${error?.message}`)
+}
+
 /**
  * @group Camera
  */
@@ -264,18 +272,26 @@ export default class RTPProxy {
   }
 
   createSocket(type: SocketType): Promise<Socket> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
+      let attempts = 0
+
       const retry = () => {
         const socket = dgram.createSocket(type)
 
-        const bindErrorHandler = () => {
-          if (this.startingPort === 65535) {
-            this.startingPort = 10000
+        const bindErrorHandler = (error: Error) => {
+          if (this.startingPort === LAST_PORT) {
+            this.startingPort = FIRST_PORT
           } else {
             ++this.startingPort
           }
 
           socket.close()
+
+          if (++attempts > LAST_PORT - FIRST_PORT) {
+            // every port was tried once. Without an end, a bind which can never work would be tried for ever.
+            reject(bindFailure(error))
+            return
+          }
           retry()
         }
 
@@ -295,11 +311,13 @@ export default class RTPProxy {
   }
 
   createSocketPair(type: SocketType): Promise<Socket[]> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
+      let attempts = 0
+
       const retry = () => {
         const socket1 = dgram.createSocket(type)
         const socket2 = dgram.createSocket(type)
-        const state = { socket1: 0, socket2: 0 }
+        const state: { socket1: number, socket2: number, error?: Error } = { socket1: 0, socket2: 0 }
 
         const recheck = () => {
           if (state.socket1 === 0 || state.socket2 === 0) {
@@ -316,8 +334,8 @@ export default class RTPProxy {
             return
           }
 
-          if (this.startingPort === 65534) {
-            this.startingPort = 10000
+          if (this.startingPort === LAST_PORT - 1) {
+            this.startingPort = FIRST_PORT
           } else {
             ++this.startingPort
           }
@@ -325,16 +343,23 @@ export default class RTPProxy {
           socket1.close()
           socket2.close()
 
+          if (++attempts >= LAST_PORT - FIRST_PORT) {
+            // every pair of ports was tried once. Without an end, a bind which can never work would be tried for ever.
+            reject(bindFailure(state.error))
+            return
+          }
           retry()
         }
 
-        socket1.once('error', () => {
+        socket1.once('error', (error) => {
           state.socket1 = 1
+          state.error = error
           recheck()
         })
 
-        socket2.once('error', () => {
+        socket2.once('error', (error) => {
           state.socket2 = 1
+          state.error = error
           recheck()
         })
 
