@@ -247,7 +247,26 @@ export class HAPFileStorage {
       // node-persist 0.0.12 swallowed unparseable files, leaving the value undefined. That stays, but not in silence: an accessory
       // whose file reads as nothing starts as a new, unpaired one. Only the path is printed: the file can hold keys, and the
       // message of the parse error quotes a piece of it.
-      console.warn(`HAP-NodeJS WARNING: The storage file '${file}' does not hold valid JSON and was ignored. What it stored is treated as missing.`)
+      const aside = HAPFileStorage.setAside(file)
+      const kept = aside
+        ? ` It was kept as '${aside}'.`
+        : ''
+      console.warn(`HAP-NodeJS WARNING: The storage file '${file}' does not hold valid JSON and was ignored. What it stored is treated as missing.${kept}`)
+      return undefined
+    }
+  }
+
+  /**
+   * Renames a file which cannot be read, so the next save of its key does not overwrite what is left of it (an accessory
+   * which reads as unpaired saves new keys at once). The dot keeps it from being loaded, and set aside again, at the next start.
+   * Returns the new path, or undefined when the rename failed (another process sharing the directory may have done it first).
+   */
+  private static setAside(file: string): string | undefined {
+    const aside = path.join(path.dirname(file), `.${path.basename(file)}.corrupt-${Date.now()}`)
+    try {
+      fs.renameSync(file, aside)
+      return aside
+    } catch {
       return undefined
     }
   }
