@@ -794,6 +794,101 @@ describe('Accessory', () => {
         consoleWarnSpy.mockRestore()
       })
 
+      it('answers a read of an excluded accessory like a read of an id which does not exist', async () => {
+        const name = offendingService.getCharacteristic(Characteristic.Name)
+        const getHandler = vi.fn(() => 'Secret Name')
+        name.onGet(getHandler)
+
+        const read = async (): Promise<CharacteristicsReadResponse> => {
+          callback.mockReset()
+          // @ts-expect-error: private access
+          bridge.handleGetCharacteristics(connection, {
+            ids: [
+              { aid: offendingAccessory.aid!, iid: name.iid! },
+              { aid: validAccessory.aid!, iid: 1 },
+            ],
+            includeMeta: false,
+            includeEvent: false,
+            includeType: false,
+            includePerms: false,
+          }, callback)
+          await callbackPromise
+          return callback.mock.calls[0][1]
+        }
+
+        await servedAids() // assigns the ids
+        expect((await read()).characteristics).toContainEqual({ aid: offendingAccessory.aid, iid: name.iid, value: 'Secret Name' })
+        getHandler.mockClear()
+
+        corruptPermissions()
+        expect(await servedAids()).not.toContain(offendingAccessory.aid)
+
+        const response = await read()
+        expect(response.characteristics).toContainEqual({ aid: offendingAccessory.aid, iid: name.iid, status: HAPStatus.INVALID_VALUE_IN_REQUEST })
+        expect(getHandler).not.toHaveBeenCalled()
+
+        // back in the accessory database, back in reach
+        offendingCharacteristic.props.perms = [Perms.PAIRED_READ, Perms.NOTIFY]
+        expect((await read()).characteristics).toContainEqual({ aid: offendingAccessory.aid, iid: name.iid, value: 'Secret Name' })
+      })
+
+      it('answers a write or a subscription to an excluded accessory like one for an id which does not exist', async () => {
+        const setHandler = vi.fn()
+        offendingCharacteristic.onSet(setHandler)
+        const subscribeHandler = vi.fn()
+        offendingCharacteristic.on(CharacteristicEventTypes.SUBSCRIBE, subscribeHandler)
+        const enableEventNotifications = vi.fn()
+        const writer = {
+          username: clientUsername0,
+          hasEventNotifications: () => false,
+          enableEventNotifications,
+        } as unknown as HAPConnection
+
+        const write = async (data: { value?: CharacteristicValue, ev?: boolean }): Promise<CharacteristicsWriteResponse> => {
+          callback.mockReset()
+          // @ts-expect-error: private access
+          bridge.handleSetCharacteristics(writer, {
+            characteristics: [
+              { aid: offendingAccessory.aid!, iid: offendingCharacteristic.iid!, ...data },
+            ],
+          }, callback)
+          await callbackPromise
+          return callback.mock.calls[0][1]
+        }
+
+        await servedAids() // assigns the ids
+
+        // the fault is on another characteristic, so this one is still well-formed and would take the write
+        offendingService.getCharacteristic(Characteristic.Name).props.perms = [null as unknown as Perms]
+        expect(await servedAids()).not.toContain(offendingAccessory.aid)
+
+        const failed = { aid: offendingAccessory.aid, iid: offendingCharacteristic.iid, status: HAPStatus.INVALID_VALUE_IN_REQUEST }
+        expect((await write({ value: true })).characteristics).toEqual([failed])
+        expect(setHandler).not.toHaveBeenCalled()
+
+        expect((await write({ ev: true })).characteristics).toEqual([failed])
+        expect(enableEventNotifications).not.toHaveBeenCalled()
+        expect(subscribeHandler).not.toHaveBeenCalled()
+      })
+
+      it('still ends the subscriptions to an excluded accessory when the connection closes', async () => {
+        const unsubscribeHandler = vi.fn()
+        offendingCharacteristic.on(CharacteristicEventTypes.UNSUBSCRIBE, unsubscribeHandler)
+
+        await servedAids() // assigns the ids
+        offendingCharacteristic.subscribe()
+        corruptPermissions()
+        expect(await servedAids()).not.toContain(offendingAccessory.aid)
+
+        // @ts-expect-error: private access
+        bridge.handleHAPConnectionClosed({
+          getRegisteredEvents: () => new Set([`${offendingAccessory.aid}.${offendingCharacteristic.iid}`]),
+          clearRegisteredEvents: vi.fn(),
+        } as unknown as HAPConnection)
+
+        expect(unsubscribeHandler).toHaveBeenCalledTimes(1)
+      })
+
       it('excludes the same accessory from the configuration that determines the configuration number', async () => {
         corruptPermissions()
 

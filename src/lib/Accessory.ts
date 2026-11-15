@@ -807,6 +807,23 @@ export class Accessory extends EventEmitter {
   }
 
   /**
+   * The characteristic a request of a controller may reach. A bridged accessory which is excluded from the accessory database for
+   * its permissions (see {@link servedBridgedAccessories}) has no characteristic for a controller: HomeKit was told it is gone,
+   * so a read, a write or a subscription to it is answered like one for an id which does not exist.
+   *
+   * Only for the requests of a controller. {@link findCharacteristic} still finds the characteristic, which is needed to end a
+   * subscription made before the accessory was excluded once the connection closes.
+   */
+  private findServedCharacteristic(aid: number, iid: number): Characteristic | undefined {
+    const accessory = this.getAccessoryByAID(aid)
+    if (!accessory || (accessory !== this && accessory.findPermsViolation())) {
+      return undefined
+    }
+
+    return accessory.getCharacteristicByIID(iid)
+  }
+
+  /**
    * This method is used to set up a new Controller for this accessory. See {@link Controller} for a more detailed
    * explanation what a Controller is and what it is capable of.
    *
@@ -1741,7 +1758,7 @@ export class Accessory extends EventEmitter {
     id: CharacteristicId,
     request: CharacteristicsReadRequest,
   ): Promise<PartialCharacteristicReadData> {
-    const characteristic = this.findCharacteristic(id.aid, id.iid)
+    const characteristic = this.findServedCharacteristic(id.aid, id.iid)
 
     if (!characteristic) {
       debug('[%s] Could not find a Characteristic with aid of %s and iid of %s', this.displayName, id.aid, id.iid)
@@ -1833,7 +1850,7 @@ export class Accessory extends EventEmitter {
     data: CharacteristicWrite,
     writeState: WriteRequestState,
   ): Promise<PartialCharacteristicWriteData> {
-    const characteristic = this.findCharacteristic(data.aid, data.iid)
+    const characteristic = this.findServedCharacteristic(data.aid, data.iid)
 
     if (!characteristic) {
       debug('[%s] Could not find a Characteristic with aid of %s and iid of %s', this.displayName, data.aid, data.iid)
