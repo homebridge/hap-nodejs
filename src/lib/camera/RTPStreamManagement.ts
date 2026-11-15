@@ -1394,7 +1394,11 @@ export class RTPStreamManagement {
       videoPort = this.videoProxy!.outgoingLocalPort()
       videoSSRC = this.videoProxy!.outgoingSSRC
 
-      if (!this.disableAudioProxy) {
+      if (!response.audio) {
+        // a camera without audio (videoOnly) has no audio source to proxy: answer with the defaults, as without a proxy
+        audioPort = (audio as SourceResponse).port
+        audioSSRC = (audio as SourceResponse).ssrc
+      } else if (!this.disableAudioProxy) {
         const audioInfo = response.audio as ProxiedSourceResponse
         this.audioProxy!.setIncomingPayloadType(audioInfo.proxy_pt)
         this.audioProxy!.setServerAddress(audioInfo.proxy_server_address)
