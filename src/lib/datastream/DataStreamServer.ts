@@ -1222,6 +1222,10 @@ export class DataStreamConnection extends EventEmitter {
     if (this.state >= ConnectionState.CLOSING) {
       throw new HDSConnectionError('Cannot send message on closing/closed socket!', HDSConnectionErrorType.CLOSED_SOCKET)
     }
+    if (!this.accessoryToControllerEncryptionKey) {
+      // the keys are only known once the hello message identified the connection
+      throw new HDSConnectionError('Cannot send message on a connection which was not identified yet!', HDSConnectionErrorType.ILLEGAL_STATE)
+    }
 
     const headerWriter = new DataStreamWriter()
     const messageWriter = new DataStreamWriter()
@@ -1253,7 +1257,7 @@ export class DataStreamConnection extends EventEmitter {
 
     hapCrypto.writeUInt64LE(this.accessoryToControllerNonce++, this.accessoryToControllerNonceBuffer)
     const encrypted = hapCrypto.chacha20_poly1305_encryptAndSeal(
-      this.accessoryToControllerEncryptionKey!,
+      this.accessoryToControllerEncryptionKey,
       this.accessoryToControllerNonceBuffer,
       frameHeader,
       payloadBuffer,

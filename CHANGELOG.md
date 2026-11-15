@@ -235,6 +235,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): answer a stream setup with an error when the plugin gives no error and no response
 - refactor(camera): drop three error answers which are overwritten by the session reset at once
 - fix(datastream): stop handing on the messages of a chunk once a handler closed the connection
+- fix(datastream): throw a data stream error for a message on a connection not identified yet
 
 ### Homebridge Dependencies
 

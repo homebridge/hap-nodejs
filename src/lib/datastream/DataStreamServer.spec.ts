@@ -11,7 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import * as hapCrypto from '../util/hapCrypto.js'
 import { DataStreamParser, DataStreamReader, DataStreamWriter } from './DataStreamParser.js'
-import { DataStreamServer, DataStreamServerEvent, HDSStatus } from './DataStreamServer.js'
+import { DataStreamServer, DataStreamServerEvent, HDSConnectionError, HDSStatus } from './DataStreamServer.js'
 
 class FakeSocket extends EventEmitter {
   remoteAddress = '192.0.2.1'
@@ -456,6 +456,16 @@ describe('DataStreamServer', () => {
       session.socket.emit('data', encryptedFrame(session, messagePayload({ protocol: 'control', request: 'hello', id: 1 })))
       return session
     }
+
+    it('should throw a data stream error, not a crypto error, for a message on a connection which is not identified yet', () => {
+      const session = setupSession()
+      const callback = vi.fn()
+
+      expect(() => session.connection.sendResponse('control', 'hello', 1)).toThrow(HDSConnectionError)
+      expect(() => session.connection.sendRequest('dataSend', 'open', {}, callback)).toThrow('not identified yet')
+      vi.advanceTimersByTime(11000)
+      expect(callback).not.toHaveBeenCalled()
+    })
 
     it('should answer a waiting request once, and at once, when the socket closes', () => {
       const session = identifiedSession()
