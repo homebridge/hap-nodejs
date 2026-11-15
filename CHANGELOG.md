@@ -240,6 +240,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(datastream): reject a data stream setup write with a missing entry as an invalid value
 - perf(datastream): hold an incomplete frame in one growing buffer instead of a list of its chunks
 - docs(datastream): fix two comments about request ids and what sendRequest answers
+- fix(remote): forget every target of a data stream connection which closed, not only the first
 
 ### Homebridge Dependencies
 
