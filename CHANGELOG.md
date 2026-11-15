@@ -229,6 +229,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - test: restore the name of the PUT /prepare test which a lint autofix had lower-cased
 - fix(storage): type getItem without a type argument as any again so typed plugin code still builds
 - fix(camera): ignore a late error answer for a stream session which already ended
+- fix(camera): answer a stream setup in proxy mode for a camera without audio instead of failing
 
 ### Homebridge Dependencies
 

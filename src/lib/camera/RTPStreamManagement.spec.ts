@@ -812,4 +812,36 @@ describe('RTPStreamManagement', () => {
       }
     })
   })
+
+  describe('handleSetupEndpoints in proxy mode for a camera without audio', () => {
+    it('should answer the setup instead of failing on the missing audio response', async () => {
+      const options: CameraStreamingOptions = {
+        ...baseStreamingOptions,
+        proxy: true,
+        audio: { codecs: [] },
+      }
+      const controller = new CameraController(buildControllerOptions(options))
+      controller.constructServices()
+      controller.configureServices()
+      const rtp = controller.streamManagements[0] as RTPStreamManagement
+      expect(rtp.videoOnly).toBe(true)
+      vi.spyOn(MockDelegate.prototype, 'prepareStream').mockImplementation(((_request: unknown, callback: PrepareStreamCallback) => callback(undefined, {
+        video: {
+          proxy_pt: 99,
+          proxy_server_address: '127.0.0.1',
+          proxy_server_rtp: 6000,
+          proxy_server_rtcp: 6001,
+        },
+      })) as () => void)
+      try {
+        const result = await new Promise(resolve => (rtp as any).handleSetupEndpoints(buildSetupEndpointsTlv(), (error: unknown) => resolve(error), buildMockConnection()))
+        expect(result).toBeUndefined()
+        expect(rtp.sessionIdentifier).toBe('11111111-1111-1111-1111-111111111111')
+      } finally {
+        vi.restoreAllMocks()
+        controller.handleFactoryReset()
+        controller.streamManagements.forEach(management => management.forceStop())
+      }
+    })
+  })
 })
