@@ -86,6 +86,12 @@ export class HAPFileStorage {
 
   private readonly data = new Map<string, unknown>()
 
+  // keys whose file was not valid JSON at initSync. The folder is shared with plugins (one keeps a binary certificate
+  // there), so such a file is only warned about when HAP-NodeJS reads its key, and only set aside when it saves or
+  // removes that key: a file HAP-NodeJS never uses stays where it is, untouched and unmentioned
+  private readonly unreadable = new Set<string>()
+  private readonly warned = new Set<string>()
+
   constructor() {
     for (const method of UNSUPPORTED_METHODS) {
       // runtime-only stubs, deliberately absent from the class type: TypeScript consumers get a compile error,
@@ -130,7 +136,14 @@ export class HAPFileStorage {
           continue
         }
 
-        this.data.set(entry.name, HAPFileStorage.parse(file, fs.readFileSync(file, 'utf8')))
+        // a file which cannot be read at all (EIO, EACCES) still fails the start: only invalid JSON is let through
+        const json = fs.readFileSync(file, 'utf8')
+        try {
+          this.data.set(entry.name, JSON.parse(json))
+        } catch {
+          // node-persist 0.0.12 swallowed unparseable files, leaving the value undefined. That stays (see `unreadable`)
+          this.unreadable.add(entry.name)
+        }
       }
     } else {
       fs.mkdirSync(this.dir, { recursive: true })
@@ -148,6 +161,13 @@ export class HAPFileStorage {
     if (legacyCallback.length > 0) {
       throw new Error('getItem() with a callback is not supported anymore: HAP-NodeJS replaced node-persist with a minimal file storage '
         + `which only implements ${SUPPORTED_METHODS} (see https://github.com/homebridge/HAP-NodeJS/issues/1107).`)
+    }
+
+    if (this.unreadable.has(key) && !this.warned.has(key)) {
+      this.warned.add(key)
+      // an accessory whose file reads as nothing starts as a new, unpaired one. Only the path is printed: the file can hold keys
+      console.warn(`HAP-NodeJS WARNING: The storage file '${path.join(this.dir, key)}' does not hold valid JSON and was ignored. `
+        + 'What it stored is treated as missing. It is kept under a new name before anything is saved in its place.')
     }
 
     return this.data.get(key) as T | undefined
@@ -171,6 +191,7 @@ export class HAPFileStorage {
     fs.mkdirSync(this.dir, { recursive: true })
 
     const file = path.join(this.dir, key)
+    this.setAsideUnreadable(key)
     // the dot prefix keeps a temporary file left behind by a crash from being loaded as a key by initSync,
     // the pid keeps processes sharing a storage directory (like child bridges) from racing on the same temporary file.
     // it sits in the storage directory next to its target, as renaming across directories would not be atomic
@@ -198,6 +219,8 @@ export class HAPFileStorage {
 
   removeItemSync(key: string): void {
     HAPFileStorage.assertPlainKey(key)
+
+    this.setAsideUnreadable(key)
 
     // force ignores a file which is already gone, without the exists-then-unlink
     // gap in which another process (child bridges share a storage directory)
@@ -240,34 +263,24 @@ export class HAPFileStorage {
     }
   }
 
-  private static parse(file: string, json: string): unknown {
-    try {
-      return JSON.parse(json)
-    } catch {
-      // node-persist 0.0.12 swallowed unparseable files, leaving the value undefined. That stays, but not in silence: an accessory
-      // whose file reads as nothing starts as a new, unpaired one. Only the path is printed: the file can hold keys, and the
-      // message of the parse error quotes a piece of it.
-      const aside = HAPFileStorage.setAside(file)
-      const kept = aside
-        ? ` It was kept as '${aside}'.`
-        : ''
-      console.warn(`HAP-NodeJS WARNING: The storage file '${file}' does not hold valid JSON and was ignored. What it stored is treated as missing.${kept}`)
-      return undefined
-    }
-  }
-
   /**
-   * Renames a file which cannot be read, so the next save of its key does not overwrite what is left of it (an accessory
-   * which reads as unpaired saves new keys at once). The dot keeps it from being loaded, and set aside again, at the next start.
-   * Returns the new path, or undefined when the rename failed (another process sharing the directory may have done it first).
+   * Renames the file of a key which could not be read at {@link initSync}, before a save or a removal of that key would
+   * overwrite or delete what is left of it (an accessory which reads as unpaired saves new keys at once). The dot keeps
+   * it from being loaded at the next start. A failed rename (another process sharing the directory may have done it
+   * first) is left to the write or removal which follows.
    */
-  private static setAside(file: string): string | undefined {
-    const aside = path.join(path.dirname(file), `.${path.basename(file)}.corrupt-${Date.now()}`)
+  private setAsideUnreadable(key: string): void {
+    if (!this.unreadable.delete(key)) {
+      return
+    }
+
+    const file = path.join(this.dir, key)
+    const aside = path.join(this.dir, `.${key}.corrupt-${Date.now()}`)
     try {
       fs.renameSync(file, aside)
-      return aside
+      console.warn(`HAP-NodeJS WARNING: The storage file '${file}', which does not hold valid JSON, was kept as '${aside}'.`)
     } catch {
-      return undefined
+      // nothing to keep
     }
   }
 }
