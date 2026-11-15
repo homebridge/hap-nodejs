@@ -221,6 +221,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(characteristic): cut an over-long string without splitting an emoji in half
 - fix(storage): set a persist file with invalid json aside instead of overwriting it
 - ci: name the labeler job labeler, not stale
+- ci: fix the labeler comment that says alpha pull requests get the beta label
 
 ### Homebridge Dependencies
 
