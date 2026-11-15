@@ -236,6 +236,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor(camera): drop three error answers which are overwritten by the session reset at once
 - fix(datastream): stop handing on the messages of a chunk once a handler closed the connection
 - fix(datastream): throw a data stream error for a message on a connection not identified yet
+- fix(datastream): catch an error of a response handler on the timeout of its request
 
 ### Homebridge Dependencies
 

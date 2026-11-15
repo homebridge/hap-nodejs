@@ -467,6 +467,21 @@ describe('DataStreamServer', () => {
       expect(callback).not.toHaveBeenCalled()
     })
 
+    it('should not let an error of a response handler escape the timer of a request which timed out', () => {
+      const session = identifiedSession()
+      // @ts-expect-error: the session was set up without the tcp server, which is closed with its last connection
+      session.server.tcpServer = {
+        close: vi.fn(),
+      }
+      const callback = vi.fn(() => {
+        throw new Error('handler bug')
+      })
+      session.connection.sendRequest('dataSend', 'open', {}, callback)
+
+      expect(() => vi.advanceTimersByTime(10001)).not.toThrow()
+      expect(callback).toHaveBeenCalledTimes(1)
+    })
+
     it('should answer a waiting request once, and at once, when the socket closes', () => {
       const session = identifiedSession()
       // @ts-expect-error: the session was set up without the tcp server, which is closed with its last connection
