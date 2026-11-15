@@ -180,6 +180,25 @@ describe('RemoteController', () => {
     })
   })
 
+  describe('a data stream connection which closes', () => {
+    it('should forget every target the connection announced, not only the first', () => {
+      const controller = createController()
+      const connection = {
+        addProtocolHandler: vi.fn(),
+      }
+      // @ts-expect-error: private access, and the connection is a minimal fake
+      controller.handleTargetControlWhoAmI(connection, { identifier: 1 })
+      // @ts-expect-error: private access, and the connection is a minimal fake
+      controller.handleTargetControlWhoAmI(connection, { identifier: 2 })
+
+      // @ts-expect-error: private access, and the connection is a minimal fake
+      controller.handleDataStreamConnectionClosed(connection)
+
+      // @ts-expect-error: private access
+      expect(controller.dataStreamConnections.size).toBe(0)
+    })
+  })
+
   describe('target removal and updates', () => {
     async function createControllerWithTargets(): Promise<RemoteController> {
       const controller = createController()

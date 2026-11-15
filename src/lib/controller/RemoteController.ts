@@ -1211,8 +1211,7 @@ export class RemoteController<O = unknown> extends EventEmitter
     for (const [targetIdentifier, connection0] of this.dataStreamConnections) {
       if (connection === connection0) {
         debug('HDS connection disconnected for targetIdentifier %s', targetIdentifier)
-        this.dataStreamConnections.delete(targetIdentifier)
-        break
+        this.dataStreamConnections.delete(targetIdentifier) // no break: one connection can announce several targets
       }
     }
   }
