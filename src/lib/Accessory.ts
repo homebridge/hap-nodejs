@@ -59,6 +59,7 @@ import {
   ChangeReason,
   Characteristic,
   describePerms,
+  Formats,
   isValidPerms,
   Perms,
 } from './Characteristic.js'
@@ -407,6 +408,17 @@ interface BridgedAccessoryListeners {
   characteristicChange: (change: AccessoryCharacteristicChange) => void
   configurationChange: () => void
   characteristicWarning: (warning: CharacteristicWarning) => void
+}
+
+/**
+ * The value of a characteristic as it may be printed to the debug log. Debug logs get posted in public, and a TLV8 value can
+ * hold secrets: SetupEndpoints carries the SRTP keys of a camera stream, SetupDataStreamTransport the data stream key salts.
+ */
+function loggableValue(characteristic: Characteristic, value: unknown): unknown {
+  if (characteristic.props.format === Formats.TLV8 && typeof value === 'string') {
+    return `<TLV8 value of ${Buffer.from(value, 'base64').length} bytes>`
+  }
+  return value
 }
 
 /**
@@ -1835,7 +1847,7 @@ export class Accessory extends EventEmitter {
 
     return characteristic.handleGetRequest(connection).then((value) => {
       value = formatOutgoingCharacteristicValue(value, characteristic.props)
-      debug('[%s] Got Characteristic "%s" value: "%s"', this.displayName, characteristic.displayName, value)
+      debug('[%s] Got Characteristic "%s" value: "%s"', this.displayName, characteristic.displayName, loggableValue(characteristic, value))
 
       const data: PartialCharacteristicReadData = {
         value: value ?? null,
@@ -1868,7 +1880,10 @@ export class Accessory extends EventEmitter {
 
   private handleSetCharacteristics(connection: HAPConnection, writeRequest: CharacteristicsWriteRequest, callback: WriteCharacteristicsCallback): void {
     if (debug.enabled) { // the request can be large, so only serialize it when it gets logged
-      debug('[%s] Processing characteristic set: %s', this.displayName, JSON.stringify(writeRequest))
+      // the values are printed per characteristic below, where a TLV8 value (which can hold stream keys) is left out
+      debug('[%s] Processing characteristic set: %s', this.displayName, JSON.stringify(writeRequest, (key, value: unknown) => key === 'value'
+        ? '<value>'
+        : value))
     }
 
     let writeState: WriteRequestState = WriteRequestState.REGULAR_REQUEST
@@ -1999,7 +2014,7 @@ export class Accessory extends EventEmitter {
         }
         return value
       }).then((value) => {
-        debug('[%s] Setting Characteristic "%s" to value %s', this.displayName, characteristic.displayName, data.value)
+        debug('[%s] Setting Characteristic "%s" to value %s', this.displayName, characteristic.displayName, loggableValue(characteristic, data.value))
         return {
           // if write response is requested and a value is provided (0, false and '' are values too), return that
           value: data.r && value != null
@@ -2009,7 +2024,7 @@ export class Accessory extends EventEmitter {
           status: HAPStatus.SUCCESS,
         }
       }, (status: HAPStatus) => {
-        debug('[%s] Error setting Characteristic "%s" to value %s: ', this.displayName, characteristic.displayName, data.value, HAPStatus[status])
+        debug('[%s] Error setting Characteristic "%s" to value %s: ', this.displayName, characteristic.displayName, loggableValue(characteristic, data.value), HAPStatus[status])
 
         return { status }
       })
