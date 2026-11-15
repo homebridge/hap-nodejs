@@ -139,6 +139,26 @@ describe('AdaptiveLightingController', () => {
     controller.disableAdaptiveLighting()
   })
 
+  it('should wait out an update interval longer than a timer can hold instead of updating every millisecond', async () => {
+    const { lightbulb, controller } = createController()
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    try {
+      // about 49.7 days, past the 2^31 - 1 ms (24.8 days) a node.js timer holds: node fires such a timer after 1 ms
+      await writeTransitionControl(lightbulb, buildUpdateTransition(lightbulb, Date.now(), curve(5), uintLE(0xFFFFFFFF, 4)))
+      expect(controller.isAdaptiveLightingActive()).toBeTruthy()
+      // the controller is answered with the interval it sent
+      expect(controller.getAdaptiveLightingUpdateInterval()).toBe(0xFFFFFFFF)
+
+      const update = vi.spyOn(controller, 'scheduleNextUpdate')
+      vi.advanceTimersByTime(100)
+
+      expect(update).not.toHaveBeenCalled()
+    } finally {
+      warn.mockRestore()
+      controller.disableAdaptiveLighting()
+    }
+  })
+
   it.each(['my-plugin', 42, true])('should turn off after a manual color write with the context %j', async (context) => {
     const { lightbulb, controller } = createController()
     await writeTransitionControl(lightbulb, buildUpdateTransition(lightbulb, Date.now(), curve(5)))
