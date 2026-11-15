@@ -3,9 +3,6 @@
   "type": "module",
   "version": "2.3.0",
   "description": "HAP-NodeJS is a Node.js implementation of HomeKit Accessory Server.",
-  "maintainers": [
-    "Andreas Bauer <mail@anderl-bauer.de>"
-  ],
   "author": "Khaos Tian <khaos.tian@gmail.com> (https://tz.is/)",
   "license": "Apache-2.0",
   "homepage": "https://github.com/homebridge/HAP-NodeJS",
