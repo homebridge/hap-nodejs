@@ -859,9 +859,14 @@ export class HAPConnection extends EventEmitter {
     if (this.pendingRequests === 0) {
       this.incomingDataTimeout = setTimeout(() => {
         this.incomingDataTimeout = undefined
-        if (this.pendingRequests === 0 && this.httpResponseEnd === undefined) {
-          this.requestHandlingFinished()
-        }
+        // a stalled event loop runs this timer before the poll phase hands the forwarded bytes to the internal
+        // http server, so let that phase run once before deciding that no request came out of them
+        setImmediate(() => {
+          if (this.incomingDataTimeout === undefined && this.pendingRequests === 0 && this.httpResponseEnd === undefined
+            && this.state <= HAPConnectionState.AUTHENTICATED) {
+            this.requestHandlingFinished()
+          }
+        })
       }, HAPConnection.INCOMING_DATA_TIMEOUT)
       this.incomingDataTimeout.unref()
     }
