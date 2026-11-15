@@ -714,7 +714,11 @@ export class DataStreamConnection extends EventEmitter {
   private controllerToAccessoryNonce: number
   private readonly controllerToAccessoryNonceBuffer: Buffer
 
-  private frameBuffer?: Buffer // used to store incomplete HDS frames
+  // The chunks of an incomplete HDS frame. They are only joined once all bytes of the frame are there:
+  // joining them on every chunk would copy a large frame which arrives in small chunks over and over again.
+  private frameChunks: Buffer[] = []
+  private frameChunksLength = 0
+  private frameChunksNeeded = 0 // the total length the chunks need before there is something new to decode
 
   private readonly hapConnectionClosedListener: () => void
   private protocolHandlers: Record<string, DataStreamProtocolHandler> = {} // used to store protocolHandlers identified by their protocol name
@@ -1034,9 +1038,16 @@ export class DataStreamConnection extends EventEmitter {
   }
 
   private decodeHDSFrames(data: Buffer) {
-    if (this.frameBuffer !== undefined) {
-      data = Buffer.concat([this.frameBuffer, data])
-      this.frameBuffer = undefined
+    if (this.frameChunks.length > 0) {
+      this.frameChunks.push(data)
+      this.frameChunksLength += data.length
+      if (this.frameChunksLength < this.frameChunksNeeded) {
+        return [] // still not enough data for the frame header, or for the frame
+      }
+
+      data = Buffer.concat(this.frameChunks, this.frameChunksLength)
+      this.frameChunks = []
+      this.frameChunksLength = 0
     }
 
     const totalBufferLength = data.length
@@ -1045,7 +1056,7 @@ export class DataStreamConnection extends EventEmitter {
     for (let frameBegin = 0; frameBegin < totalBufferLength;) {
       if (frameBegin + 4 > totalBufferLength) {
         // we don't have enough data in the buffer for the next header
-        this.frameBuffer = data.subarray(frameBegin)
+        this.keepIncompleteFrame(data.subarray(frameBegin), 4)
         break
       }
 
@@ -1062,7 +1073,7 @@ export class DataStreamConnection extends EventEmitter {
       // check if the data from this frame is already there (payload + 16-byte authTag)
       if (payloadLength + 16 > remainingBufferLength) {
         // Frame is fragmented, so we wait until we receive more
-        this.frameBuffer = data.subarray(frameBegin)
+        this.keepIncompleteFrame(data.subarray(frameBegin), 4 + payloadLength + 16)
         break
       }
 
@@ -1088,6 +1099,12 @@ export class DataStreamConnection extends EventEmitter {
     }
 
     return frames
+  }
+
+  private keepIncompleteFrame(data: Buffer, neededLength: number) {
+    this.frameChunks = [data]
+    this.frameChunksLength = data.length
+    this.frameChunksNeeded = neededLength
   }
 
   /**

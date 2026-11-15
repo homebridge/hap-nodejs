@@ -196,6 +196,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - ci: pin the wiki notification action to a commit
 - fix(datastream): answer the sessions which wait for the port when the server is destroyed too early
 - fix(camera): keep the endpoints response of the active stream when another controller is told busy
+- perf(datastream): join the chunks of an incoming frame once instead of again for every chunk
 
 ### Homebridge Dependencies
 
