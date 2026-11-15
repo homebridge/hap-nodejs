@@ -21,7 +21,7 @@ import {
   ResourceRequestType,
 } from '../types.js'
 import { Accessory, AccessoryEventTypes, Categories, CharacteristicWarningType, MDNSAdvertiser, PublishInfo } from './Accessory.js'
-import { BonjourHAPAdvertiser } from './Advertiser.js'
+import { AvahiAdvertiser, BonjourHAPAdvertiser, CiaoAdvertiser } from './Advertiser.js'
 import { Bridge } from './Bridge.js'
 import {
   Access,
@@ -1051,6 +1051,29 @@ describe('Accessory', () => {
       expect(accessory.displayName).toEqual(displayNameWithIdentifyingMaterial)
 
       await awaitEventOnce(accessory, AccessoryEventTypes.ADVERTISED)
+    })
+
+    it('leaves the advertiser of the publish info of the caller as it was given', async () => {
+      const warn = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const available = vi.spyOn(AvahiAdvertiser, 'isAvailable').mockResolvedValue(false)
+      try {
+        accessory.addService(new Service.Switch('My Example Switch'))
+
+        const defaulted: PublishInfo = { username: serverUsername, pincode: '000-00-000', category: Categories.SWITCH }
+        await accessory.publish(defaulted)
+        expect(accessory._advertiser).toBeInstanceOf(CiaoAdvertiser)
+        expect(defaulted).toEqual({ username: serverUsername, pincode: '000-00-000', category: Categories.SWITCH })
+        await accessory.unpublish()
+
+        // avahi is not available, so ciao is used instead: the caller still asked for avahi
+        const fallback: PublishInfo = { ...defaulted, advertiser: MDNSAdvertiser.AVAHI }
+        await accessory.publish(fallback)
+        expect(accessory._advertiser).toBeInstanceOf(CiaoAdvertiser)
+        expect(fallback.advertiser).toBe(MDNSAdvertiser.AVAHI)
+      } finally {
+        available.mockRestore()
+        warn.mockRestore()
+      }
     })
 
     it('clean Accessory publish and unpublish with default advertiser selection', async () => {
