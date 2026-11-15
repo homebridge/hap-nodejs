@@ -937,7 +937,8 @@ export class Accessory extends EventEmitter {
   /**
    * This method will remove a given Controller from this accessory.
    * The controller object will be restored to its initial state.
-   * This also means that any event handlers setup for the controller will be removed.
+   * Event handlers which the plugin added to an adaptive lighting or remote controller stay on that object.
+   * The camera controller (and the doorbell controller) removes every event handler set up on it.
    *
    * @param controller - The controller which should be removed from the accessory.
    */
