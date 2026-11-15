@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 
 import { HAPFileStorage } from './HAPFileStorage.js'
 
@@ -97,6 +97,16 @@ describe('HAPFileStorage', () => {
       expect(() => storage.initSync({ dir })).not.toThrow()
       expect(storage.getItem('dangling.json')).toBeUndefined()
       expect(storage.getItem('key.json')).toEqual(1)
+    })
+
+    it('should type the value as any without a type argument and as T or undefined with one', () => {
+      fs.writeFileSync(path.join(dir, 'key.json'), '{"a":1}')
+      storage.initSync({ dir })
+
+      // node-persist typed it as any, so a plugin which names the type of the variable must keep building
+      const untyped: { a: number } = storage.getItem('key.json')
+      expect(untyped.a).toBe(1)
+      expectTypeOf(storage.getItem<{ a: number }>('key.json')).toEqualTypeOf<{ a: number } | undefined>()
     })
 
     it('should treat files with invalid JSON as undefined instead of throwing', () => {
