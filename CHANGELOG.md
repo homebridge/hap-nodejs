@@ -214,6 +214,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor: import types with import type and turn on the consistent-type-imports lint rule
 - fix(types): export PairingStates so a plugin can name the type of the pairing state of a connection
 - chore(deps): replace futoin-hkdf with the hkdf of node.js and remove unused packages
+- ci: keep the npm publish token to the publish job, stay on npm 11 and pass refs as env
 
 ### Homebridge Dependencies
 
