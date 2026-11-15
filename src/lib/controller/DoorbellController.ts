@@ -112,7 +112,7 @@ export class DoorbellController extends CameraController {
   }
 
   // eslint-disable-next-line unused-imports/no-unused-vars
-  protected override migrateFromDoorbell(serviceMap: ControllerServiceMap): boolean {
+  protected override migrateFromDoorbell(_serviceMap: ControllerServiceMap): boolean {
     return false
   }
 

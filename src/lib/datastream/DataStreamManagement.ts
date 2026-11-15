@@ -234,7 +234,7 @@ export class DataStreamManagement {
   private setupServiceHandlers() {
     this.dataStreamTransportManagementService.getCharacteristic(Characteristic.SetupDataStreamTransport)
       .onGet(() => this.lastSetupDataStreamTransportResponse)
-      .on(CharacteristicEventTypes.SET, (value, callback, context, connection) => {
+      .on(CharacteristicEventTypes.SET, (value, callback, _context, connection) => {
         if (!connection) {
           debug('Set event handler for SetupDataStreamTransport cannot be called from plugin! Connection undefined!')
           callback(HAPStatus.INVALID_VALUE_IN_REQUEST)

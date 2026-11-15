@@ -42,7 +42,7 @@ accessory
   .setCharacteristic(Characteristic.SerialNumber, 'MY-Serial-Number')
 
 // listen for the "identify" event for this Accessory
-accessory.on(AccessoryEventTypes.IDENTIFY, (paired, callback) => {
+accessory.on(AccessoryEventTypes.IDENTIFY, (_paired, callback) => {
   FAKE_LOCK.identify()
   callback() // success
 })

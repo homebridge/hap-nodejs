@@ -96,7 +96,7 @@ export const mockRecordingOptions: CameraRecordingOptions = {
 }
 
 export class MockDelegate implements CameraStreamingDelegate, CameraRecordingDelegate {
-  handleSnapshotRequest(request: SnapshotRequest, callback: SnapshotRequestCallback): void {
+  handleSnapshotRequest(_request: SnapshotRequest, callback: SnapshotRequestCallback): void {
     callback(undefined, MOCK_IMAGE)
   }
 

@@ -210,6 +210,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(accessory): stop publish writing the advertiser it chose into the publish info of the caller
 - refactor: mark members which replace an inherited one with override and turn on noImplicitOverride
 - refactor: return undefined in the open on every code path and turn on noImplicitReturns
+- refactor: prefix parameters which are never read with an underscore and turn on noUnusedParameters
 
 ### Homebridge Dependencies
 

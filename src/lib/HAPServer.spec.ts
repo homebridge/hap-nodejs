@@ -486,7 +486,7 @@ describe('HAPServer', () => {
       server.allowInsecureRequest = true
       const [port] = await bindServer(server)
 
-      server.on(HAPServerEventTypes.SET_CHARACTERISTICS, (connection, writeRequest, callback) => {
+      server.on(HAPServerEventTypes.SET_CHARACTERISTICS, (_connection, writeRequest, callback) => {
         callback(undefined, {
           characteristics: writeRequest.characteristics.map(c => ({ aid: c.aid, iid: c.iid, status: HAPStatus.SUCCESS })),
         })
@@ -946,7 +946,7 @@ describe('HAPServer', () => {
       expect(objects[TLVValues.ERROR_CODE]).toEqual(Buffer.from([TLVErrorCode.UNKNOWN]))
 
       // the session still uses its keys
-      server.on(HAPServerEventTypes.ACCESSORIES, (connection, callback) => callback(undefined, { accessories: [] }))
+      server.on(HAPServerEventTypes.ACCESSORIES, (_connection, callback) => callback(undefined, { accessories: [] }))
       await expect(client.sendAccessoriesRequest()).resolves.toEqual({ accessories: [] })
     })
 
@@ -1250,7 +1250,7 @@ describe('HAPServer', () => {
         ],
       }
 
-      server.on(HAPServerEventTypes.SET_CHARACTERISTICS, (connection, request, callback) => {
+      server.on(HAPServerEventTypes.SET_CHARACTERISTICS, (_connection, request, callback) => {
         expect(request).toEqual(writeRequest)
         callback(undefined, {
           characteristics: [

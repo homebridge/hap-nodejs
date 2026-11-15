@@ -757,7 +757,7 @@ describe('Characteristic', () => {
       const characteristic = createCharacteristic(Formats.UINT8)
 
       const result = Array.from(characteristic.validValuesIterator())
-      expect(result).toEqual(Array.from(new Uint8Array(256).map((value, i) => i)))
+      expect(result).toEqual(Array.from(new Uint8Array(256).map((_value, i) => i)))
     })
 
     // we could do the same for UINT16, UINT32 and UINT64 but i think thats kind of pointless and takes to long
@@ -2379,7 +2379,7 @@ describe('Characteristic', () => {
       // throw HapStatusError - should not trigger characteristic warning
       mock.mockReset()
       characteristic.removeAllListeners('set')
-      characteristic.on('set', (value, callback) => {
+      characteristic.on('set', (_value, callback) => {
         callback(new HapStatusError(HAPStatus.RESOURCE_BUSY))
       })
       await expect(characteristic.handleSetRequest('hello')).rejects.toEqual(HAPStatus.RESOURCE_BUSY)
@@ -2389,7 +2389,7 @@ describe('Characteristic', () => {
       // throw number - should not trigger characteristic warning
       mock.mockReset()
       characteristic.removeAllListeners('set')
-      characteristic.on('set', (value, callback) => {
+      characteristic.on('set', (_value, callback) => {
         callback(HAPStatus.RESOURCE_BUSY)
       })
       await expect(characteristic.handleSetRequest('hello')).rejects.toEqual(HAPStatus.RESOURCE_BUSY)
@@ -2399,7 +2399,7 @@ describe('Characteristic', () => {
       // throw out of range number - should convert status code to SERVICE_COMMUNICATION_FAILURE
       mock.mockReset()
       characteristic.removeAllListeners('set')
-      characteristic.on('set', (value, callback) => {
+      characteristic.on('set', (_value, callback) => {
         callback(234234234234 as HAPStatus)
       })
       await expect(characteristic.handleSetRequest('hello')).rejects.toEqual(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
@@ -2409,7 +2409,7 @@ describe('Characteristic', () => {
       // throw other error - callback style setters should still not trigger warning when error is passed in
       mock.mockReset()
       characteristic.removeAllListeners('set')
-      characteristic.on('set', (value, callback) => {
+      characteristic.on('set', (_value, callback) => {
         callback(new Error('Something else'))
       })
       await expect(characteristic.handleSetRequest('hello')).rejects.toEqual(HAPStatus.SERVICE_COMMUNICATION_FAILURE)
@@ -2425,7 +2425,7 @@ describe('Characteristic', () => {
       })
       const warning = vi.spyOn(characteristic, 'characteristicWarning')
       let answer: CharacteristicSetCallback | undefined
-      characteristic.on('set', (value, callback) => {
+      characteristic.on('set', (_value, callback) => {
         answer = callback // the plugin answers later, from its own code
       })
 

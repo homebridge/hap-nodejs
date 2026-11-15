@@ -327,7 +327,7 @@ class ExampleCamera implements CameraStreamingDelegate, CameraRecordingDelegate 
    */
 
   // eslint-disable-next-line unused-imports/no-unused-vars
-  async* handleRecordingStreamRequest(streamId: number): AsyncGenerator<RecordingPacket> {
+  async* handleRecordingStreamRequest(_streamId: number): AsyncGenerator<RecordingPacket> {
     assert(!!this.configuration)
 
     /**
@@ -464,7 +464,7 @@ class ExampleCamera implements CameraStreamingDelegate, CameraRecordingDelegate 
   }
 
   // eslint-disable-next-line unused-imports/no-unused-vars
-  closeRecordingStream(streamId: number, reason?: HDSProtocolSpecificErrorReason): void {
+  closeRecordingStream(_streamId: number, _reason?: HDSProtocolSpecificErrorReason): void {
     if (this.server) {
       this.server.destroy()
       this.server = undefined

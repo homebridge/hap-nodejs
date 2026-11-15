@@ -15,7 +15,7 @@ describe('eventedhttp', () => {
   let clients: HAPHTTPClient[]
   let server: EventedHTTPServer
 
-  const defaultRequestHandler = (connection: any, request: any, response: ServerResponse) => {
+  const defaultRequestHandler = (_connection: any, _request: any, response: ServerResponse) => {
     response.writeHead(HAPHTTPCode.OK, { 'Content-Type': 'plain/text' })
     response.end('Hello World', 'ascii')
   }
@@ -59,7 +59,7 @@ describe('eventedhttp', () => {
     const connectionOpened: Promise<HAPConnection> = awaitEventOnce(server, EventedHTTPServerEvent.CONNECTION_OPENED)
     const connectionClosed: Promise<HAPConnection> = awaitEventOnce(server, EventedHTTPServerEvent.CONNECTION_CLOSED)
 
-    server.on(EventedHTTPServerEvent.REQUEST, (connection, request, response) => {
+    server.on(EventedHTTPServerEvent.REQUEST, (_connection, request, response) => {
       expect(request.method).toBe('GET')
       expect(request.url!.endsWith('/test?query=true')).toBeTruthy()
       response.writeHead(HAPHTTPCode.OK, { 'Content-Type': 'plain/text' })
@@ -306,7 +306,7 @@ describe('eventedhttp', () => {
 
   it('should not write an event into the middle of a response larger than 64 KiB', async () => {
     const body = 'x'.repeat(300_000)
-    server.once(EventedHTTPServerEvent.REQUEST, (connection: HAPConnection, request: IncomingMessage, response: ServerResponse) => {
+    server.once(EventedHTTPServerEvent.REQUEST, (connection: HAPConnection, _request: IncomingMessage, response: ServerResponse) => {
       connection.enableEventNotifications(1, 1)
       // an event to be delivered immediately (like a ProgrammableSwitchEvent) arrives while the response is being produced
       connection.sendEvent(1, 1, 'Hello Mars!', true)

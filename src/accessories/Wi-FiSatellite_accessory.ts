@@ -5,7 +5,7 @@ export const accessory = new Accessory('Wi-Fi Satellite', UUID)
 
 accessory.category = Categories.ROUTER
 
-accessory.on(AccessoryEventTypes.IDENTIFY, (paired: boolean, callback: VoidCallback) => {
+accessory.on(AccessoryEventTypes.IDENTIFY, (_paired: boolean, callback: VoidCallback) => {
   console.log('Identify the \'%s\'', accessory.displayName)
   callback()
 })
