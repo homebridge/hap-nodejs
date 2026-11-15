@@ -595,7 +595,7 @@ export class RemoteController<O = unknown> extends EventEmitter
         // e.g. the remote was set inactive in the meantime; throwing inside the timer would crash the process
         debug('Failed to release button %d: %s', button, errorMessage(error))
       }
-    }, time)
+    }, Math.min(time, 2 ** 31 - 1)) // Node fires a timer of more than 2^31 - 1 ms (24.8 days) after 1 ms instead
     timeout.unref() // a pending release must not keep the process alive
     this.buttonReleaseTimeouts.add(timeout)
   }

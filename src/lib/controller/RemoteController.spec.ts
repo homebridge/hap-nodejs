@@ -338,6 +338,27 @@ describe('RemoteController', () => {
       }
     })
 
+    it('should not release the button after 1 ms when the time is longer than a timer can wait', async () => {
+      vi.useFakeTimers()
+      try {
+        const controller = createController()
+        await writeTargetControl(controller, Operation.ADD, targetTLV(1, 'Living Room', [
+          buttonTLV(101, 1),
+        ]))
+        // @ts-expect-error: private access
+        controller.handleActiveWrite(true, () => {}, new EventEmitter())
+        const release = vi.spyOn(controller, 'releaseButton')
+
+        controller.pushAndReleaseButton(ButtonType.MENU, 2 ** 32)
+        vi.advanceTimersByTime(1000)
+
+        expect(release).not.toHaveBeenCalled()
+        controller.handleControllerRemoved()
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
     it.each([
       {
         name: 'the controller is removed',

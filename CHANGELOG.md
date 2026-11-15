@@ -241,6 +241,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - perf(datastream): hold an incomplete frame in one growing buffer instead of a list of its chunks
 - docs(datastream): fix two comments about request ids and what sendRequest answers
 - fix(remote): forget every target of a data stream connection which closed, not only the first
+- fix(remote): cap the time of pushAndReleaseButton so a long one does not release after 1 ms
 
 ### Homebridge Dependencies
 
