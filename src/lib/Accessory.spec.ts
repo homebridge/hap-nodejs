@@ -1,11 +1,6 @@
 import type { Mock, MockInstance } from 'vitest'
 
-import { Buffer } from 'node:buffer'
-import crypto from 'node:crypto'
-
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-
-import {
+import type {
   AccessoriesResponse,
   CharacteristicJsonObject,
   CharacteristicReadData,
@@ -18,25 +13,39 @@ import {
   InterfaceName,
   IPAddress,
   ResourceRequest,
+} from '../types.js'
+import type { PublishInfo } from './Accessory.js'
+import type {
+  CharacteristicGetCallback,
+  CharacteristicSetCallback,
+} from './Characteristic.js'
+import type { Controller, ControllerIdentifier, ControllerServiceMap } from './controller/index.js'
+import type { IdentifyCallback } from './HAPServer.js'
+import type { PairingInformation } from './model/AccessoryInfo.js'
+
+import { Buffer } from 'node:buffer'
+import crypto from 'node:crypto'
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+import {
   ResourceRequestType,
 } from '../types.js'
-import { Accessory, AccessoryEventTypes, Categories, CharacteristicWarningType, MDNSAdvertiser, PublishInfo } from './Accessory.js'
+import { Accessory, AccessoryEventTypes, Categories, CharacteristicWarningType, MDNSAdvertiser } from './Accessory.js'
 import { AvahiAdvertiser, BonjourHAPAdvertiser, CiaoAdvertiser } from './Advertiser.js'
 import { Bridge } from './Bridge.js'
 import {
   Access,
   Characteristic,
   CharacteristicEventTypes,
-  CharacteristicGetCallback,
-  CharacteristicSetCallback,
   Formats,
   Perms,
   Units,
 } from './Characteristic.js'
 import { createCameraControllerOptions, MOCK_IMAGE } from './controller/CameraController.spec.js'
-import { CameraController, Controller, ControllerIdentifier, ControllerServiceMap } from './controller/index.js'
-import { HAPHTTPCode, HAPServer, HAPStatus, IdentifyCallback, TLVErrorCode } from './HAPServer.js'
-import { AccessoryInfo, PairingInformation, PermissionTypes } from './model/AccessoryInfo.js'
+import { CameraController } from './controller/index.js'
+import { HAPHTTPCode, HAPServer, HAPStatus, TLVErrorCode } from './HAPServer.js'
+import { AccessoryInfo, PermissionTypes } from './model/AccessoryInfo.js'
 import { IdentifierCache } from './model/IdentifierCache.js'
 import { Service } from './Service.js'
 import { EventedHTTPServer, HAPConnection } from './util/eventedhttp.js'

@@ -1,3 +1,6 @@
+import type { AccessoryJsonObject, CharacteristicJsonObject } from '../../types.js'
+import type { HAPConnection } from '../util/eventedhttp.js'
+
 import { AssertionError } from 'node:assert'
 import { Buffer } from 'node:buffer'
 import fs from 'node:fs'
@@ -7,10 +10,9 @@ import { format } from 'node:util'
 import createDebug from 'debug'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { AccessoryJsonObject, CharacteristicJsonObject } from '../../types.js'
 import { Categories } from '../Accessory.js'
 import { Formats, Perms } from '../Characteristic.js'
-import { EventedHTTPServer, HAPConnection } from '../util/eventedhttp.js'
+import { EventedHTTPServer } from '../util/eventedhttp.js'
 import { AccessoryInfo, PermissionTypes } from './AccessoryInfo.js'
 import { HAPStorage } from './HAPStorage.js'
 

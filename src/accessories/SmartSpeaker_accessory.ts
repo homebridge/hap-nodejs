@@ -1,11 +1,14 @@
+import type {
+  CharacteristicGetCallback,
+  CharacteristicSetCallback,
+  CharacteristicValue,
+} from '../index.js'
+
 import {
   Accessory,
   Categories,
   Characteristic,
   CharacteristicEventTypes,
-  CharacteristicGetCallback,
-  CharacteristicSetCallback,
-  CharacteristicValue,
   Service,
   uuid,
 } from '../index.js'

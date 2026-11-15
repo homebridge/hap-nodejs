@@ -1,3 +1,5 @@
+import type { HAPEncryption } from './eventedhttp.js'
+
 /* global NodeJS */
 import assert from 'node:assert'
 import { Buffer } from 'node:buffer'
@@ -5,8 +7,6 @@ import crypto from 'node:crypto'
 import process from 'node:process'
 
 import hkdf from 'futoin-hkdf'
-
-import { HAPEncryption } from './eventedhttp.js'
 
 if (!crypto.getCiphers().includes('chacha20-poly1305')) {
   // every supported Node.js version has this cipher, unless its OpenSSL was built without it or runs in FIPS mode

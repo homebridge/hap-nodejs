@@ -1,8 +1,10 @@
+import type { SerializedService } from './Service.js'
+import type { HAPConnection } from './util/eventedhttp.js'
+
 import { describe, expect, it, vi } from 'vitest'
 
 import { Characteristic, CharacteristicEventTypes } from './Characteristic.js'
-import { SerializedService, Service } from './Service.js'
-import { HAPConnection } from './util/eventedhttp.js'
+import { Service } from './Service.js'
 import * as uuid from './util/uuid.js'
 
 function createService() {

@@ -1,12 +1,15 @@
 // here's a fake hardware device that we'll expose to HomeKit
+import type {
+  CharacteristicSetCallback,
+  CharacteristicValue,
+  NodeCallback,
+} from '../index.js'
+
 import {
   Accessory,
   Categories,
   Characteristic,
   CharacteristicEventTypes,
-  CharacteristicSetCallback,
-  CharacteristicValue,
-  NodeCallback,
   Service,
   uuid,
 } from '../index.js'

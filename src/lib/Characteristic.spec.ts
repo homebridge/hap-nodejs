@@ -1,3 +1,12 @@
+import type {
+  CharacteristicChange,
+  CharacteristicGetCallback,
+  CharacteristicProps,
+  CharacteristicSetCallback,
+  SerializedCharacteristic,
+} from './Characteristic.js'
+import type { HAPConnection } from './util/eventedhttp.js'
+
 import { Buffer } from 'node:buffer'
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -6,21 +15,15 @@ import { CharacteristicWarningType } from './Accessory.js'
 import {
   Access,
   Characteristic,
-  CharacteristicChange,
   CharacteristicEventTypes,
-  CharacteristicGetCallback,
-  CharacteristicProps,
-  CharacteristicSetCallback,
   describePerms,
   Formats,
   isValidPerms,
   Perms,
-  SerializedCharacteristic,
   Units,
 } from './Characteristic.js'
 import { SelectedRTPStreamConfiguration } from './definitions/index.js'
 import { HAPStatus } from './HAPServer.js'
-import { HAPConnection } from './util/eventedhttp.js'
 import { HapStatusError } from './util/hapStatusError.js'
 import * as uuid from './util/uuid.js'
 

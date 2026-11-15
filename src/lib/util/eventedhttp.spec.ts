@@ -1,7 +1,9 @@
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import type { AddressInfo } from 'node:net'
+
 import { Buffer } from 'node:buffer'
 import { EventEmitter } from 'node:events'
-import { IncomingMessage, ServerResponse } from 'node:http'
-import net, { AddressInfo } from 'node:net'
+import net from 'node:net'
 import os from 'node:os'
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'

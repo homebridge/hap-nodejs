@@ -1,18 +1,21 @@
+import type { SrpServer } from 'fast-srp-hap'
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import type { AddressInfo, Socket } from 'node:net'
+
 import type { CharacteristicEventNotification, EventNotification, PairingStates } from '../../internal-types.js'
+import type { CharacteristicValue, Nullable, SessionIdentifier } from '../../types.js'
 
 /* global NodeJS */
 import assert from 'node:assert'
 import { Buffer } from 'node:buffer'
 import { EventEmitter } from 'node:events'
-import http, { IncomingMessage, ServerResponse } from 'node:http'
-import net, { AddressInfo, Socket } from 'node:net'
+import http from 'node:http'
+import net from 'node:net'
 import os from 'node:os'
 
 import { getNetAddress } from '@homebridge/ciao/lib/util/domain-formatter.js'
 import createDebug from 'debug'
-import { SrpServer } from 'fast-srp-hap'
 
-import { CharacteristicValue, Nullable, SessionIdentifier } from '../../types.js'
 import { errorMessage } from './errors.js'
 import * as hapCrypto from './hapCrypto.js'
 import { getOSLoopbackAddressIfAvailable } from './net-utils.js'

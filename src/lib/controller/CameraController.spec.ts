@@ -1,3 +1,16 @@
+import type {
+  CameraRecordingOptions,
+  CameraStreamingOptions,
+  RecordingPacket,
+  SnapshotRequest,
+} from '../camera/index.js'
+import type {
+  CameraControllerOptions,
+  CameraRecordingDelegate,
+  CameraStreamingDelegate,
+  SnapshotRequestCallback,
+} from './index.js'
+
 import { Buffer } from 'node:buffer'
 import crypto from 'node:crypto'
 
@@ -9,14 +22,10 @@ import {
   AudioRecordingSamplerate,
   AudioStreamingCodecType,
   AudioStreamingSamplerate,
-  CameraRecordingOptions,
-  CameraStreamingOptions,
   EventTriggerOption,
   H264Level,
   H264Profile,
   MediaContainerType,
-  RecordingPacket,
-  SnapshotRequest,
   SRTPCryptoSuites,
   VideoCodecType,
 } from '../camera/index.js'
@@ -25,12 +34,8 @@ import { HAPStatus } from '../HAPServer.js'
 import { Service } from '../Service.js'
 import {
   CameraController,
-  CameraControllerOptions,
-  CameraRecordingDelegate,
-  CameraStreamingDelegate,
   DoorbellController,
   ResourceRequestReason,
-  SnapshotRequestCallback,
 } from './index.js'
 
 import '../definitions/index.js'

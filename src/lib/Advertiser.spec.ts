@@ -1,8 +1,9 @@
+import type { MessageBus } from 'dbus-native'
 import type { Mock } from 'vitest'
 
 import { EventEmitter } from 'node:events'
 
-import dbus, { DBusError, MessageBus } from 'dbus-native'
+import dbus, { DBusError } from 'dbus-native'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { AvahiAdvertiser, BonjourHAPAdvertiser, CiaoAdvertiser, DBusInvokeError, PairingFeatureFlag, ResolvedAdvertiser, StatusFlag } from './Advertiser.js'

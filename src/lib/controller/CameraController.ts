@@ -1,29 +1,22 @@
 /* global NodeJS */
-import { Buffer } from 'node:buffer'
-import crypto from 'node:crypto'
-import { EventEmitter } from 'node:events'
+import type { Buffer } from 'node:buffer'
 
-import createDebug from 'debug'
-
-import { CharacteristicValue, SessionIdentifier } from '../../types.js'
-import {
+import type { CharacteristicValue, SessionIdentifier } from '../../types.js'
+import type {
   CameraRecordingConfiguration,
   CameraRecordingOptions,
   CameraStreamingOptions,
-  EventTriggerOption,
   PrepareStreamRequest,
   PrepareStreamResponse,
-  RecordingManagement,
   RecordingManagementState,
   RecordingPacket,
-  RTPStreamManagement,
   RTPStreamManagementState,
   SnapshotRequest,
   StreamingRequest,
 } from '../camera/index.js'
-import { Characteristic, CharacteristicEventTypes, CharacteristicGetCallback, CharacteristicSetCallback } from '../Characteristic.js'
-import { DataStreamManagement, HDSProtocolSpecificErrorReason } from '../datastream/index.js'
-import {
+import type { CharacteristicGetCallback, CharacteristicSetCallback } from '../Characteristic.js'
+import type { HDSProtocolSpecificErrorReason } from '../datastream/index.js'
+import type {
   CameraOperatingMode,
   CameraRecordingManagement,
   DataStreamTransportManagement,
@@ -33,11 +26,25 @@ import {
   OccupancySensor,
   Speaker,
 } from '../definitions/index.js'
+import type { ControllerIdentifier, ControllerServiceMap, SerializableController, StateChangeDelegate } from './Controller.js'
+
+import crypto from 'node:crypto'
+import { EventEmitter } from 'node:events'
+
+import createDebug from 'debug'
+
+import {
+  EventTriggerOption,
+  RecordingManagement,
+  RTPStreamManagement,
+} from '../camera/index.js'
+import { Characteristic, CharacteristicEventTypes } from '../Characteristic.js'
+import { DataStreamManagement } from '../datastream/index.js'
 import { HAPStatus } from '../HAPServer.js'
 import { Service } from '../Service.js'
 import { errorMessage, errorStack } from '../util/errors.js'
 import { HapStatusError } from '../util/hapStatusError.js'
-import { ControllerIdentifier, ControllerServiceMap, DefaultControllerType, SerializableController, StateChangeDelegate } from './Controller.js'
+import { DefaultControllerType } from './Controller.js'
 
 const debug = createDebug('HAP-NodeJS:Camera:Controller')
 

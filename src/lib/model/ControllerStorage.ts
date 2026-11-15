@@ -1,11 +1,12 @@
+import type { MacAddress } from '../../types.js'
+import type { Accessory } from '../Accessory.js'
+import type { ControllerIdentifier, SerializableController } from '../controller/index.js'
+
 /* global NodeJS */
 import util from 'node:util'
 
 import createDebug from 'debug'
 
-import { MacAddress } from '../../types.js'
-import { Accessory } from '../Accessory.js'
-import { ControllerIdentifier, SerializableController } from '../controller/index.js'
 import { errorMessage, errorStack } from '../util/errors.js'
 import { HAPStorage } from './HAPStorage.js'
 

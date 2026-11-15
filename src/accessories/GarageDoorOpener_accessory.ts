@@ -1,13 +1,15 @@
+import type { CharacteristicSetCallback, CharacteristicValue,
+  NodeCallback,
+  VoidCallback } from '../index.js'
+
 import {
   Accessory,
   AccessoryEventTypes,
   Categories,
   Characteristic,
-  CharacteristicEventTypes, CharacteristicSetCallback, CharacteristicValue,
-  NodeCallback,
+  CharacteristicEventTypes,
   Service,
   uuid,
-  VoidCallback,
 } from '../index.js'
 
 const FAKE_GARAGE = {

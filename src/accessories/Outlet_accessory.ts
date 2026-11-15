@@ -1,15 +1,17 @@
+import type { CharacteristicSetCallback,
+  CharacteristicValue, NodeCallback,
+  VoidCallback } from '../index.js'
+import type { Nullable } from '../types.js'
+
 import {
   Accessory,
   AccessoryEventTypes,
   Categories,
   Characteristic,
-  CharacteristicEventTypes, CharacteristicSetCallback,
-  CharacteristicValue, NodeCallback,
+  CharacteristicEventTypes,
   Service,
   uuid,
-  VoidCallback,
 } from '../index.js'
-import { Nullable } from '../types.js'
 
 const err: Nullable<Error> = null // in case there were any problems
 

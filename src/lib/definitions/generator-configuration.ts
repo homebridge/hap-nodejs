@@ -1,7 +1,8 @@
+import type { GeneratedCharacteristic, GeneratedService } from './generate-definitions.js'
+
 import assert from 'node:assert'
 
 import { Access } from '../Characteristic.js'
-import { GeneratedCharacteristic, GeneratedService } from './generate-definitions.js'
 
 enum PropertyId {
   NOTIFY = 0x01,

@@ -1,3 +1,16 @@
+import type { CharacteristicValue } from '../../types.js'
+import type { CameraRecordingDelegate, StateChangeDelegate } from '../controller/index.js'
+import type {
+  DataStreamConnection,
+  DataStreamProtocolHandler,
+  EventHandler,
+  HDSMessage,
+  RequestHandler,
+} from '../datastream/index.js'
+import type { CameraOperatingMode, CameraRecordingManagement } from '../definitions/index.js'
+import type { VideoCodecType } from './index.js'
+import type { H264CodecParameters, H264Level, H264Profile, Resolution } from './RTPStreamManagement.js'
+
 /* global NodeJS */
 import { Buffer } from 'node:buffer'
 import crypto from 'node:crypto'
@@ -5,33 +18,24 @@ import { EventEmitter } from 'node:events'
 
 import createDebug from 'debug'
 
-import { CharacteristicValue } from '../../types.js'
 import { Access, Characteristic, CharacteristicEventTypes } from '../Characteristic.js'
-import { CameraRecordingDelegate, StateChangeDelegate } from '../controller/index.js'
 import {
-  DataStreamConnection,
   DataStreamConnectionEvent,
   DataStreamManagement,
-  DataStreamProtocolHandler,
-  EventHandler,
   HDSConnectionError,
   HDSConnectionErrorType,
-  HDSMessage,
   HDSProtocolError,
   HDSProtocolSpecificErrorReason,
   HDSStatus,
   Protocols,
-  RequestHandler,
   Topics,
 } from '../datastream/index.js'
-import { CameraOperatingMode, CameraRecordingManagement } from '../definitions/index.js'
 import { HAPStatus } from '../HAPServer.js'
 import { Service } from '../Service.js'
 import { errorMessage, errorStack } from '../util/errors.js'
 import { HapStatusError } from '../util/hapStatusError.js'
 import * as tlv from '../util/tlv.js'
-import { AudioBitrate, VideoCodecType } from './index.js'
-import { H264CodecParameters, H264Level, H264Profile, Resolution } from './RTPStreamManagement.js'
+import { AudioBitrate } from './index.js'
 
 const debug = createDebug('HAP-NodeJS:Camera:RecordingManagement')
 const hksvDebug = createDebug('HAP-NodeJS:HKSV')

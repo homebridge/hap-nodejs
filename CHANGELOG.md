@@ -211,6 +211,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - refactor: mark members which replace an inherited one with override and turn on noImplicitOverride
 - refactor: return undefined in the open on every code path and turn on noImplicitReturns
 - refactor: prefix parameters which are never read with an underscore and turn on noUnusedParameters
+- refactor: import types with import type and turn on the consistent-type-imports lint rule
 
 ### Homebridge Dependencies
 

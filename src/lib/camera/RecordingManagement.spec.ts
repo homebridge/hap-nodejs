@@ -1,3 +1,8 @@
+import type {
+  CameraRecordingConfiguration,
+  RecordingPacket,
+} from './RecordingManagement.js'
+
 import { Buffer } from 'node:buffer'
 import { EventEmitter } from 'node:events'
 import process from 'node:process'
@@ -11,11 +16,9 @@ import { HapStatusError } from '../util/hapStatusError.js'
 import {
   AudioRecordingCodecType,
   AudioRecordingSamplerate,
-  CameraRecordingConfiguration,
   EventTriggerOption,
   MediaContainerType,
   RecordingManagement,
-  RecordingPacket,
 } from './RecordingManagement.js'
 import { AudioBitrate, H264Level, H264Profile, VideoCodecType } from './RTPStreamManagement.js'
 

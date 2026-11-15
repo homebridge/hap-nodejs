@@ -2,8 +2,8 @@
 
 declare module 'simple-plist' {
 
-  import { Buffer } from 'node:buffer'
-  import { WriteFileOptions } from 'node:fs'
+  import type { Buffer } from 'node:buffer'
+  import type { WriteFileOptions } from 'node:fs'
 
   export function parse(content: Buffer | string, path: string): unknown
 

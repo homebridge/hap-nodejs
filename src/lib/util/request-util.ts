@@ -1,5 +1,7 @@
-import { CharacteristicValue, Nullable } from '../../types.js'
-import { CharacteristicProps, Formats } from '../Characteristic.js'
+import type { CharacteristicValue, Nullable } from '../../types.js'
+import type { CharacteristicProps } from '../Characteristic.js'
+
+import { Formats } from '../Characteristic.js'
 import { HAPStatus, IsKnownHAPStatusError } from '../HAPServer.js'
 
 /**

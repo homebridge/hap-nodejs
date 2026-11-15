@@ -1,5 +1,6 @@
+import type { Buffer } from 'node:buffer'
+
 import assert from 'node:assert'
-import { Buffer } from 'node:buffer'
 
 import { readUInt64LE } from './tlv.js'
 

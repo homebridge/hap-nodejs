@@ -1,6 +1,20 @@
+import type { AddressInfo } from 'node:net'
+
+import type {
+  AccessoriesResponse,
+  CharacteristicId,
+  CharacteristicReadData,
+  CharacteristicsWriteRequest,
+  CharacteristicsWriteResponse,
+  ResourceRequest,
+} from '../types.js'
+import type { IdentifyCallback } from './HAPServer.js'
+import type { PairingInformation } from './model/AccessoryInfo.js'
+import type { HAPConnection, HAPEncryption } from './util/eventedhttp.js'
+
 import { Buffer } from 'node:buffer'
 import crypto from 'node:crypto'
-import net, { AddressInfo } from 'node:net'
+import net from 'node:net'
 
 import createDebug from 'debug'
 import tweetnacl from 'tweetnacl'
@@ -11,12 +25,6 @@ import { HAPHTTPClient } from '../test-utils/HAPHTTPClient.js'
 import { PairSetupClient } from '../test-utils/PairSetupClient.js'
 import { PairVerifyClient } from '../test-utils/PairVerifyClient.js'
 import {
-  AccessoriesResponse,
-  CharacteristicId,
-  CharacteristicReadData,
-  CharacteristicsWriteRequest,
-  CharacteristicsWriteResponse,
-  ResourceRequest,
   ResourceRequestType,
 } from '../types.js'
 import { Accessory } from './Accessory.js'
@@ -27,13 +35,11 @@ import {
   HAPServer,
   HAPServerEventTypes,
   HAPStatus,
-  IdentifyCallback,
   IsKnownHAPStatusError,
   TLVErrorCode,
 } from './HAPServer.js'
-import { AccessoryInfo, PairingInformation, PermissionTypes } from './model/AccessoryInfo.js'
+import { AccessoryInfo, PermissionTypes } from './model/AccessoryInfo.js'
 import { Service } from './Service.js'
-import { HAPConnection, HAPEncryption } from './util/eventedhttp.js'
 import * as hapCrypto from './util/hapCrypto.js'
 import { awaitEventOnce, PromiseTimeout } from './util/promise-utils.js'
 import * as tlv from './util/tlv.js'

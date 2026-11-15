@@ -1,14 +1,6 @@
-import { Buffer } from 'node:buffer'
-import crypto from 'node:crypto'
-import { EventEmitter } from 'node:events'
-import { IncomingMessage, ServerResponse } from 'node:http'
-import { URL } from 'node:url'
+import type { IncomingMessage, ServerResponse } from 'node:http'
 
-import createDebug from 'debug'
-import { SRP, SrpServer } from 'fast-srp-hap'
-
-import { consideredTrue, HAPMimeTypes, PairingStates, PairMethods, TLVValues } from '../internal-types.js'
-import {
+import type {
   AccessoriesResponse,
   CharacteristicId,
   CharacteristicsReadRequest,
@@ -21,9 +13,20 @@ import {
   ResourceRequest,
   VoidCallback,
 } from '../types.js'
-import { AccessoryInfo, PairingInformation, PermissionTypes } from './model/AccessoryInfo.js'
+import type { AccessoryInfo, PairingInformation, PermissionTypes } from './model/AccessoryInfo.js'
+import type { HAPConnection, HAPUsername } from './util/eventedhttp.js'
+
+import { Buffer } from 'node:buffer'
+import crypto from 'node:crypto'
+import { EventEmitter } from 'node:events'
+import { URL } from 'node:url'
+
+import createDebug from 'debug'
+import { SRP, SrpServer } from 'fast-srp-hap'
+
+import { consideredTrue, HAPMimeTypes, PairingStates, PairMethods, TLVValues } from '../internal-types.js'
 import { errorMessage, errorStack } from './util/errors.js'
-import { EventedHTTPServer, EventedHTTPServerEvent, HAPConnection, HAPEncryption, HAPUsername } from './util/eventedhttp.js'
+import { EventedHTTPServer, EventedHTTPServerEvent, HAPEncryption } from './util/eventedhttp.js'
 import * as hapCrypto from './util/hapCrypto.js'
 import { once } from './util/once.js'
 import * as tlv from './util/tlv.js'

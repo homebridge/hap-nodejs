@@ -1,6 +1,8 @@
+import type { CharacteristicProps } from '../Characteristic.js'
+
 import { describe, expect, it } from 'vitest'
 
-import { CharacteristicProps, Formats, Perms } from '../Characteristic.js'
+import { Formats, Perms } from '../Characteristic.js'
 import { formatOutgoingCharacteristicValue } from './request-util.js'
 
 function createProps(format: Formats, props?: Partial<CharacteristicProps>): CharacteristicProps {

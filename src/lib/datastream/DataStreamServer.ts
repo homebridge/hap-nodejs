@@ -1,14 +1,18 @@
+import type { Socket } from 'node:net'
+
+import type { HAPConnection } from '../util/eventedhttp.js'
+
 /* global NodeJS */
 import assert from 'node:assert'
 import { Buffer } from 'node:buffer'
 import crypto from 'node:crypto'
 import { EventEmitter } from 'node:events'
-import net, { Socket } from 'node:net'
+import net from 'node:net'
 
 import createDebug from 'debug'
 
 import { errorMessage, errorStack } from '../util/errors.js'
-import { HAPConnection, HAPConnectionEvent } from '../util/eventedhttp.js'
+import { HAPConnectionEvent } from '../util/eventedhttp.js'
 import * as hapCrypto from '../util/hapCrypto.js'
 import { DataStreamParser, DataStreamReader, DataStreamWriter, Int64 } from './DataStreamParser.js'
 
