@@ -230,6 +230,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(storage): type getItem without a type argument as any again so typed plugin code still builds
 - fix(camera): ignore a late error answer for a stream session which already ended
 - fix(camera): answer a stream setup in proxy mode for a camera without audio instead of failing
+- fix(doorbell): warn instead of throwing when the doorbell rings while it is not on an accessory
 
 ### Homebridge Dependencies
 
