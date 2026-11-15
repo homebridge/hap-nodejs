@@ -475,6 +475,11 @@ export class Accessory extends EventEmitter {
    */
   private readonly bridgedAccessoryListeners = new Map<Accessory, BridgedAccessoryListeners>()
   /**
+   * The characteristics of services removed since the last configuration update, by `<aid>.<iid>`. Kept on the published accessory,
+   * for its bridged accessories as well, until {@link dropStaleEventRegistrations} has looked at them.
+   */
+  private readonly removedCharacteristics = new Map<EventName, Characteristic>()
+  /**
    * This property captures the time when we last served a /accessories request.
    * For multiple bursts of /accessories request we don't want to always contact GET handlers
    */
@@ -622,6 +627,16 @@ export class Accessory extends EventEmitter {
         this.primaryService = undefined
       }
       this.removeLinkedService(service) // remove it from linked service entries on the local accessory
+
+      const published = this.getPrimaryAccessory()
+      if (published._server && this.aid != null) {
+        // a connected client may be subscribed to them, see dropStaleEventRegistrations()
+        for (const characteristic of service.characteristics) {
+          if (characteristic.iid != null) {
+            published.removedCharacteristics.set(`${this.aid}.${characteristic.iid}`, characteristic)
+          }
+        }
+      }
 
       if (!this.bridged) {
         this.enqueueConfigurationUpdate()
@@ -1491,6 +1506,7 @@ export class Accessory extends EventEmitter {
         // sure to omit actual values since these are not part of the "configuration".
         try {
           const config = this.internalHAPRepresentation()
+          this.dropStaleEventRegistrations()
           if (this._accessoryInfo?.checkForCurrentConfigurationNumberIncrement(config)) {
             this._advertiser.updateAdvertisement()
           }
@@ -1508,6 +1524,27 @@ export class Accessory extends EventEmitter {
     // 1s is fine, HomeKit is built so that no iid or aid conflicts occur with configuration updates.
     // Thus, the only thing happening when the txt update arrives late is already removed accessories/services
     // not responding or new accessories/services not yet shown
+  }
+
+  /**
+   * Ends the subscriptions of connected clients to characteristics which were removed, with their service or on their own.
+   * A client keeps such a registration until it disconnects, and the removed characteristic is never told that nobody listens anymore.
+   *
+   * Runs after the ids were assigned for a changed configuration, and only while unused ids are purged: the id of a removed
+   * characteristic is forgotten then and never handed out again, so the registration can never mean anything again. A service
+   * which was removed and added back before this runs has kept its ids, and its subscriptions are left alone.
+   */
+  private dropStaleEventRegistrations(): void {
+    const removed = new Map(this.removedCharacteristics)
+    this.removedCharacteristics.clear()
+
+    if (!this._server || !this.shouldPurgeUnusedIDs) {
+      return
+    }
+
+    for (const event of this._server.disableStaleEventNotifications((aid, iid) => this.findCharacteristic(aid, iid) !== undefined)) {
+      removed.get(event)?.unsubscribe()
+    }
   }
 
   private onListening(port: number, hostname: string): void {

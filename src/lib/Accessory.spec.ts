@@ -632,6 +632,116 @@ describe('Accessory', () => {
       })
     })
 
+    describe('event registrations of removed services and characteristics', () => {
+      let bridge: Bridge
+      let server: HAPServer
+      let client: HAPConnection
+      let registeredEvents: Set<string>
+      let on: Characteristic
+      let lightOn: Characteristic
+      let switchService: Service
+
+      const subscribe = async (target: Accessory, characteristic: Characteristic) => {
+        const done = vi.fn()
+        // @ts-expect-error: private access
+        bridge.handleSetCharacteristics(client, {
+          characteristics: [
+            { aid: target.aid!, iid: characteristic.iid!, ev: true },
+          ],
+        }, done)
+        await vi.advanceTimersByTimeAsync(0)
+        expect(done).toHaveBeenCalled()
+      }
+
+      beforeEach(() => {
+        vi.useFakeTimers()
+
+        // made after the timers were faked: the constructors already queue the first configuration update
+        bridge = new Bridge('TestBridge', uuid.generate('bridge with removed services'))
+        accessory = new Accessory(TEST_DISPLAY_NAME, TEST_UUID)
+        switchService = accessory.addService(Service.Switch, 'Switch')
+        on = switchService.getCharacteristic(Characteristic.On)
+        lightOn = accessory.addService(Service.Lightbulb, 'Light').getCharacteristic(Characteristic.On)
+        bridge.addBridgedAccessory(accessory)
+        vi.advanceTimersByTime(1500)
+
+        // a published bridge with one connected client, without the network
+        server = new HAPServer(accessoryInfoUnpaired)
+        registeredEvents = new Set()
+        client = Object.assign(Object.create(HAPConnection.prototype), { username: clientUsername0, registeredEvents })
+        // @ts-expect-error: private access
+        server.httpServer.connections.add(client)
+
+        const internals = bridge as any
+        internals._accessoryInfo = accessoryInfoUnpaired
+        internals._identifierCache = new IdentifierCache(serverUsername)
+        internals._advertiser = {
+          updateAdvertisement: vi.fn(),
+          destroy: vi.fn(),
+        }
+        internals._server = server
+        bridge._assignIDs(bridge._identifierCache!)
+      })
+
+      afterEach(async () => {
+        // @ts-expect-error: private access
+        server.httpServer.connections.delete(client)
+        await bridge.unpublish()
+        vi.useRealTimers()
+      })
+
+      it('drops the registration for a removed service and tells its characteristic nobody listens anymore', async () => {
+        const unsubscribed = vi.fn()
+        on.on(CharacteristicEventTypes.UNSUBSCRIBE, unsubscribed)
+        await subscribe(accessory, on)
+        await subscribe(accessory, lightOn)
+        expect([...registeredEvents]).toEqual([`${accessory.aid}.${on.iid}`, `${accessory.aid}.${lightOn.iid}`])
+
+        accessory.removeService(switchService)
+        vi.advanceTimersByTime(1500) // the configuration update
+
+        expect([...registeredEvents]).toEqual([`${accessory.aid}.${lightOn.iid}`]) // the others are untouched
+        expect(unsubscribed).toHaveBeenCalledTimes(1)
+      })
+
+      it('drops the registration for a removed characteristic', async () => {
+        await subscribe(accessory, on)
+
+        switchService.removeCharacteristic(on)
+        vi.advanceTimersByTime(1500) // the configuration update
+
+        expect(registeredEvents.size).toBe(0)
+      })
+
+      it('keeps the registration for a service which is removed and added back with the same ids', async () => {
+        const unsubscribed = vi.fn()
+        on.on(CharacteristicEventTypes.UNSUBSCRIBE, unsubscribed)
+        await subscribe(accessory, on)
+
+        accessory.removeService(switchService)
+        accessory.addService(switchService)
+        vi.advanceTimersByTime(1500) // the configuration update
+
+        expect([...registeredEvents]).toEqual([`${accessory.aid}.${on.iid}`])
+        expect(unsubscribed).not.toHaveBeenCalled()
+      })
+
+      it('keeps the registration while unused ids are not purged, as the service can come back under the same ids', async () => {
+        bridge.disableUnusedIDPurge()
+        await subscribe(accessory, on)
+        const iid = on.iid
+
+        accessory.removeService(switchService)
+        vi.advanceTimersByTime(1500) // the configuration update
+        expect([...registeredEvents]).toEqual([`${accessory.aid}.${iid}`])
+
+        const back = accessory.addService(Service.Switch, 'Switch').getCharacteristic(Characteristic.On)
+        vi.advanceTimersByTime(1500)
+        expect(back.iid).toBe(iid)
+        expect([...registeredEvents]).toEqual([`${accessory.aid}.${iid}`])
+      })
+    })
+
     it('validates bridged accessories when the bridge is validated', () => {
       const bridge = new Bridge('TestBridge', uuid.generate('bridge validation delegation'))
       const bridgedAccessory = new Accessory('Bridged Accessory', uuid.generate('validated bridged accessory'))

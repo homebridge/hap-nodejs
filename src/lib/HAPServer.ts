@@ -393,6 +393,16 @@ export class HAPServer extends EventEmitter {
   }
 
   /**
+   * Removes the event registrations every connected client holds for a characteristic which does not exist anymore.
+   *
+   * @param exists - Tells if the characteristic with the given ids still exists.
+   * @returns the removed registrations as `<aid>.<iid>`, once for every connection that held one.
+   */
+  public disableStaleEventNotifications(exists: (aid: number, iid: number) => boolean): string[] {
+    return this.httpServer.disableStaleEventNotifications(exists)
+  }
+
+  /**
    * Send an event notification for the given characteristic and changed value to all connected clients.
    * If `originator` is specified, the given {@link HAPConnection} will be excluded from the broadcast.
    *
