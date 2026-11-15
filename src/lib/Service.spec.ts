@@ -3,7 +3,7 @@ import type { HAPConnection } from './util/eventedhttp.js'
 
 import { describe, expect, it, vi } from 'vitest'
 
-import { Characteristic, CharacteristicEventTypes } from './Characteristic.js'
+import { Characteristic, CharacteristicEventTypes, Formats, Perms } from './Characteristic.js'
 import { Service } from './Service.js'
 import * as uuid from './util/uuid.js'
 
@@ -154,6 +154,47 @@ describe('Service', () => {
   })
 
   describe('#toHAP', () => {
+    it('should reject, not leave an unhandled rejection, for a characteristic which cannot be represented', async () => {
+      const service = new Service.Switch('Bad')
+      service.addCharacteristic(new Characteristic('Bad', 'not-a-uuid', {
+        format: Formats.BOOL,
+        perms: [Perms.PAIRED_READ],
+      }))
+      service.iid = 8
+      let iid = 9
+      for (const characteristic of service.characteristics) {
+        characteristic.iid = iid++
+      }
+
+      await expect(service.toHAP({} as HAPConnection, false)).rejects.toThrow('not a valid UUID')
+    })
+
+    it('should reject, not throw from its timer, when a characteristic which timed out cannot be represented', async () => {
+      vi.useFakeTimers()
+      try {
+        const service = new Service.Switch('Slow')
+        service.iid = 8
+        let iid = 9
+        for (const characteristic of service.characteristics) {
+          characteristic.iid = iid++
+        }
+        service.on('characteristic-warning', () => undefined)
+        const on = service.getCharacteristic(Characteristic.On)
+        on.on(CharacteristicEventTypes.GET, () => undefined) // never answers
+
+        const response = service.toHAP({} as HAPConnection)
+        const settled = response.then(() => 'resolved', (error: Error) => error.message)
+        vi.spyOn(on, 'internalHAPRepresentation').mockImplementation(() => {
+          throw new Error('cannot be represented')
+        })
+
+        await vi.advanceTimersByTimeAsync(9000)
+        await expect(settled).resolves.toBe('cannot be represented')
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
     it('should not keep the process alive while it waits for a slow read handler', async () => {
       vi.useFakeTimers()
       const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout')

@@ -847,7 +847,7 @@ export class Service extends EventEmitter {
    * @private
    */
   toHAP(connection: HAPConnection, contactGetHandlers = true): Promise<ServiceJsonObject> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       assert(this.iid, `iid cannot be undefined for service '${this.displayName}'`)
       assert(this.characteristics.length, `service '${this.displayName}' does not have any characteristics!`)
 
@@ -885,11 +885,17 @@ export class Service extends EventEmitter {
         timeout = setTimeout(() => {
           timeout = undefined
 
-          for (const characteristic of missingCharacteristics) {
-            this.emitCharacteristicWarningEvent(characteristic, CharacteristicWarningType.TIMEOUT_READ,
-              `The read handler for the characteristic '${characteristic?.displayName
-              }' didn't respond at all! Please check that you properly call the callback!`)
-            service.characteristics.push(characteristic.internalHAPRepresentation()) // value is set to null
+          try {
+            for (const characteristic of missingCharacteristics) {
+              this.emitCharacteristicWarningEvent(characteristic, CharacteristicWarningType.TIMEOUT_READ,
+                `The read handler for the characteristic '${characteristic?.displayName
+                }' didn't respond at all! Please check that you properly call the callback!`)
+              service.characteristics.push(characteristic.internalHAPRepresentation()) // value is set to null
+            }
+          } catch (error) {
+            // thrown inside a timer, this would end the process
+            reject(error)
+            return
           }
 
           missingCharacteristics.clear()
@@ -916,6 +922,14 @@ export class Service extends EventEmitter {
             }
             resolve(service)
           }
+        }, (error: unknown) => {
+          // a characteristic which cannot be represented (like one with an invalid UUID, added after publish) fails the
+          // whole request, which is answered with an error, instead of an unhandled rejection which ends the process
+          if (timeout) {
+            clearTimeout(timeout)
+            timeout = undefined
+          }
+          reject(error)
         })
       }
     })
