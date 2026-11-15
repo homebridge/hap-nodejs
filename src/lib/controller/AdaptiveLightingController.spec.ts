@@ -45,7 +45,19 @@ function curve(length: number, temperature = 200): CurveEntry[] {
   }))
 }
 
-function buildUpdateTransition(lightbulb: Service, startMillis: number, entries: CurveEntry[], updateInterval = 60000): string {
+function uintLE(value: number, width: number): Buffer {
+  const buffer = Buffer.alloc(width)
+  buffer.writeUIntLE(value, 0, width)
+  return buffer
+}
+
+function buildUpdateTransition(
+  lightbulb: Service,
+  startMillis: number,
+  entries: CurveEntry[],
+  updateInterval: number | Buffer = 60000,
+  notifyIntervalThreshold: Buffer = uintLE(600000, 4),
+): string {
   const startTime = Buffer.alloc(8)
   startTime.writeBigUInt64LE(BigInt(startMillis - EPOCH_MILLIS_2001_01_01))
   const parameters = tlv.encode(0x01, Buffer.alloc(16, 0xAB), 0x02, startTime)
@@ -70,10 +82,9 @@ function buildUpdateTransition(lightbulb: Service, startMillis: number, entries:
     0x03, tlv.encode(0x01, tlv.writeUInt32(10), 0x02, tlv.writeUInt32(100)),
   )
 
-  const updateIntervalBuffer = Buffer.alloc(2)
-  updateIntervalBuffer.writeUInt16LE(updateInterval)
-  const notifyIntervalThreshold = Buffer.alloc(4)
-  notifyIntervalThreshold.writeUInt32LE(600000)
+  const updateIntervalBuffer = typeof updateInterval === 'number'
+    ? uintLE(updateInterval, 2)
+    : updateInterval
 
   const configuration = tlv.encode(
     0x01, tlv.writeVariableUIntLE(lightbulb.getCharacteristic(Characteristic.ColorTemperature).iid!),
@@ -191,6 +202,54 @@ describe('AdaptiveLightingController', () => {
       warn.mockRestore()
       controller.disableAdaptiveLighting()
     }
+  })
+
+  describe('the width of the interval values', () => {
+    it.each([
+      {
+        name: 'an update interval of four bytes',
+        updateInterval: uintLE(120000, 4),
+        notify: uintLE(600000, 4),
+        expected: [120000, 600000],
+      },
+      {
+        name: 'an update interval of one byte',
+        updateInterval: uintLE(200, 1),
+        notify: uintLE(600000, 4),
+        expected: [200, 600000],
+      },
+      {
+        name: 'a notify interval threshold of two bytes',
+        updateInterval: uintLE(60000, 2),
+        notify: uintLE(30000, 2),
+        expected: [60000, 30000],
+      },
+      {
+        name: 'a notify interval threshold of eight bytes',
+        updateInterval: uintLE(60000, 2),
+        notify: Buffer.concat([
+          uintLE(600000, 4),
+          uintLE(0, 4),
+        ]),
+        expected: [60000, 600000],
+      },
+    ])('should read $name by its real length', async ({ updateInterval, notify, expected }) => {
+      const { lightbulb, controller } = createController()
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      try {
+        await writeTransitionControl(lightbulb, buildUpdateTransition(lightbulb, Date.now(), curve(5), updateInterval, notify))
+
+        expect(warn).not.toHaveBeenCalled()
+        expect(controller.isAdaptiveLightingActive()).toBeTruthy()
+        expect([
+          controller.getAdaptiveLightingUpdateInterval(),
+          controller.getAdaptiveLightingNotifyIntervalThreshold(),
+        ]).toEqual(expected)
+      } finally {
+        warn.mockRestore()
+        controller.disableAdaptiveLighting()
+      }
+    })
   })
 
   describe('a time before the first point of the curve', () => {

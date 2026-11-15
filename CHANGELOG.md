@@ -198,6 +198,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): keep the endpoints response of the active stream when another controller is told busy
 - perf(datastream): join the chunks of an incoming frame once instead of again for every chunk
 - fix(camera): reject the rtp proxy setup once every port failed to bind instead of trying for ever
+- fix(controller): read the adaptive lighting update and notify intervals by the length that was sent
 
 ### Homebridge Dependencies
 
