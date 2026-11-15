@@ -287,6 +287,20 @@ export class EventedHTTPServer extends EventEmitter {
     return iids
   }
 
+  /**
+   * Removes the event registrations every connection holds for a characteristic which does not exist anymore.
+   *
+   * @param exists - Tells if the characteristic with the given ids still exists.
+   * @returns the removed registrations, once for every connection that held one.
+   */
+  public disableStaleEventNotifications(exists: (aid: number, iid: number) => boolean): EventName[] {
+    const removed: EventName[] = []
+    for (const connection of this.connections) {
+      removed.push(...connection.disableStaleEventNotifications(exists))
+    }
+    return removed
+  }
+
   private onConnection(socket: Socket): void {
     // eslint-disable-next-line ts/no-use-before-define
     const connection = new HAPConnection(this, socket)
@@ -736,6 +750,24 @@ export class HAPConnection extends EventEmitter {
       }
     }
     return iids
+  }
+
+  /**
+   * Removes the event registrations of this connection for a characteristic which does not exist anymore.
+   *
+   * @param exists - Tells if the characteristic with the given ids still exists.
+   * @returns the removed registrations.
+   */
+  public disableStaleEventNotifications(exists: (aid: number, iid: number) => boolean): EventName[] {
+    const removed: EventName[] = []
+    for (const event of this.registeredEvents) {
+      const [aid, iid] = event.split('.')
+      if (!exists(parseInt(aid, 10), parseInt(iid, 10))) {
+        this.registeredEvents.delete(event)
+        removed.push(event)
+      }
+    }
+    return removed
   }
 
   public hasEventNotifications(aid: number, iid: number): boolean {

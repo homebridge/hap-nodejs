@@ -599,6 +599,16 @@ describe('HAPConnection', () => {
     })
   })
 
+  it('disableStaleEventNotifications removes only the registrations of characteristics which do not exist anymore', () => {
+    const registeredEvents = new Set(['2.9', '2.10', '12.9', '1.9'])
+    const connection = { registeredEvents } as unknown as HAPConnection
+    const exists = vi.fn((aid: number, iid: number) => !(aid === 2 && iid === 10) && aid !== 12)
+
+    expect(HAPConnection.prototype.disableStaleEventNotifications.call(connection, exists)).toEqual(['2.10', '12.9'])
+    expect([...registeredEvents]).toEqual(['2.9', '1.9'])
+    expect(exists).toHaveBeenCalledWith(2, 10)
+  })
+
   it('disableEventNotificationsForAccessory removes only the registrations of that accessory', () => {
     const registeredEvents = new Set(['2.9', '2.10', '12.9', '1.9'])
     const connection = { registeredEvents } as unknown as HAPConnection
