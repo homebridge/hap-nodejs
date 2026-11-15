@@ -554,6 +554,24 @@ describe('Characteristic', () => {
       expectNoChange()
     })
 
+    it('should not cut an over-long string in the middle of an emoji', () => {
+      const characteristic = createCharacteristicWithProps({
+        format: Formats.STRING,
+        perms: [Perms.NOTIFY, Perms.PAIRED_READ],
+        maxLen: 5,
+      })
+      const warningMock = vi.spyOn(characteristic, 'characteristicWarning').mockImplementation(() => {})
+
+      // the emoji takes two UTF-16 code units, the 5th and the 6th: half of it would be an invalid character
+      characteristic.updateValue('Hall🔥 light')
+      expect(characteristic.value).toBe('Hall')
+      expect(warningMock).toHaveBeenCalledTimes(1)
+
+      // a cut between two characters stays where it is
+      characteristic.updateValue('Hello🔥')
+      expect(characteristic.value).toBe('Hello')
+    })
+
     it('setProps call should not remove error state', () => {
       const characteristic = createCharacteristicWithProps({
         format: Formats.STRING,
