@@ -245,6 +245,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(adaptive-lighting): refuse a transition curve of fewer than two entries, keep the running one
 - docs(accessory): say which controllers keep the event handlers of the plugin on removeController
 - fix(characteristic): ignore a minStep which is not a whole number for an integer format
+- fix(storage): say how to fix a persist file which the user can not read, like one saved with sudo
 
 ### Homebridge Dependencies
 
