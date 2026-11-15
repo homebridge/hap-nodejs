@@ -22,6 +22,7 @@ import util from 'node:util'
 import createDebug from 'debug'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { Accessory } from '../Accessory.js'
 import {
   AudioBitrate,
   AudioRecordingCodecType,
@@ -38,6 +39,7 @@ import {
   CameraController,
 } from '../controller/index.js'
 import { HAPStatus } from '../HAPServer.js'
+import { IdentifierCache } from '../model/IdentifierCache.js'
 import * as tlv from '../util/tlv.js'
 import * as uuid from '../util/uuid.js'
 import RTPProxy from './RTPProxy.js'
@@ -350,6 +352,44 @@ describe('RTPStreamManagement', () => {
         expect(output).toContain('11111111-1111-1111-1111-111111111111') // the line with the session was written
         expect(output).not.toContain('Master')
         expect(output).not.toContain('<Buffer')
+      } finally {
+        log.mockRestore()
+        createDebug.enable(namespaces)
+        vi.restoreAllMocks()
+        controller.handleFactoryReset()
+      }
+    })
+  })
+
+  describe('debug output of the accessory', () => {
+    it('should not contain the SetupEndpoints value of a write, which holds the SRTP keys', async () => {
+      const accessory = new Accessory('Cam', uuid.generate('srtp keys in the accessory debug log'))
+      const controller = new CameraController(buildControllerOptions(baseStreamingOptions))
+      accessory.configureController(controller)
+      accessory._identifierCache = new IdentifierCache('AA:BB:CC:DD:EE:FF')
+      accessory._assignIDs(accessory._identifierCache)
+      const setup = controller.streamManagements[0].getService().getCharacteristic(Characteristic.SetupEndpoints)
+      vi.spyOn(MockDelegate.prototype, 'prepareStream').mockImplementation(() => undefined)
+
+      const value = buildSetupEndpointsTlv()
+      const namespaces = createDebug.disable()
+      createDebug.enable('HAP-NodeJS:*')
+      const lines: string[] = []
+      const log = vi.spyOn(createDebug, 'log').mockImplementation((...args: unknown[]) => {
+        lines.push(util.format(...args))
+      })
+      try {
+        // @ts-expect-error: private method access
+        accessory.handleSetCharacteristics(buildMockConnection(), {
+          characteristics: [
+            { aid: 1, iid: setup.iid!, value },
+          ],
+        }, vi.fn())
+        await new Promise(resolve => setTimeout(resolve, 10))
+
+        const output = lines.join('\n')
+        expect(output).toContain('Processing characteristic set') // the lines were written
+        expect(output).not.toContain(value)
       } finally {
         log.mockRestore()
         createDebug.enable(namespaces)
