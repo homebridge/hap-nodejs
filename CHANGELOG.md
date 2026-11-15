@@ -225,6 +225,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(storage): leave a persist file which is not json alone until hap-nodejs saves or removes it
 - fix(service): answer /accessories with an error instead of crashing on a bad characteristic
 - fix(server): hold events until a request which arrived during a stalled event loop is answered
+- fix(server): refuse an add pairing request whose permission or public key is malformed
 
 ### Homebridge Dependencies
 

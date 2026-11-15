@@ -1060,6 +1060,49 @@ describe('HAPServer', () => {
         expect(objects[TLVValues.ERROR_CODE].readUInt8(0)).toEqual(TLVErrorCode.UNKNOWN)
       })
 
+      it.each([
+        [
+          'an empty PERMISSIONS value',
+          crypto.randomBytes(32),
+          Buffer.alloc(0),
+        ],
+        [
+          'a PERMISSIONS value which is neither user nor admin',
+          crypto.randomBytes(32),
+          Buffer.from([2]),
+        ],
+        [
+          'a PERMISSIONS value of two bytes',
+          crypto.randomBytes(32),
+          Buffer.from([1, 0]),
+        ],
+        [
+          'an empty PUBLIC_KEY',
+          Buffer.alloc(0),
+          Buffer.from([PermissionTypes.ADMIN]),
+        ],
+        [
+          'a PUBLIC_KEY which is not 32 bytes long',
+          crypto.randomBytes(31),
+          Buffer.from([PermissionTypes.ADMIN]),
+        ],
+      ])('ADD_PAIRING should reject %s', async (_title, publicKey, permissions) => {
+        const listener = vi.fn()
+        server.on(HAPServerEventTypes.ADD_PAIRING, listener)
+        const malformed = tlv.encode(
+          TLVValues.METHOD, PairMethods.ADD_PAIRING,
+          TLVValues.STATE, PairingStates.M1,
+          TLVValues.IDENTIFIER, thirdUsername,
+          TLVValues.PUBLIC_KEY, publicKey,
+          TLVValues.PERMISSIONS, permissions,
+        )
+        const httpResponse = await client.writeHTTPRequest('POST', '/pairings', malformed, { contentType: HAPMimeTypes.PAIRING_TLV8 })
+        const objects = tlv.decode(httpResponse.body)
+        expect(objects[TLVValues.STATE].readUInt8(0)).toEqual(PairingStates.M2)
+        expect(objects[TLVValues.ERROR_CODE].readUInt8(0)).toEqual(TLVErrorCode.UNKNOWN)
+        expect(listener).not.toHaveBeenCalled()
+      })
+
       it('REMOVE_PAIRING should reject when IDENTIFIER is missing', async () => {
         const malformed = tlv.encode(
           TLVValues.METHOD, PairMethods.REMOVE_PAIRING,

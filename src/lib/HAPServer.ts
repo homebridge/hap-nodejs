@@ -951,7 +951,12 @@ export class HAPServer extends EventEmitter {
     }
 
     if (method === PairMethods.ADD_PAIRING) {
-      if (!objects[TLVValues.IDENTIFIER] || !objects[TLVValues.PUBLIC_KEY] || !objects[TLVValues.PERMISSIONS]) {
+      // an empty or unknown permission would be stored as it is: an admin given one stops counting as admin, and the stored
+      // value makes every later LIST_PAIRINGS fail. A controller's long-term public key is an Ed25519 key of 32 bytes.
+      // 0 and 1 are PermissionTypes.USER and ADMIN (a type import only: AccessoryInfo loads Accessory, which loads this file)
+      const permissionsValue = objects[TLVValues.PERMISSIONS]
+      if (!objects[TLVValues.IDENTIFIER] || objects[TLVValues.PUBLIC_KEY]?.length !== 32 || permissionsValue?.length !== 1
+        || permissionsValue[0] > 1) {
         response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
         response.end(tlv.encode(TLVValues.STATE, PairingStates.M2, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
         return
