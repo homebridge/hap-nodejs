@@ -175,14 +175,15 @@ export class DataStreamManagement {
     const data = Buffer.from(value, 'base64')
     const objects = tlv.decode(data)
 
-    const sessionCommandType = objects[SetupDataStreamSessionTypes.SESSION_COMMAND_TYPE][0]
-    const transportType = objects[SetupDataStreamSessionTypes.TRANSPORT_TYPE][0]
+    // a missing entry is a malformed write (answered below), not a TypeError which is logged as a bug of the plugin
+    const sessionCommandType = objects[SetupDataStreamSessionTypes.SESSION_COMMAND_TYPE]?.[0]
+    const transportType = objects[SetupDataStreamSessionTypes.TRANSPORT_TYPE]?.[0]
     const controllerKeySalt = objects[SetupDataStreamSessionTypes.CONTROLLER_KEY_SALT]
 
     debug('Received setup write with command %s and transport type %s', SessionCommandType[sessionCommandType], TransportType[transportType])
 
     if (sessionCommandType === SessionCommandType.START_SESSION) {
-      if (transportType !== TransportType.HOMEKIT_DATA_STREAM || controllerKeySalt.length !== 32) {
+      if (transportType !== TransportType.HOMEKIT_DATA_STREAM || controllerKeySalt?.length !== 32) {
         callback(HAPStatus.INVALID_VALUE_IN_REQUEST)
         return
       }
