@@ -215,6 +215,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(types): export PairingStates so a plugin can name the type of the pairing state of a connection
 - chore(deps): replace futoin-hkdf with the hkdf of node.js and remove unused packages
 - ci: keep the npm publish token to the publish job, stay on npm 11 and pass refs as env
+- ci: pin the third-party actions to a commit
 
 ### Homebridge Dependencies
 

@@ -58,7 +58,7 @@ jobs:
       - name: Get Release Tag (Latest Only)
         if: steps.release-type.outputs.type == 'latest'
         id: get_version
-        uses: jannemattila/get-version-from-tag@v4
+        uses: jannemattila/get-version-from-tag@22de24a56e53ef11268538c9e6a77659a142afa7 # v4
 
       - name: Tag Info (Latest Only)
         if: steps.release-type.outputs.type == 'latest'
