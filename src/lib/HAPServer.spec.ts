@@ -1,9 +1,10 @@
 import { Buffer } from 'node:buffer'
 import crypto from 'node:crypto'
+import net, { AddressInfo } from 'node:net'
 
 import createDebug from 'debug'
 import tweetnacl from 'tweetnacl'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { HAPMimeTypes, PairingStates, PairMethods, TLVValues } from '../internal-types.js'
 import { HAPHTTPClient } from '../test-utils/HAPHTTPClient.js'
@@ -109,6 +110,50 @@ describe('HAPServer', () => {
     }
     server?.stop()
     server?.destroy()
+  })
+
+  it('names the accessory and the port when the port is already in use, and still throws', async () => {
+    const blocker = net.createServer()
+    await new Promise<void>(resolve => blocker.listen(0, 'localhost', resolve))
+    const port = (blocker.address() as AddressInfo).port
+
+    try {
+      accessoryInfoUnpaired.displayName = 'Test Bridge'
+      server = new HAPServer(accessoryInfoUnpaired)
+
+      // Node.js emits the error on the next tick, and what the emit throws is the uncaught exception which ends the process.
+      // Catching it here, at the emit, is the only place a test can look at it without ending the test run.
+      // @ts-expect-error: private access
+      const tcpServer: net.Server = server.httpServer.tcpServer
+      const emit = tcpServer.emit.bind(tcpServer)
+      const thrown = new Promise<unknown>((resolve) => {
+        vi.spyOn(tcpServer, 'emit').mockImplementation((event: string | symbol, ...args: unknown[]) => {
+          if (event !== 'error') {
+            return emit(event, ...args)
+          }
+          try {
+            emit(event, ...args)
+            resolve(undefined) // nothing was thrown: the error was swallowed
+          } catch (error) {
+            resolve(error)
+          }
+          return true
+        })
+      })
+
+      server.listen(port, 'localhost')
+
+      const error = await thrown as Error & { code?: string, syscall?: string, port?: number }
+      expect(error).toBeInstanceOf(Error)
+      expect(error.message).toMatch(new RegExp(`^\\[Test Bridge ${serverUsername}\\] The HAP server could not start on port ${port}: .*EADDRINUSE`))
+      expect((error.cause as Error).message).toContain('EADDRINUSE')
+      expect(error.code).toBe('EADDRINUSE')
+      expect(error.syscall).toBe('listen')
+      expect(error.port).toBe(port)
+    } finally {
+      vi.restoreAllMocks()
+      await new Promise(resolve => blocker.close(resolve))
+    }
   })
 
   it('simple unpaired identify', async () => {

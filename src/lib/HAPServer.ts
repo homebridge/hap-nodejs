@@ -357,7 +357,7 @@ export class HAPServer extends EventEmitter {
     this.accessoryInfo = accessoryInfo
     this.allowInsecureRequest = false
     // internal server that does all the actual communication
-    this.httpServer = new EventedHTTPServer()
+    this.httpServer = new EventedHTTPServer(() => `${accessoryInfo.displayName} ${accessoryInfo.username}`.trim())
     this.httpServer.on(EventedHTTPServerEvent.LISTENING, this.onListening.bind(this))
     this.httpServer.on(EventedHTTPServerEvent.REQUEST, this.handleRequestOnHAPConnection.bind(this))
     this.httpServer.on(EventedHTTPServerEvent.CONNECTION_CLOSED, this.handleConnectionClosed.bind(this))
