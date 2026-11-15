@@ -350,6 +350,21 @@ describe('DataStreamServer', () => {
       expect(session.socket.end).not.toHaveBeenCalled()
     })
 
+    it('should hold the bytes of a frame which arrives in tiny chunks without an object for every chunk', () => {
+      const session = setupSession()
+      session.socket.emit('data', Buffer.from([0x01, 0x0F, 0xFF, 0xFF])) // a frame of the largest size, not sent yet
+      const chunks = 10_000
+      for (let i = 0; i < chunks; i++) {
+        session.socket.emit('data', Buffer.alloc(1))
+      }
+
+      // every chunk which is still referenced from here costs a Buffer object of its own
+      const held: unknown[] = Object.values(session.connection).filter(value => Array.isArray(value))
+      expect(held.every(list => (list as unknown[]).length < 100)).toBe(true)
+      // @ts-expect-error: private property access
+      expect(session.connection.incompleteFrameLength).toBe(4 + chunks)
+    })
+
     it('should not copy the bytes it already holds again for every chunk of a large frame', () => {
       const session = setupSession()
       const events: any[] = []

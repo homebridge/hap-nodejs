@@ -238,6 +238,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(datastream): throw a data stream error for a message on a connection not identified yet
 - fix(datastream): catch an error of a response handler on the timeout of its request
 - fix(datastream): reject a data stream setup write with a missing entry as an invalid value
+- perf(datastream): hold an incomplete frame in one growing buffer instead of a list of its chunks
 
 ### Homebridge Dependencies
 
