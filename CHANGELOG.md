@@ -232,6 +232,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(camera): answer a stream setup in proxy mode for a camera without audio instead of failing
 - fix(doorbell): warn instead of throwing when the doorbell rings while it is not on an accessory
 - fix(accessory): keep tlv8 values, which can hold the camera stream keys, out of the debug log
+- fix(camera): answer a stream setup with an error when the plugin gives no error and no response
 
 ### Homebridge Dependencies
 
