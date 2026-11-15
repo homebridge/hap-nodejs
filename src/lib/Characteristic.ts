@@ -3020,6 +3020,12 @@ export class Characteristic extends EventEmitter {
         if (value.length > maxLength) {
           this.characteristicWarning(`characteristic was supplied illegal value: string '${value}' exceeded max length of ${maxLength}`, warningType)
           value = value.substring(0, maxLength)
+          // an emoji (and any character past U+FFFF) takes two UTF-16 code units: when the cut fell between them,
+          // drop the first half too, as half a character is not valid text
+          const last = value.charCodeAt(value.length - 1)
+          if (last >= 0xD800 && last <= 0xDBFF) {
+            value = value.substring(0, value.length - 1)
+          }
         }
 
         return value

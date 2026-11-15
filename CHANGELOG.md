@@ -218,6 +218,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - ci: pin the third-party actions to a commit
 - fix(storage): save the persist files, which hold the pairing keys, readable by their owner only
 - fix(controller): cap an adaptive lighting update interval past 24.8 days, not update every 1 ms
+- fix(characteristic): cut an over-long string without splitting an emoji in half
 
 ### Homebridge Dependencies
 
