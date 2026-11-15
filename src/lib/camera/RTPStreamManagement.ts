@@ -1207,12 +1207,7 @@ export class RTPStreamManagement {
 
         if (error || !response) {
           debug(`PrepareStream request encountered an error: ${error ? error.message : undefined}`)
-          this.setupEndpointsResponse = tlv.encode(
-            SetupEndpointsResponseTypes.SESSION_ID, uuid.write(sessionIdentifier),
-            SetupEndpointsResponseTypes.STATUS, SetupEndpointsStatus.ERROR,
-          ).toString('base64')
-
-          this.handleSessionClosed()
+          this.handleSessionClosed() // resets the SetupEndpoints answer to a plain error
           // an answer with neither an error nor a response must not tell the controller that the setup worked
           callback(error ?? HAPStatus.SERVICE_COMMUNICATION_FAILURE)
         } else {
@@ -1221,12 +1216,7 @@ export class RTPStreamManagement {
           } catch (error) {
             // the delegate usually calls back asynchronously, so nothing up the stack would catch this
             debug(`Failed to build the SetupEndpoints response from the PrepareStreamResponse: ${errorMessage(error)}`)
-            this.setupEndpointsResponse = tlv.encode(
-              SetupEndpointsResponseTypes.SESSION_ID, uuid.write(sessionIdentifier),
-              SetupEndpointsResponseTypes.STATUS, SetupEndpointsStatus.ERROR,
-            ).toString('base64')
-
-            this.handleSessionClosed()
+            this.handleSessionClosed() // resets the SetupEndpoints answer to a plain error
             callback(error instanceof Error
               ? error
               : new Error(String(error)))
@@ -1239,12 +1229,7 @@ export class RTPStreamManagement {
         callback(HAPStatus.SERVICE_COMMUNICATION_FAILURE) // as above: not the current session anymore
         return
       }
-      this.setupEndpointsResponse = tlv.encode(
-        SetupEndpointsResponseTypes.SESSION_ID, uuid.write(sessionIdentifier),
-        SetupEndpointsResponseTypes.STATUS, SetupEndpointsStatus.ERROR,
-      ).toString('base64')
-
-      this.handleSessionClosed()
+      this.handleSessionClosed() // resets the SetupEndpoints answer to a plain error
       callback(error)
     })
   }
