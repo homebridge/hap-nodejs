@@ -194,6 +194,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - build: stop shipping declaration maps which point at source files the package does not hold
 - chore: drop the stale maintainers field from package.json
 - ci: pin the wiki notification action to a commit
+- fix(datastream): answer the sessions which wait for the port when the server is destroyed too early
 
 ### Homebridge Dependencies
 

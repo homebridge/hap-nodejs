@@ -478,6 +478,13 @@ export class DataStreamServer extends EventEmitter {
     this.tcpPort = undefined
     this.state = ServerState.UNINITIALIZED
 
+    this.failPendingBinds(error)
+  }
+
+  /**
+   * Answers everybody who waits for the TCP server to start listening with the given error, each of them once.
+   */
+  private failPendingBinds(error: Error) {
     for (const { preparedSession, callback } of this.pendingBinds.splice(0)) {
       clearTimeout(preparedSession.connectTimeout)
       const index = this.preparedSessions.indexOf(preparedSession)
@@ -598,6 +605,10 @@ export class DataStreamServer extends EventEmitter {
       for (const connection of this.connections) {
         connection.close()
       }
+
+      // A server which is closed before it listens never reports `listening`,
+      // so nobody would answer those who still wait for its port.
+      this.failPendingBinds(new Error('The HomeKit Data Stream server was destroyed before it started to listen'))
     }
 
     if (this.connections.length > 0) {
