@@ -224,6 +224,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - ci: fix the labeler comment that says alpha pull requests get the beta label
 - fix(storage): leave a persist file which is not json alone until hap-nodejs saves or removes it
 - fix(service): answer /accessories with an error instead of crashing on a bad characteristic
+- fix(server): hold events until a request which arrived during a stalled event loop is answered
 
 ### Homebridge Dependencies
 

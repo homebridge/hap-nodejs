@@ -393,6 +393,39 @@ describe('eventedhttp', () => {
         socket.destroy()
       }
     })
+
+    it('should not write an event between a request and its response when the event loop stalls', async () => {
+      let connection: HAPConnection | undefined
+      server.on(EventedHTTPServerEvent.REQUEST, (hapConnection: HAPConnection, request: IncomingMessage, response: ServerResponse) => {
+        connection = hapConnection
+        hapConnection.enableEventNotifications(1, 1)
+        response.writeHead(HAPHTTPCode.OK, { 'Content-Type': 'plain/text' })
+        response.end(request.url === '/a'
+          ? 'first'
+          : 'second')
+      })
+      const { socket, received } = await rawClient()
+      try {
+        socket.write('GET /a HTTP/1.1\r\nHost: test\r\n\r\n')
+        await vi.waitFor(() => expect(received()).toContain('first'))
+
+        // a busy plugin blocks the event loop for 600 ms right after the second request arrived
+        // @ts-expect-error: private access
+        const tcpSocket: net.Socket = connection!.tcpSocket
+        tcpSocket.once('data', () => {
+          connection!.sendEvent(1, 1, true, true) // queued, as a request is in progress
+          const end = Date.now() + 600
+          while (Date.now() < end) { /* busy */ }
+        })
+        socket.write('GET /b HTTP/1.1\r\nHost: test\r\n\r\n')
+
+        await vi.waitFor(() => expect(received()).toContain('second'), { timeout: 3000 })
+        await vi.waitFor(() => expect(received()).toContain('EVENT/1.0'), { timeout: 3000 })
+        expect(received().indexOf('second')).toBeLessThan(received().indexOf('EVENT/1.0'))
+      } finally {
+        socket.destroy()
+      }
+    })
   })
 
   describe('internal HTTP server', () => {
