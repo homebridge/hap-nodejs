@@ -193,6 +193,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - build: drop the importHelpers option which does nothing at target ES2022
 - build: stop shipping declaration maps which point at source files the package does not hold
 - chore: drop the stale maintainers field from package.json
+- ci: pin the wiki notification action to a commit
 
 ### Homebridge Dependencies
 
