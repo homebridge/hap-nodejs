@@ -291,6 +291,97 @@ describe('DataStreamServer', () => {
     })
   })
 
+  describe('frames which arrive in chunks', () => {
+    // hello, an event, a frame of an unknown type (it is skipped) and a second event
+    function sessionWithStream(): { session: TestSession, stream: Buffer, events: unknown[] } {
+      const session = setupSession()
+      const events: unknown[] = []
+      session.server.onEventMessage('test', 'event', (_connection, message) => events.push(message))
+
+      const unknownFrame = Buffer.concat([
+        Buffer.from([0x02, 0, 0, 5]),
+        Buffer.alloc(5 + 16),
+      ])
+      const stream = Buffer.concat([
+        encryptedFrame(session, messagePayload({ protocol: 'control', request: 'hello', id: 1 })),
+        encryptedFrame(session, messagePayload({ protocol: 'test', event: 'event' }, {
+          number: 1,
+          data: Buffer.alloc(40, 0xAB),
+        })),
+        unknownFrame,
+        encryptedFrame(session, messagePayload({ protocol: 'test', event: 'event' }, { number: 2, text: 'second' })),
+      ])
+
+      return { session, stream, events }
+    }
+
+    function expectedEvents(): unknown[] {
+      const { session, stream, events } = sessionWithStream()
+      session.socket.emit('data', stream)
+      expect(events).toHaveLength(2)
+      return events
+    }
+
+    it('should decode the same messages when the data is split at any offset', () => {
+      const expected = expectedEvents()
+      const length = sessionWithStream().stream.length
+
+      for (let offset = 1; offset < length; offset++) {
+        const { session, stream, events } = sessionWithStream()
+        session.socket.emit('data', stream.subarray(0, offset))
+        session.socket.emit('data', stream.subarray(offset))
+
+        expect(events, `split at offset ${offset}`).toEqual(expected)
+        expect(session.socket.write, `split at offset ${offset}`).toHaveBeenCalledTimes(1) // the hello response
+        expect(session.socket.end, `split at offset ${offset}`).not.toHaveBeenCalled()
+      }
+    })
+
+    it.each([1, 2, 3, 5, 7, 16])('should decode the same messages when the data arrives in chunks of %d bytes', (size) => {
+      const expected = expectedEvents()
+      const { session, stream, events } = sessionWithStream()
+
+      for (let offset = 0; offset < stream.length; offset += size) {
+        session.socket.emit('data', stream.subarray(offset, offset + size))
+      }
+
+      expect(events).toEqual(expected)
+      expect(session.socket.write).toHaveBeenCalledTimes(1) // the hello response
+      expect(session.socket.end).not.toHaveBeenCalled()
+    })
+
+    it('should not copy the bytes it already holds again for every chunk of a large frame', () => {
+      const session = setupSession()
+      const events: any[] = []
+      session.server.onEventMessage('test', 'event', (_connection, message) => events.push(message))
+      session.socket.emit('data', encryptedFrame(session, messagePayload({ protocol: 'control', request: 'hello', id: 1 })))
+
+      const data = crypto.randomBytes(0x10000)
+      const frame = encryptedFrame(session, messagePayload({ protocol: 'test', event: 'event' }, { data }))
+      const chunkSize = 64
+
+      let copiedBytes = 0
+      const realConcat = Buffer.concat
+      const concatSpy = vi.spyOn(Buffer, 'concat').mockImplementation((list, totalLength) => {
+        copiedBytes += list.reduce((sum, entry) => sum + entry.length, 0)
+        return realConcat.call(Buffer, list, totalLength)
+      })
+      try {
+        for (let offset = 0; offset < frame.length; offset += chunkSize) {
+          session.socket.emit('data', frame.subarray(offset, offset + chunkSize))
+        }
+      } finally {
+        concatSpy.mockRestore()
+      }
+
+      expect(events).toHaveLength(1)
+      expect(events[0].data.equals(data)).toBe(true)
+      // More than a thousand chunks: joining what is there on every chunk copies about 500 times the frame.
+      // The frame is joined once now. The rest of the allowance is for the copies of the decryption.
+      expect(copiedBytes).toBeLessThan(4 * frame.length)
+    })
+  })
+
   describe('closing', () => {
     it('should destroy a closed socket which the remote never closes', () => {
       const { socket, connection } = setupSession()
