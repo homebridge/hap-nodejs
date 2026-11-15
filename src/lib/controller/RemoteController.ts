@@ -431,6 +431,7 @@ export class RemoteController<O = unknown> extends EventEmitter
   private targetConfigurationsString = ''
 
   private lastButtonEvent = ''
+  private readonly buttonReleaseTimeouts: Set<NodeJS.Timeout> = new Set() // pending releases of pushAndReleaseButton
 
   activeIdentifier = 0 // id of 0 means no device selected
   private activeConnection?: HAPConnection // session which marked this remote as active and listens for events and siri
@@ -579,7 +580,8 @@ export class RemoteController<O = unknown> extends EventEmitter
    */
   public pushAndReleaseButton(button: ButtonType, time = 200): void {
     this.pushButton(button)
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
+      this.buttonReleaseTimeouts.delete(timeout)
       try {
         this.releaseButton(button)
       } catch (error) {
@@ -587,6 +589,18 @@ export class RemoteController<O = unknown> extends EventEmitter
         debug('Failed to release button %d: %s', button, errorMessage(error))
       }
     }, time)
+    timeout.unref() // a pending release must not keep the process alive
+    this.buttonReleaseTimeouts.add(timeout)
+  }
+
+  /**
+   * Drops the pending releases of {@link pushAndReleaseButton}: there is no target left which could receive them.
+   */
+  private clearButtonReleaseTimeouts(): void {
+    for (const timeout of this.buttonReleaseTimeouts) {
+      clearTimeout(timeout)
+    }
+    this.buttonReleaseTimeouts.clear()
   }
 
   // ---------------------------------- CONFIGURATION ----------------------------------
@@ -1425,6 +1439,8 @@ export class RemoteController<O = unknown> extends EventEmitter
    * @private
    */
   handleControllerRemoved(): void {
+    this.clearButtonReleaseTimeouts()
+
     this.targetControlManagementService = undefined
     this.targetControlService = undefined
     this.siriService = undefined
@@ -1446,6 +1462,7 @@ export class RemoteController<O = unknown> extends EventEmitter
    */
   handleFactoryReset(): void {
     debug('Running factory reset. Resetting targets...')
+    this.clearButtonReleaseTimeouts()
     this.handleResetTargets(undefined)
     this.lastButtonEvent = ''
   }

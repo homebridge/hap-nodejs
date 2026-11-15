@@ -284,6 +284,66 @@ describe('RemoteController', () => {
     })
   })
 
+  describe('the release timer of a pushed button', () => {
+    async function pushMenuFor(time: number): Promise<{ controller: RemoteController, timer: ReturnType<typeof setTimeout> }> {
+      const controller = createController()
+      await writeTargetControl(controller, Operation.ADD, targetTLV(1, 'Living Room', [
+        buttonTLV(101, 1),
+      ]))
+      // @ts-expect-error: private access
+      controller.handleActiveWrite(true, () => {}, new EventEmitter())
+
+      const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout')
+      try {
+        controller.pushAndReleaseButton(ButtonType.MENU, time)
+        const index = setTimeoutSpy.mock.calls.findIndex(call => call[1] === time)
+        return { controller, timer: setTimeoutSpy.mock.results[index].value }
+      } finally {
+        setTimeoutSpy.mockRestore()
+      }
+    }
+
+    it('should not keep the process alive and still release the button', async () => {
+      vi.useFakeTimers()
+      try {
+        const { controller, timer } = await pushMenuFor(5000)
+        const release = vi.spyOn(controller, 'releaseButton')
+
+        expect(timer.hasRef()).toBe(false)
+        vi.advanceTimersByTime(5000)
+        expect(release).toHaveBeenCalledExactlyOnceWith(ButtonType.MENU)
+        // @ts-expect-error: private access
+        expect(controller.buttonReleaseTimeouts.size).toBe(0)
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
+    it.each([
+      {
+        name: 'the controller is removed',
+        remove: (controller: RemoteController) => controller.handleControllerRemoved(),
+      },
+      {
+        name: 'a factory reset runs',
+        remove: (controller: RemoteController) => controller.handleFactoryReset(),
+      },
+    ])('should be cancelled when $name', async ({ remove }) => {
+      vi.useFakeTimers()
+      try {
+        const { controller } = await pushMenuFor(5000)
+        const release = vi.spyOn(controller, 'releaseButton')
+
+        remove(controller)
+        vi.advanceTimersByTime(5000)
+
+        expect(release).not.toHaveBeenCalled()
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+  })
+
   describe('an active target which is not configured', () => {
     it('should not mark the remote as active when the write is refused', () => {
       const controller = createController()
