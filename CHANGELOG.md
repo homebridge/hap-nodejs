@@ -14,8 +14,19 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
   - `SiriAudioStreamProducerConstructor` without a type argument has options of type `unknown`. Name the type: `SiriAudioStreamProducerConstructor<MyOptions>`.
   - `tlv.encode()` only takes numbers, strings and Buffers (or lists of them). Wrap a `Uint8Array` in `Buffer.from()`.
   - `uuid.unparse()` only takes a Buffer with at least 16 bytes from the offset, and throws otherwise.
-- **For developers**: every `const enum` is a normal `enum` now. Names and values are the same, and they can be used with `isolatedModules`.
+  - `RemoteController` and `SiriAudioSession` have a type argument for the options of the Siri audio producer, and `producerOptions` has that type (it was `any`). Name it when the options are checked: `new RemoteController<MyOptions>(MyProducer, options)`.
+  - A data stream handler which names its own message type, like `(message: MyMessage) => ...`, no longer fits. Type the parameter as `HDSMessage` and check the fields.
+  - `HAPStorage.storage().getItem<T>()` returns `T | undefined`. Without a type argument it is `any`, as before.
+  - `IdentifierCache` lost its public `_savedCacheHash` field.
+- **For developers**: every `const enum` is a normal `enum` now. Names are the same, and they can be used with `isolatedModules`. All values are the same except `DataFormatTags.INTEGER_RANGE_STOP_39`, which is now 47 (0x2F). It was 46, which was wrong.
 - **For developers**: `addBridgedAccessory()` throws when an accessory with the same UUID is already bridged.
+- **For developers**: `removeBridgedAccessory()` and `AdaptiveLightingController.handleControllerRemoved()` no longer remove the event listeners the plugin added to the accessory or the controller.
+- **For developers**: a camera restored from the cache with `sensors.motion` or `sensors.occupancy` set to `true` now gets that sensor, which a camera saved without it was missing. If the accessory already has its own sensor of that type without a subtype, `configureController()` throws, as it does for a new accessory. Pass your sensor as `sensors.motion: service` instead, or remove it.
+- **For developers**: a camera delegate now gets a STOP request after a START or RECONFIGURE it answered with an error.
+- **For developers**: `setProps({ minStep })` with a step which is not a whole number, for a characteristic of an integer format, is ignored with a warning. Before, it was published, and the Home app could write a value like 21.5.
+- **For developers**: a data stream `sendRequest()` or `sendResponse()` before the hello message throws an `HDSConnectionError`. A request which is still waiting when the connection closes is answered at once with an error, not after 10 seconds.
+- **For users**: the files in the `persist` folder, which hold the pairing keys, are saved readable by their owner only. A backup tool which runs as another user can no longer read them. After a start as another user (like root with `sudo`), give the files back to the usual user, for example with `chown`. HAP-NodeJS says so in its error.
+- **For users**: a file of HAP-NodeJS in the `persist` folder which does not hold valid JSON is renamed to `.<name>.corrupt-<time>` before a new one is saved in its place. Files of plugins in that folder are left alone.
 - **For developers** importing files from `dist`: the example accessories (`dist/accessories/*_accessory.js`), the definitions generator and the `.d.ts.map` files are no longer part of the package.
 
 ### Changes
