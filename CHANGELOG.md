@@ -204,6 +204,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(tv): send the access control events with the values of their own write, not a later one
 - refactor(controller): import the camera controller from its own file so it loads on its own
 - fix(server): name the accessory and the port in the error when the hap server can not start
+- fix(accessory): stop a controller reading or writing an accessory excluded for invalid permissions
 
 ### Homebridge Dependencies
 
