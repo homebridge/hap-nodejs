@@ -188,6 +188,33 @@ describe('DataStreamServer', () => {
     })
   })
 
+  describe('destroy of a server which is still binding', () => {
+    it('should answer every waiting session once with an error', async () => {
+      vi.useRealTimers()
+      const server = new DataStreamServer()
+      const first = vi.fn()
+      const second = vi.fn()
+      server.prepareSession(hapConnection(), crypto.randomBytes(32), first)
+      server.prepareSession(hapConnection(), crypto.randomBytes(32), second)
+      const tcpServer = (server as any).tcpServer
+      expect((server as any).state).toBe(1) // binding
+      const closed = new Promise(resolve => tcpServer.once('close', resolve))
+
+      server.destroy()
+      await closed
+      await new Promise(resolve => setTimeout(resolve, 50)) // a late `listening` event would have arrived by now
+
+      for (const callback of [first, second]) {
+        expect(callback).toHaveBeenCalledTimes(1)
+        expect(callback.mock.calls[0]).toHaveLength(1) // an error and no session
+        expect(callback.mock.calls[0][0]).toBeInstanceOf(Error)
+      }
+      expect((server as any).preparedSessions).toHaveLength(0)
+      expect((server as any).pendingBinds).toHaveLength(0)
+      expect((server as any).state).toBe(0) // the next session starts a new server
+    })
+  })
+
   describe('connection identification', () => {
     it('should close an unidentified connection without crashing on its undecryptable first frame', () => {
       const { socket } = setupSession()
