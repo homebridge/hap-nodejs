@@ -12,7 +12,7 @@
 <h1>Interface CameraRecordingDelegate</h1></div>
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>A <code>CameraRecordingDelegate</code> is responsible for handling recordings of a HomeKit Secure Video camera.</p>
-<p>It is responsible for maintaining the prebuffer (see <a href="CameraRecordingOptions.html#prebufferlength" class="tsd-kind-property">CameraRecordingOptions.prebufferLength</a>,
+<p>It is responsible for maintaining the prebuffer (see <a href="CameraRecordingOptions.html#prebufferlength" class="tsd-kind-property">CameraRecordingOptions.prebufferLength</a>),
 once recording was activated (see <a href="#updaterecordingactive" class="tsd-kind-method">updateRecordingActive</a>).</p>
 <p>Before recording is considered enabled two things must happen:</p>
 <ul>
@@ -34,14 +34,14 @@ This results in a call to <a href="#handlerecordingstreamrequest" class="tsd-kin
 (e.g. in the <a href="../classes/Service.html#motionsensor" class="tsd-kind-property">Service.MotionSensor</a> or <a href="../classes/Service.html#doorbell" class="tsd-kind-property">Service.Doorbell</a> service).
 It will continue to send the remaining fragments of the currently ongoing recording stream request.</li>
 <li>The camera will either reach the end of the recording (and signal this via <a href="RecordingPacket.html#islast" class="tsd-kind-property">RecordingPacket.isLast</a>. Also see <a href="#acknowledgestream" class="tsd-kind-method">acknowledgeStream</a>)
-or it will continue to stream til the HomeKit Controller closes
+or it will continue to stream until the HomeKit Controller closes
 the stream <a href="#closerecordingstream" class="tsd-kind-method">closeRecordingStream</a> with reason <a href="../enums/HDSProtocolSpecificErrorReason.html#normal" class="tsd-kind-enum-member">HDSProtocolSpecificErrorReason.NORMAL</a>.</li>
 <li>The camera goes back into idle mode.</li>
 </ul>
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">CameraRecordingDelegate</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-call-signature" href="#acknowledgestream-1">acknowledgeStream</a><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">streamId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#closerecordingstream-1">closeRecordingStream</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">streamId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">reason</span><span class="tsd-signature-symbol">:</span> <a href="../enums/HDSProtocolSpecificErrorReason.html" class="tsd-signature-type tsd-kind-enum">HDSProtocolSpecificErrorReason</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#handlerecordingstreamrequest-1">handleRecordingStreamRequest</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">streamId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">signal</span><span class="tsd-signature-symbol">?:</span> <a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal" class="tsd-signature-type external" target="_blank">AbortSignal</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="RecordingPacket.html" class="tsd-signature-type tsd-kind-interface">RecordingPacket</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#updaterecordingactive-1">updateRecordingActive</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">active</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#updaterecordingconfiguration-1">updateRecordingConfiguration</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">configuration</span><span class="tsd-signature-symbol">:</span> <a href="CameraRecordingConfiguration.html" class="tsd-signature-type tsd-kind-interface">CameraRecordingConfiguration</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/CameraController.ts#L204">lib/controller/CameraController.ts:204</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/CameraController.ts#L211">lib/controller/CameraController.ts:211</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -65,7 +65,7 @@ the stream <a href="#closerecordingstream" class="tsd-kind-method">closeRecordin
 <div class="tsd-signature tsd-anchor-link" id="acknowledgestream-1"><span class="tsd-kind-call-signature">acknowledgeStream</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">streamId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#acknowledgestream-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>This method is called once the HomeKit Controller acknowledges the <code>endOfStream</code>.
-A <code>endOfStream</code> is sent by the accessory by setting <a href="RecordingPacket.html#islast" class="tsd-kind-property">RecordingPacket.isLast</a> to <code>true</code> in the last packet yielded
+An <code>endOfStream</code> is sent by the accessory by setting <a href="RecordingPacket.html#islast" class="tsd-kind-property">RecordingPacket.isLast</a> to <code>true</code> in the last packet yielded
 by the <a href="#handlerecordingstreamrequest" class="tsd-kind-method">handleRecordingStreamRequest</a> <code>AsyncGenerator</code>.</p>
 </div>
 <div class="tsd-parameters">
@@ -76,7 +76,7 @@ by the <a href="#handlerecordingstreamrequest" class="tsd-kind-method">handleRec
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/CameraController.ts#L299">lib/controller/CameraController.ts:299</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/CameraController.ts#L306">lib/controller/CameraController.ts:306</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="closerecordingstream"><span>close<wbr/>Recording<wbr/>Stream</span><a href="#closerecordingstream" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -101,7 +101,7 @@ NOTE: This method is also called in case of a closed connection. This is encoded
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/CameraController.ts#L313">lib/controller/CameraController.ts:313</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/CameraController.ts#L320">lib/controller/CameraController.ts:320</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="handlerecordingstreamrequest"><span>handle<wbr/>Recording<wbr/>Stream<wbr/>Request</span><a href="#handlerecordingstreamrequest" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -111,7 +111,7 @@ NOTE: This method is also called in case of a closed connection. This is encoded
 <div class="tsd-comment tsd-typography"><p>This method is called to stream the next recording event.
 It is guaranteed that there is only ever one ongoing recording stream request at a time.</p>
 <p>When this method is called return the currently ongoing (or next in case of a potentially queued)
-recording via a <code>AsyncGenerator</code>. Every <code>yield</code> of the generator represents a complete recording <code>packet</code>.
+recording via an <code>AsyncGenerator</code>. Every <code>yield</code> of the generator represents a complete recording <code>packet</code>.
 The first packet MUST always be the <a href="../enums/PacketDataType.html#media_initialization" class="tsd-kind-enum-member">PacketDataType.MEDIA_INITIALIZATION</a> packet.
 Any following packet will transport the actual mp4 fragments in <a href="../enums/PacketDataType.html#media_fragment" class="tsd-kind-enum-member">PacketDataType.MEDIA_FRAGMENT</a> packets,
 starting with the content of the prebuffer. Every <a href="../enums/PacketDataType.html#media_fragment" class="tsd-kind-enum-member">PacketDataType.MEDIA_FRAGMENT</a> starts with a key frame
@@ -151,7 +151,7 @@ operations (e.g. pacing delays) for immediate cleanup, rather than waiting for <
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="RecordingPacket.html" class="tsd-signature-type tsd-kind-interface">RecordingPacket</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/CameraController.ts#L290">lib/controller/CameraController.ts:290</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/CameraController.ts#L297">lib/controller/CameraController.ts:297</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="updaterecordingactive"><span>update<wbr/>Recording<wbr/>Active</span><a href="#updaterecordingactive" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -169,7 +169,7 @@ and will call <a href="#updaterecordingactive" class="tsd-kind-method">updateRec
 <p>NOTE: HAP-NodeJS cannot guarantee that a <a href="CameraRecordingConfiguration.html" class="tsd-kind-interface">CameraRecordingConfiguration</a> is present
 when recording is activated (e.g. the selected configuration might be erased due to changes
 in the supplied <a href="CameraRecordingOptions.html" class="tsd-kind-interface">CameraRecordingOptions</a>, but the camera is still <code>active</code>; or we can't otherwise
-influence the order which a HomeKit Controller might call those characteristics).
+influence the order in which a HomeKit Controller might call those characteristics).
 However, HAP-NodeJS guarantees that if there is a valid <a href="CameraRecordingConfiguration.html" class="tsd-kind-interface">CameraRecordingConfiguration</a>,
 <a href="#updaterecordingconfiguration" class="tsd-kind-method">updateRecordingConfiguration</a> is called before <a href="#updaterecordingactive" class="tsd-kind-method">updateRecordingActive</a> (when enabling)
 to avoid any unnecessary and potentially expensive reconfigurations.</p>
@@ -182,7 +182,7 @@ to avoid any unnecessary and potentially expensive reconfigurations.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/CameraController.ts#L227">lib/controller/CameraController.ts:227</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/CameraController.ts#L234">lib/controller/CameraController.ts:234</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="updaterecordingconfiguration"><span>update<wbr/>Recording<wbr/>Configuration</span><a href="#updaterecordingconfiguration" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -203,13 +203,13 @@ currently running stream and only apply the updated configuration to the next st
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">configuration</span>: <a href="CameraRecordingConfiguration.html" class="tsd-signature-type tsd-kind-interface">CameraRecordingConfiguration</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></span>
 <div class="tsd-comment tsd-typography"><p>The <a href="CameraRecordingConfiguration.html" class="tsd-kind-interface">CameraRecordingConfiguration</a>. Reconfigure your recording pipeline accordingly.
-The parameter might be <code>undefined</code> when the selected configuration became invalid. This typically ony happens
+The parameter might be <code>undefined</code> when the selected configuration became invalid. This typically only happens
 e.g. due to a factory reset (when all pairings are removed). Disable the recording pipeline in such a case
 even if recording is still enabled for the camera.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/CameraController.ts#L246">lib/controller/CameraController.ts:246</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/CameraController.ts#L253">lib/controller/CameraController.ts:253</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

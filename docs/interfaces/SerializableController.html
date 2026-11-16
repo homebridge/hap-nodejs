@@ -13,14 +13,17 @@
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>A SerializableController is a Controller which additionally carries states/data (beside services and characteristics)
 which needs to be persistently stored. For example current target configuration for an AppleTV remote.</p>
+<p><code>S</code> is the type of the data the controller saves. Name it, as otherwise the data is typed as <code>unknown</code>.
+What is read back from disk was written by an earlier version of the controller, so <a href="#deserialize" class="tsd-kind-method">deserialize</a>
+should check it before relying on it.</p>
 </div></section>
-<div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">SerializableController</span><span class="tsd-signature-symbol">&lt;</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#m">M</a> <span class="tsd-signature-keyword">extends</span> <a href="ControllerServiceMap.html" class="tsd-signature-type tsd-kind-interface">ControllerServiceMap</a> <span class="tsd-signature-symbol">=</span> <a href="ControllerServiceMap.html" class="tsd-signature-type tsd-kind-interface">ControllerServiceMap</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#s">S</a> <span class="tsd-signature-symbol">=</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-call-signature" href="#configureservices-1">configureServices</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#constructservices-1">constructServices</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#m">M</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#controllerid-1">controllerId</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#deserialize-1">deserialize</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">serialized</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#s">S</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#handlecontrollerremoved-1">handleControllerRemoved</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#handlefactoryreset-1">handleFactoryReset</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#initwithservices-1">initWithServices</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">serviceMap</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#m">M</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span> <span class="tsd-signature-symbol">|</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#m">M</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#serialize-1">serialize</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#s">S</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#setupstatechangedelegate-1">setupStateChangeDelegate</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">delegate</span><span class="tsd-signature-symbol">?:</span> <a href="../types/StateChangeDelegate.html" class="tsd-signature-type tsd-kind-type-alias">StateChangeDelegate</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
+<div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">SerializableController</span><span class="tsd-signature-symbol">&lt;</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#m">M</a> <span class="tsd-signature-keyword">extends</span> <a href="ControllerServiceMap.html" class="tsd-signature-type tsd-kind-interface">ControllerServiceMap</a> <span class="tsd-signature-symbol">=</span> <a href="ControllerServiceMap.html" class="tsd-signature-type tsd-kind-interface">ControllerServiceMap</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#s">S</a> <span class="tsd-signature-symbol">=</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-call-signature" href="#configureservices-1">configureServices</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#constructservices-1">constructServices</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#m">M</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#controllerid-1">controllerId</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#deserialize-1">deserialize</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">serialized</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#s">S</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#handlecontrollerremoved-1">handleControllerRemoved</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#handlefactoryreset-1">handleFactoryReset</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#initwithservices-1">initWithServices</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">serviceMap</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#m">M</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span> <span class="tsd-signature-symbol">|</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#m">M</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#serialize-1">serialize</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#s">S</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#setupstatechangedelegate-1">setupStateChangeDelegate</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">delegate</span><span class="tsd-signature-symbol">?:</span> <a href="../types/StateChangeDelegate.html" class="tsd-signature-type tsd-kind-type-alias">StateChangeDelegate</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
 <li><span id="m"><span class="tsd-kind-type-parameter">M</span> <span class="tsd-signature-keyword">extends</span> <a href="ControllerServiceMap.html" class="tsd-signature-type tsd-kind-interface">ControllerServiceMap</a> = <a href="ControllerServiceMap.html" class="tsd-signature-type tsd-kind-interface">ControllerServiceMap</a></span></li>
-<li><span id="s"><span class="tsd-kind-type-parameter">S</span> = <span class="tsd-signature-type">any</span></span></li></ul></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="1955">
+<li><span id="s"><span class="tsd-kind-type-parameter">S</span> = <span class="tsd-signature-type">unknown</span></span></li></ul></section>
+<section class="tsd-panel tsd-hierarchy" data-refl="1975">
 <h4>Hierarchy (<a href="../hierarchy.html#SerializableController">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="Controller.html" class="tsd-signature-type tsd-kind-interface">Controller</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#m">M</a><span class="tsd-signature-symbol">&gt;</span>
@@ -33,7 +36,7 @@ which needs to be persistently stored. For example current target configuration 
 <li><a href="../classes/CameraController.html" class="tsd-signature-type tsd-kind-class">CameraController</a></li>
 <li><a href="../classes/RemoteController.html" class="tsd-signature-type tsd-kind-class">RemoteController</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/Controller.ts#L155">lib/controller/Controller.ts:155</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/Controller.ts#L157">lib/controller/Controller.ts:157</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -68,7 +71,7 @@ were called before and all services are already created.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="Controller.html">Controller</a>.<a href="Controller.html#configureservices">configureServices</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/Controller.ts#L124">lib/controller/Controller.ts:124</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/Controller.ts#L123">lib/controller/Controller.ts:123</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="constructservices"><span>construct<wbr/>Services</span><a href="#constructservices" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -84,14 +87,14 @@ The controller SHOULD save created services in internal properties for later acc
 <p>The method must return all created services in a ServiceMap.
 A <a href="ControllerServiceMap.html" class="tsd-kind-interface">ControllerServiceMap</a> basically maps a name to every service on the controller.
 It is used to potentially recreate a controller for a given ServiceMap using <a href="Controller.html#initwithservices" class="tsd-kind-method">initWithServices</a>.</p>
-<p>The set of services represented by the Controller MUST remain static and can only change over new version of
+<p>The set of services represented by the Controller MUST remain static and can only change over new versions of
 the Controller implementation (see <a href="Controller.html#initwithservices" class="tsd-kind-method">initWithServices</a>)</p>
 </div>
 <h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#m">M</a></h4><p>a <a href="ControllerServiceMap.html" class="tsd-kind-interface">ControllerServiceMap</a> representing all services of a controller indexed by a controller chosen name.</p>
 <aside class="tsd-sources">
 <p>Inherited from <a href="Controller.html">Controller</a>.<a href="Controller.html#constructservices">constructServices</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/Controller.ts#L101">lib/controller/Controller.ts:101</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/Controller.ts#L100">lib/controller/Controller.ts:100</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="controllerid"><span>controller<wbr/>Id</span><a href="#controllerid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -101,13 +104,13 @@ the Controller implementation (see <a href="Controller.html#initwithservices" cl
 <div class="tsd-comment tsd-typography"><p>Every instance of a Controller must define appropriate identifying material.
 The returned identifier MUST NOT change over the lifetime of the Controller object.</p>
 <p>Note: The controller can choose to return the same identifier for all controllers of the same type.
-This will result in the user only being able to add ONE instance of an Controller to an accessory.</p>
-<p>Some predefined identifiers can be found in <a href="../types/ControllerIdentifier.html" class="tsd-kind-type-alias">ControllerIdentifier</a>.</p>
+This will result in the user only being able to add ONE instance of a Controller to an accessory.</p>
+<p>Some predefined identifiers can be found in <a href="../enums/DefaultControllerType.html" class="tsd-kind-enum">DefaultControllerType</a>.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="Controller.html">Controller</a>.<a href="Controller.html#controllerid">controllerId</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/Controller.ts#L82">lib/controller/Controller.ts:82</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/Controller.ts#L81">lib/controller/Controller.ts:81</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="deserialize"><span>deserialize</span><a href="#deserialize" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -125,7 +128,7 @@ A Controller MUST NOT depend on any specific calling order.</p>
 <li><span><span class="tsd-kind-parameter">serialized</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#s">S</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/Controller.ts#L172">lib/controller/Controller.ts:172</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/Controller.ts#L174">lib/controller/Controller.ts:174</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="handlecontrollerremoved"><span>handle<wbr/>Controller<wbr/>Removed</span><a href="#handlecontrollerremoved" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -134,17 +137,17 @@ A Controller MUST NOT depend on any specific calling order.</p>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>This method is called once the Controller is removed from the accessory.
 The controller MUST reset everything to its initial state (just as it would have been constructed freshly)
-form the constructor.
+from the constructor.
 Adding the Controller back to an accessory after it was removed MUST be supported!
 If the controller is a <a href="#" class="tsd-kind-interface">SerializableController</a> it MUST NOT call the <a href="../types/StateChangeDelegate.html" class="tsd-kind-type-alias">StateChangeDelegate</a>
 as a result of a call to this method.</p>
-<p>All service contained in the <a href="ControllerServiceMap.html" class="tsd-kind-interface">ControllerServiceMap</a> returned by <a href="Controller.html#constructservices" class="tsd-kind-method">constructServices</a>
+<p>All services contained in the <a href="ControllerServiceMap.html" class="tsd-kind-interface">ControllerServiceMap</a> returned by <a href="Controller.html#constructservices" class="tsd-kind-method">constructServices</a>
 will be automatically removed from the Accessory. The Controller MUST remove any references to those services.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="Controller.html">Controller</a>.<a href="Controller.html#handlecontrollerremoved">handleControllerRemoved</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/Controller.ts#L137">lib/controller/Controller.ts:137</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/Controller.ts#L136">lib/controller/Controller.ts:136</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="handlefactoryreset"><span>handle<wbr/>Factory<wbr/>Reset</span><a href="#handlefactoryreset" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -156,7 +159,7 @@ will be automatically removed from the Accessory. The Controller MUST remove any
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="Controller.html">Controller</a>.<a href="Controller.html#handlefactoryreset">handleFactoryReset</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/Controller.ts#L177">lib/controller/Controller.ts:177</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/Controller.ts#L179">lib/controller/Controller.ts:179</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="initwithservices"><span>init<wbr/>With<wbr/>Services</span><a href="#initwithservices" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -180,7 +183,7 @@ It MUST be able to restore services using a ServiceMap from any point in time.</
 <aside class="tsd-sources">
 <p>Inherited from <a href="Controller.html">Controller</a>.<a href="Controller.html#initwithservices">initWithServices</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/Controller.ts#L115">lib/controller/Controller.ts:115</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/Controller.ts#L114">lib/controller/Controller.ts:114</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="serialize"><span>serialize</span><a href="#serialize" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -193,7 +196,7 @@ It should return undefined, if the controller data was reset to default values a
 <h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#s">S</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></h4><p>an arbitrary Controller defined object containing all necessary data</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/Controller.ts#L162">lib/controller/Controller.ts:162</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/Controller.ts#L164">lib/controller/Controller.ts:164</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="setupstatechangedelegate"><span>setup<wbr/>State<wbr/>Change<wbr/>Delegate</span><a href="#setupstatechangedelegate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -214,7 +217,7 @@ The delegate parameter can be undefined when the controller is removed and the s
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/Controller.ts#L188">lib/controller/Controller.ts:188</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/Controller.ts#L190">lib/controller/Controller.ts:190</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

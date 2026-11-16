@@ -9,9 +9,9 @@
 <div class="tsd-page-title">
 <ul class="tsd-breadcrumb" aria-label="Breadcrumb">
 <li><a href="" aria-current="page">RemoteControllerEvents</a></li></ul>
-<h1>Enumeration RemoteControllerEvents<code class="tsd-tag">Const</code></h1></div><aside class="tsd-sources">
+<h1>Enumeration RemoteControllerEvents</h1></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/RemoteController.ts#L340">lib/controller/RemoteController.ts:340</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/RemoteController.ts#L336">lib/controller/RemoteController.ts:336</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -33,10 +33,10 @@
 <h3 class="tsd-anchor-link" id="active_change"><span>ACTIVE_<wbr/>CHANGE</span><a href="#active_change" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-enum-member">ACTIVE_CHANGE</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;active-change&quot;</span></div>
 <div class="tsd-comment tsd-typography"><p>This event is emitted when the active state of the remote has changed.
-active = true indicates that there is currently an Apple TV listening of button presses and audio streams.</p>
+active = true indicates that there is currently an Apple TV listening for button presses and audio streams.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/RemoteController.ts#L345">lib/controller/RemoteController.ts:345</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/RemoteController.ts#L341">lib/controller/RemoteController.ts:341</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="active_identifier_change"><span>ACTIVE_<wbr/>IDENTIFIER_<wbr/>CHANGE</span><a href="#active_identifier_change" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-enum-member">ACTIVE_IDENTIFIER_CHANGE</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;active-identifier-change&quot;</span></div>
@@ -46,22 +46,22 @@ gets added, active target gets removed, accessory gets unpaired, reset request w
 An activeIdentifier of 0 indicates that no target is selected.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/RemoteController.ts#L352">lib/controller/RemoteController.ts:352</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/RemoteController.ts#L348">lib/controller/RemoteController.ts:348</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="target_added"><span>TARGET_<wbr/>ADDED</span><a href="#target_added" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-enum-member">TARGET_ADDED</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;target-add&quot;</span></div>
-<div class="tsd-comment tsd-typography"><p>This event is emitted when a new target configuration is received. As we currently do not persistently store
-configured targets, this will be called at every startup for every Apple TV configured in the home.</p>
+<div class="tsd-comment tsd-typography"><p>This event is emitted when a new target configuration is received.
+Configured targets are saved to disk, so it is not emitted again for them on startup.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/RemoteController.ts#L358">lib/controller/RemoteController.ts:358</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/RemoteController.ts#L354">lib/controller/RemoteController.ts:354</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="target_removed"><span>TARGET_<wbr/>REMOVED</span><a href="#target_removed" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-enum-member">TARGET_REMOVED</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;target-remove&quot;</span></div>
 <div class="tsd-comment tsd-typography"><p>This event is emitted when an existing configuration for a target was removed.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/RemoteController.ts#L367">lib/controller/RemoteController.ts:367</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/RemoteController.ts#L363">lib/controller/RemoteController.ts:363</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="target_updated"><span>TARGET_<wbr/>UPDATED</span><a href="#target_updated" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-enum-member">TARGET_UPDATED</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;target-update&quot;</span></div>
@@ -69,7 +69,7 @@ configured targets, this will be called at every startup for every Apple TV conf
 The 'updates' array indicates what exactly was changed for the target.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/RemoteController.ts#L363">lib/controller/RemoteController.ts:363</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/RemoteController.ts#L359">lib/controller/RemoteController.ts:359</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="targets_reset"><span>TARGETS_<wbr/>RESET</span><a href="#targets_reset" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-enum-member">TARGETS_RESET</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;targets-reset&quot;</span></div>
@@ -78,7 +78,7 @@ With this event every configuration made should be reset. This event is also cal
 when the accessory gets unpaired.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/RemoteController.ts#L373">lib/controller/RemoteController.ts:373</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/RemoteController.ts#L369">lib/controller/RemoteController.ts:369</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
