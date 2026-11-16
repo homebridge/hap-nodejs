@@ -1085,6 +1085,49 @@ describe('Accessory', () => {
       }
     })
 
+    describe('an unpublish or destroy while publish checks the advertiser', () => {
+      let release: (available: boolean) => void
+      let available: MockInstance
+
+      beforeEach(() => {
+        available = vi.spyOn(AvahiAdvertiser, 'isAvailable').mockImplementation(() => new Promise((resolve) => {
+          release = resolve
+        }))
+        accessory.addService(new Service.Switch('My Example Switch'))
+      })
+
+      afterEach(() => {
+        available.mockRestore()
+      })
+
+      const publishInfo = (): PublishInfo => ({
+        username: serverUsername,
+        pincode: '000-00-000',
+        category: Categories.SWITCH,
+        advertiser: MDNSAdvertiser.AVAHI,
+      })
+
+      it('stops the publish quietly after an unpublish', async () => {
+        const publishing = accessory.publish(publishInfo())
+        await accessory.unpublish()
+        release(false) // unavailable: without the check, publish would go on with ciao
+
+        await expect(publishing).resolves.toBeUndefined()
+        expect(accessory._server).toBeUndefined()
+        expect(accessory._advertiser).toBeUndefined()
+      })
+
+      it('rejects the publish with a clear message after a destroy', async () => {
+        const publishing = accessory.publish(publishInfo())
+        await accessory.destroy()
+        release(false) // unavailable: without the check, publish would go on with ciao
+
+        await expect(publishing).rejects.toThrow('The accessory was destroyed while it was being published')
+        expect(accessory._server).toBeUndefined()
+        expect(accessory._advertiser).toBeUndefined()
+      })
+    })
+
     it('clean Accessory publish and unpublish with default advertiser selection', async () => {
       const switchService = new Service.Switch('My Example Switch')
       accessory.addService(switchService)
