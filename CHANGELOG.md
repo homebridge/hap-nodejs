@@ -266,11 +266,12 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - feat(doorbell): add setOperatingState to report a doorbell that is too hot or too cold
 - docs(typedoc): link the source of the docs to the latest branch, not to a commit
 - docs: regenerate `typedoc` docs
+- chore(deps): dependency updates
 
 ### Homebridge Dependencies
 
-- `@homebridge/ciao` @ `v1.4.0`
-- `bonjour-hap` @ `v3.11.0`
+- `@homebridge/ciao` @ `v1.4.1-beta`
+- `bonjour-hap` @ `v3.11.1-beta`
 
 ## v2.3.0 (2026-11-01)
 
