@@ -492,6 +492,10 @@ export class Accessory extends EventEmitter {
 
   private configurationChangeDebounceTimeout?: NodeJS.Timeout
   /**
+   * Counts the calls of {@link unpublish}, so a {@link publish} which waited for an advertiser check can see that it was cancelled meanwhile.
+   */
+  private unpublishCount = 0
+  /**
    * The listeners this accessory, as a bridge, registered on each of its bridged accessories.
    */
   private readonly bridgedAccessoryListeners = new Map<Accessory, BridgedAccessoryListeners>()
@@ -1411,10 +1415,19 @@ export class Accessory extends EventEmitter {
 
     // a variable of our own: the object belongs to the caller, who may publish with it again
     let advertiser = info.advertiser ?? MDNSAdvertiser.CIAO
-    if (
-      (advertiser === MDNSAdvertiser.AVAHI && !await AvahiAdvertiser.isAvailable())
+    const unpublishCount = this.unpublishCount
+    const unavailable = (advertiser === MDNSAdvertiser.AVAHI && !await AvahiAdvertiser.isAvailable())
       || (advertiser === MDNSAdvertiser.RESOLVED && !await ResolvedAdvertiser.isAvailable())
-    ) {
+
+    // unpublish() or destroy() was called while we waited: starting the server now would undo it
+    if (this.unpublishCount !== unpublishCount) {
+      if (!this._accessoryInfo) {
+        throw new Error(`[${this.displayName}] The accessory was destroyed while it was being published`)
+      }
+      return
+    }
+
+    if (unavailable) {
       console.error(
         `[${this.displayName}] The selected advertiser, "${advertiser}", isn't available on this platform. `
         + `Reverting to "${MDNSAdvertiser.CIAO}"`,
@@ -1500,6 +1513,7 @@ export class Accessory extends EventEmitter {
   }
 
   public async unpublish(): Promise<void> {
+    this.unpublishCount++ // cancels a publish() which is still checking its advertiser
     if (this.configurationChangeDebounceTimeout) {
       // nothing is left to tell about a changed configuration, and destroy() takes away what the update needs
       clearTimeout(this.configurationChangeDebounceTimeout)

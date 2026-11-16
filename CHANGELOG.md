@@ -257,6 +257,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - docs(accessory): say which controllers keep the event handlers of the plugin on removeController
 - fix(characteristic): ignore a minStep which is not a whole number for an integer format
 - fix(storage): say how to fix a persist file which the user can not read, like one saved with sudo
+- fix: stop publish() when unpublish() or destroy() is called while it checks the advertiser
 
 ### Homebridge Dependencies
 
