@@ -12,7 +12,7 @@
 <h1>Interface AdaptiveLightingTransitionCurveEntry</h1></div>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">AdaptiveLightingTransitionCurveEntry</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#brightnessadjustmentfactor">brightnessAdjustmentFactor</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#duration">duration</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#temperature">temperature</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#transitiontime">transitionTime</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/AdaptiveLightingController.ts#L221">lib/controller/AdaptiveLightingController.ts:221</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/AdaptiveLightingController.ts#L219">lib/controller/AdaptiveLightingController.ts:219</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -41,29 +41,29 @@ brightness of the Lightbulb.</p>
 <p>To calculate the resulting color temperature you will need to do the following.</p>
 <p>In short: temperature + brightnessAdjustmentFactor * currentBrightness</p>
 <p>Complete example:</p>
-<pre><code class="js"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-7">temperature</span><span class="hl-1"> = ...; </span><span class="hl-6">// next transition value, the above property</span><br/><span class="hl-6">// below query the current brightness while staying the the min/max brightness range (typically between 10-100 percent)</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-7">currentBrightness</span><span class="hl-1"> = </span><span class="hl-0">Math</span><span class="hl-1">.</span><span class="hl-2">max</span><span class="hl-1">(</span><span class="hl-0">minBrightnessValue</span><span class="hl-1">, </span><span class="hl-0">Math</span><span class="hl-1">.</span><span class="hl-2">min</span><span class="hl-1">(</span><span class="hl-0">maxBrightnessValue</span><span class="hl-1">, </span><span class="hl-7">CHARACTERISTIC_BRIGHTNESS_VALUE</span><span class="hl-1">));</span><br/><br/><span class="hl-6">// as both temperature and brightnessAdjustmentFactor are floating point values it is advised to round to the next integer</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-7">resultTemperature</span><span class="hl-1"> = </span><span class="hl-0">Math</span><span class="hl-1">.</span><span class="hl-2">round</span><span class="hl-1">(</span><span class="hl-0">temperature</span><span class="hl-1"> + </span><span class="hl-0">brightnessAdjustmentFactor</span><span class="hl-1"> * </span><span class="hl-0">currentBrightness</span><span class="hl-1">);</span>
+<pre><code class="js"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-8">temperature</span><span class="hl-1"> = ...; </span><span class="hl-7">// next transition value, the above property</span><br/><span class="hl-7">// below query the current brightness while staying in the min/max brightness range (typically between 10-100 percent)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-8">currentBrightness</span><span class="hl-1"> = </span><span class="hl-3">Math</span><span class="hl-1">.</span><span class="hl-0">max</span><span class="hl-1">(</span><span class="hl-3">minBrightnessValue</span><span class="hl-1">, </span><span class="hl-3">Math</span><span class="hl-1">.</span><span class="hl-0">min</span><span class="hl-1">(</span><span class="hl-3">maxBrightnessValue</span><span class="hl-1">, </span><span class="hl-8">CHARACTERISTIC_BRIGHTNESS_VALUE</span><span class="hl-1">));</span><br/><br/><span class="hl-7">// as both temperature and brightnessAdjustmentFactor are floating point values it is advised to round to the next integer</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-8">resultTemperature</span><span class="hl-1"> = </span><span class="hl-3">Math</span><span class="hl-1">.</span><span class="hl-0">round</span><span class="hl-1">(</span><span class="hl-3">temperature</span><span class="hl-1"> + </span><span class="hl-3">brightnessAdjustmentFactor</span><span class="hl-1"> * </span><span class="hl-3">currentBrightness</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/AdaptiveLightingController.ts#L250">lib/controller/AdaptiveLightingController.ts:250</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/AdaptiveLightingController.ts#L248">lib/controller/AdaptiveLightingController.ts:248</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="duration"><code class="tsd-tag">Optional</code><span>duration</span><a href="#duration" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">duration</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The duration in milliseconds this exact temperature value stays the same.
-When we transition to to the temperature value represented by this entry, it stays for the specified
+When we transition to the temperature value represented by this entry, it stays for the specified
 duration on the exact same value (with respect to brightness adjustment) until we transition
 to the next entry (see <a href="#transitiontime" class="tsd-kind-property">transitionTime</a>).</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/AdaptiveLightingController.ts#L257">lib/controller/AdaptiveLightingController.ts:257</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/AdaptiveLightingController.ts#L255">lib/controller/AdaptiveLightingController.ts:255</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="temperature"><span>temperature</span><a href="#temperature" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">temperature</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The color temperature in mired.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/AdaptiveLightingController.ts#L225">lib/controller/AdaptiveLightingController.ts:225</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/AdaptiveLightingController.ts#L223">lib/controller/AdaptiveLightingController.ts:223</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="transitiontime"><span>transition<wbr/>Time</span><a href="#transitiontime" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">transitionTime</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -73,10 +73,10 @@ For example if we got the two values A and B, with A.temperature = 300 and B.tem
 for the current time we are at temperature value 300. Then we need to transition smoothly
 within the B.transitionTime to the B.temperature value.
 If this is the first entry in the Curve (this value is probably zero) and is the offset to the transitionStartMillis
-(the Date/Time were this transition curve was set up).</p>
+(the Date/Time where this transition curve was set up).</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/controller/AdaptiveLightingController.ts#L267">lib/controller/AdaptiveLightingController.ts:267</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/controller/AdaptiveLightingController.ts#L265">lib/controller/AdaptiveLightingController.ts:265</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

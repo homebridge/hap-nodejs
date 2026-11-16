@@ -13,7 +13,7 @@
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>EventedHTTPServer provides an HTTP-like server that supports HAP &quot;extensions&quot; for security and events.</p>
 <h2 id="implementation" class="tsd-anchor-link">Implementation<a href="#implementation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>In order to implement the &quot;custom HTTP&quot; server required by the HAP protocol (see HAPServer.js) without completely
+<p>In order to implement the &quot;custom HTTP&quot; server required by the HAP protocol (see HAPServer.ts) without completely
 reinventing the wheel, we create both a generic TCP socket server and a standard Node HTTP server.
 The TCP socket server acts as a proxy, allowing users of this class to transform data (for encryption) as necessary
 and passing through bytes directly to the HTTP server for processing. This way we get Node to do all
@@ -23,15 +23,15 @@ directly down the wire via the socket.</p>
 <p>Each connection to the main TCP server gets its own internal HTTP server, so we can track ongoing requests/responses
 for safe event insertion.</p>
 </div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="3969">
+<section class="tsd-panel tsd-hierarchy" data-refl="4244">
 <h4>Hierarchy</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-signature-type">EventEmitter</span>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">EventedHTTPServer</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L75">lib/util/eventedhttp.ts:75</a></li>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L109">lib/util/eventedhttp.ts:109</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L78">lib/util/eventedhttp.ts:78</a></li>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L111">lib/util/eventedhttp.ts:111</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -47,6 +47,7 @@ for safe event insertion.</p>
 <a href="#broadcastevent" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>broadcast<wbr/>Event</span></a>
 <a href="#destroy" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy</span></a>
 <a href="#disableeventnotificationsforaccessory" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>disable<wbr/>Event<wbr/>Notifications<wbr/>For<wbr/>Accessory</span></a>
+<a href="#disablestaleeventnotifications" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>disable<wbr/>Stale<wbr/>Event<wbr/>Notifications</span></a>
 <a href="#emit" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>emit</span></a>
 <a href="#listen" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>listen</span></a>
 <a href="#on" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on</span></a>
@@ -60,11 +61,17 @@ for safe event insertion.</p>
 <h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="constructoreventedhttpserver"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">EventedHTTPServer</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">EventedHTTPServer</a><a href="#constructoreventedhttpserver" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="constructoreventedhttpserver"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">EventedHTTPServer</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">owner</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">EventedHTTPServer</a><a href="#constructoreventedhttpserver" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">owner</span>: <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>Names who the server belongs to, like the accessory. It is put in front of an error of the server.</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">EventedHTTPServer</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L127">lib/util/eventedhttp.ts:127</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L137">lib/util/eventedhttp.ts:137</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -76,7 +83,7 @@ for safe event insertion.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">AddressInfo</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L161">lib/util/eventedhttp.ts:161</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L208">lib/util/eventedhttp.ts:208</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="broadcastevent"><span>broadcast<wbr/>Event</span><a href="#broadcastevent" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -102,12 +109,12 @@ If <code>originator</code> is specified, the given <a href="HAPConnection.html" 
 <div class="tsd-comment tsd-typography"><p>If specified, the connection will not get an event message.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">immediateDelivery</span>: <span class="tsd-signature-type">boolean</span></span>
-<div class="tsd-comment tsd-typography"><p>The HAP spec requires some characteristics to be delivery immediately.
+<div class="tsd-comment tsd-typography"><p>The HAP spec requires some characteristics to be delivered immediately.
 Namely, for the <a href="Characteristic.html#buttonevent" class="tsd-kind-property">Characteristic.ButtonEvent</a> and the <a href="Characteristic.html#programmableswitchevent" class="tsd-kind-property">Characteristic.ProgrammableSwitchEvent</a> characteristics.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L220">lib/util/eventedhttp.ts:220</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L268">lib/util/eventedhttp.ts:268</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="destroy"><span>destroy</span><a href="#destroy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -116,7 +123,7 @@ Namely, for the <a href="Characteristic.html#buttonevent" class="tsd-kind-proper
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L204">lib/util/eventedhttp.ts:204</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L252">lib/util/eventedhttp.ts:252</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="disableeventnotificationsforaccessory"><span>disable<wbr/>Event<wbr/>Notifications<wbr/>For<wbr/>Accessory</span><a href="#disableeventnotificationsforaccessory" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -134,7 +141,25 @@ Namely, for the <a href="Characteristic.html#buttonevent" class="tsd-kind-proper
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h4><p>the instance ids of the removed registrations, once for every connection that held one.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L237">lib/util/eventedhttp.ts:237</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L285">lib/util/eventedhttp.ts:285</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="disablestaleeventnotifications"><span>disable<wbr/>Stale<wbr/>Event<wbr/>Notifications</span><a href="#disablestaleeventnotifications" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="disablestaleeventnotifications-1"><span class="tsd-kind-call-signature">disableStaleEventNotifications</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">exists</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">aid</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">iid</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><a href="#disablestaleeventnotifications-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Removes the event registrations every connection holds for a characteristic which does not exist anymore.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">exists</span>: <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">aid</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">iid</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">boolean</span></span>
+<div class="tsd-comment tsd-typography"><p>Tells if the characteristic with the given ids still exists.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4><p>the removed registrations, once for every connection that held one.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L299">lib/util/eventedhttp.ts:299</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="emit"><span>emit</span><a href="#emit" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -149,7 +174,7 @@ Namely, for the <a href="Characteristic.html#buttonevent" class="tsd-kind-proper
 <li><span><span class="tsd-kind-parameter">address</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L82">lib/util/eventedhttp.ts:82</a></li></ul></aside></div></li>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L85">lib/util/eventedhttp.ts:85</a></li></ul></aside></div></li>
 <li class="">
 <div class="tsd-signature tsd-anchor-link" id="emit-2"><span class="tsd-kind-call-signature">emit</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">event</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;connection-opened&quot;</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">connection</span><span class="tsd-signature-symbol">:</span> <a href="HAPConnection.html" class="tsd-signature-type tsd-kind-class">HAPConnection</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#emit-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
@@ -160,7 +185,7 @@ Namely, for the <a href="Characteristic.html#buttonevent" class="tsd-kind-proper
 <li><span><span class="tsd-kind-parameter">connection</span>: <a href="HAPConnection.html" class="tsd-signature-type tsd-kind-class">HAPConnection</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L83">lib/util/eventedhttp.ts:83</a></li></ul></aside></div></li>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L86">lib/util/eventedhttp.ts:86</a></li></ul></aside></div></li>
 <li class="">
 <div class="tsd-signature tsd-anchor-link" id="emit-3"><span class="tsd-kind-call-signature">emit</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">event</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;request&quot;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">connection</span><span class="tsd-signature-symbol">:</span> <a href="HAPConnection.html" class="tsd-signature-type tsd-kind-class">HAPConnection</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">request</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">IncomingMessage</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">response</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ServerResponse</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#emit-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
@@ -173,7 +198,7 @@ Namely, for the <a href="Characteristic.html#buttonevent" class="tsd-kind-proper
 <li><span><span class="tsd-kind-parameter">response</span>: <span class="tsd-signature-type">ServerResponse</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L84">lib/util/eventedhttp.ts:84</a></li></ul></aside></div></li>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L87">lib/util/eventedhttp.ts:87</a></li></ul></aside></div></li>
 <li class="">
 <div class="tsd-signature tsd-anchor-link" id="emit-4"><span class="tsd-kind-call-signature">emit</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">event</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;connection-closed&quot;</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">connection</span><span class="tsd-signature-symbol">:</span> <a href="HAPConnection.html" class="tsd-signature-type tsd-kind-class">HAPConnection</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#emit-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
@@ -184,7 +209,7 @@ Namely, for the <a href="Characteristic.html#buttonevent" class="tsd-kind-proper
 <li><span><span class="tsd-kind-parameter">connection</span>: <a href="HAPConnection.html" class="tsd-signature-type tsd-kind-class">HAPConnection</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L85">lib/util/eventedhttp.ts:85</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L88">lib/util/eventedhttp.ts:88</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="listen"><span>listen</span><a href="#listen" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -198,7 +223,7 @@ Namely, for the <a href="Characteristic.html#buttonevent" class="tsd-kind-proper
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">hostname</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L165">lib/util/eventedhttp.ts:165</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L212">lib/util/eventedhttp.ts:212</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="on"><span>on</span><a href="#on" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -212,7 +237,7 @@ Namely, for the <a href="Characteristic.html#buttonevent" class="tsd-kind-proper
 <li><span><span class="tsd-kind-parameter">listener</span>: <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">port</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">address</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L77">lib/util/eventedhttp.ts:77</a></li></ul></aside></div></li>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L80">lib/util/eventedhttp.ts:80</a></li></ul></aside></div></li>
 <li class="">
 <div class="tsd-signature tsd-anchor-link" id="on-2"><span class="tsd-kind-call-signature">on</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">event</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;connection-opened&quot;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">listener</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">connection</span><span class="tsd-signature-symbol">:</span> <a href="HAPConnection.html" class="tsd-signature-type tsd-kind-class">HAPConnection</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#on-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
@@ -223,7 +248,7 @@ Namely, for the <a href="Characteristic.html#buttonevent" class="tsd-kind-proper
 <li><span><span class="tsd-kind-parameter">listener</span>: <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">connection</span><span class="tsd-signature-symbol">:</span> <a href="HAPConnection.html" class="tsd-signature-type tsd-kind-class">HAPConnection</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L78">lib/util/eventedhttp.ts:78</a></li></ul></aside></div></li>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L81">lib/util/eventedhttp.ts:81</a></li></ul></aside></div></li>
 <li class="">
 <div class="tsd-signature tsd-anchor-link" id="on-3"><span class="tsd-kind-call-signature">on</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">event</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;request&quot;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">listener</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">connection</span><span class="tsd-signature-symbol">:</span> <a href="HAPConnection.html" class="tsd-signature-type tsd-kind-class">HAPConnection</a><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">request</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">IncomingMessage</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">response</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ServerResponse</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#on-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
@@ -234,7 +259,7 @@ Namely, for the <a href="Characteristic.html#buttonevent" class="tsd-kind-proper
 <li><span><span class="tsd-kind-parameter">listener</span>: <span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">connection</span><span class="tsd-signature-symbol">:</span> <a href="HAPConnection.html" class="tsd-signature-type tsd-kind-class">HAPConnection</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">request</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">IncomingMessage</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">response</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ServerResponse</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L79">lib/util/eventedhttp.ts:79</a></li></ul></aside></div></li>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L82">lib/util/eventedhttp.ts:82</a></li></ul></aside></div></li>
 <li class="">
 <div class="tsd-signature tsd-anchor-link" id="on-4"><span class="tsd-kind-call-signature">on</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">event</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;connection-closed&quot;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">listener</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">connection</span><span class="tsd-signature-symbol">:</span> <a href="HAPConnection.html" class="tsd-signature-type tsd-kind-class">HAPConnection</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#on-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
@@ -245,7 +270,7 @@ Namely, for the <a href="Characteristic.html#buttonevent" class="tsd-kind-proper
 <li><span><span class="tsd-kind-parameter">listener</span>: <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">connection</span><span class="tsd-signature-symbol">:</span> <a href="HAPConnection.html" class="tsd-signature-type tsd-kind-class">HAPConnection</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L80">lib/util/eventedhttp.ts:80</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L83">lib/util/eventedhttp.ts:83</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="stop"><span>stop</span><a href="#stop" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -254,7 +279,7 @@ Namely, for the <a href="Characteristic.html#buttonevent" class="tsd-kind-proper
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L187">lib/util/eventedhttp.ts:187</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L235">lib/util/eventedhttp.ts:235</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="destroyexistingconnectionsafterunpair"><code class="tsd-tag">Static</code><span>destroy<wbr/>Existing<wbr/>Connections<wbr/>After<wbr/>Unpair</span><a href="#destroyexistingconnectionsafterunpair" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -263,7 +288,7 @@ Namely, for the <a href="Characteristic.html#buttonevent" class="tsd-kind-proper
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>This method is to be called when a given <a href="HAPConnection.html" class="tsd-kind-class">HAPConnection</a> performs a request that should result in the disconnection
 of all other <a href="HAPConnection.html" class="tsd-kind-class">HAPConnection</a> with the same <a href="../types/HAPUsername.html" class="tsd-kind-type-alias">HAPUsername</a>.</p>
-<p>The initiator MUST be in the middle of a http request were the response was not served yet.
+<p>The initiator MUST be in the middle of a http request where the response was not served yet.
 Otherwise, the initiator connection might reside in a state where it isn't disconnected and can't make any further requests.</p>
 </div>
 <div class="tsd-parameters">
@@ -277,7 +302,7 @@ Otherwise, the initiator connection might reside in a state where it isn't disco
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/6c9144cc325924dd1ec730b099c0e6c8384a350b/src/lib/util/eventedhttp.ts#L305">lib/util/eventedhttp.ts:305</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/homebridge/HAP-NodeJS/blob/latest/src/lib/util/eventedhttp.ts#L367">lib/util/eventedhttp.ts:367</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -294,7 +319,7 @@ Otherwise, the initiator connection might reside in a state where it isn't disco
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
 <div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
-<div><a href="#address"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>address</span></a><a href="#broadcastevent"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>broadcast<wbr/>Event</span></a><a href="#destroy"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy</span></a><a href="#disableeventnotificationsforaccessory"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>disable<wbr/>Event<wbr/>Notifications<wbr/>For<wbr/>Accessory</span></a><a href="#emit"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>emit</span></a><a href="#listen"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>listen</span></a><a href="#on"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on</span></a><a href="#stop"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>stop</span></a><a href="#destroyexistingconnectionsafterunpair"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy<wbr/>Existing<wbr/>Connections<wbr/>After<wbr/>Unpair</span></a></div></details></div></details></div>
+<div><a href="#address"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>address</span></a><a href="#broadcastevent"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>broadcast<wbr/>Event</span></a><a href="#destroy"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy</span></a><a href="#disableeventnotificationsforaccessory"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>disable<wbr/>Event<wbr/>Notifications<wbr/>For<wbr/>Accessory</span></a><a href="#disablestaleeventnotifications"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>disable<wbr/>Stale<wbr/>Event<wbr/>Notifications</span></a><a href="#emit"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>emit</span></a><a href="#listen"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>listen</span></a><a href="#on"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on</span></a><a href="#stop"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>stop</span></a><a href="#destroyexistingconnectionsafterunpair"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy<wbr/>Existing<wbr/>Connections<wbr/>After<wbr/>Unpair</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../modules.html">@homebridge/hap-nodejs</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
