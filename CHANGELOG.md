@@ -261,6 +261,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(pair-setup): mix the setup code verifier into the one-time srp key
 - fix(pair-setup): drop the srp session from the connection once pair-setup ends
 - feat(lock): add AccessCodeManagement for the keypad codes of the Access Code service
+- feat(lock): add NFCAccessManagement for the HomeKit half of Apple Home Key
 
 ### Homebridge Dependencies
 
