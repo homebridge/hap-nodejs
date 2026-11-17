@@ -263,6 +263,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - feat(lock): add AccessCodeManagement for the keypad codes of the Access Code service
 - feat(lock): add NFCAccessManagement for the HomeKit half of Apple Home Key
 - feat: add encodeErrorStatus and decodeErrorStatus for the faults of the Error Status characteristic
+- feat(doorbell): add setOperatingState to report a doorbell that is too hot or too cold
 
 ### Homebridge Dependencies
 

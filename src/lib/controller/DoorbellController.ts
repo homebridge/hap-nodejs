@@ -2,10 +2,70 @@ import type { Doorbell } from '../definitions/index.js'
 import type { CameraControllerOptions, CameraControllerServiceMap } from './CameraController.js'
 import type { ControllerServiceMap } from './Controller.js'
 
+import { Buffer } from 'node:buffer'
+
 import { EventTriggerOption } from '../camera/index.js'
 import { Characteristic } from '../Characteristic.js'
 import { Service } from '../Service.js'
+import * as tlv from '../util/tlv.js'
 import { CameraController } from './CameraController.js'
+
+enum OperatingStateResponseTypes {
+  STATE = 0x01,
+  ABNORMAL_REASONS = 0x02,
+}
+
+/**
+ * How well a doorbell is working, for {@link DoorbellController.setOperatingState}.
+ *
+ * @group Doorbell
+ */
+export enum DoorbellOperatingState {
+  NORMAL = 0,
+  LIMITED_FUNCTIONALITY = 1,
+  SHUTDOWN_IMMINENT = 2,
+}
+
+/**
+ * Why a doorbell is not working normally. The values are flags: several can be true at once.
+ *
+ * @group Doorbell
+ */
+export enum DoorbellOperatingStateAbnormalReason {
+  OTHER = 1,
+  LOW_TEMPERATURE = 2,
+  HIGH_TEMPERATURE = 4,
+}
+
+/**
+ * Builds the value of the Operating State Response characteristic of a doorbell service.
+ * {@link DoorbellController.setOperatingState} does this for a doorbell made with the controller; use this
+ * function for a doorbell service of your own.
+ *
+ * HomeKit does not document the characteristic. The layout comes from Apple's own HomeKit code.
+ *
+ * @example
+ * ```ts
+ * doorbellService.updateCharacteristic(Characteristic.OperatingStateResponse, encodeOperatingStateResponse(
+ *   DoorbellOperatingState.LIMITED_FUNCTIONALITY,
+ *   [DoorbellOperatingStateAbnormalReason.HIGH_TEMPERATURE],
+ * ));
+ * ```
+ * @param state - how well the doorbell is working
+ * @param abnormalReasons - why it is not working normally. Leave it out for {@link DoorbellOperatingState.NORMAL}.
+ * @group Doorbell
+ */
+export function encodeOperatingStateResponse(state: DoorbellOperatingState, abnormalReasons: DoorbellOperatingStateAbnormalReason[] = []): string {
+  const reasons = abnormalReasons.reduce((flags, reason) => flags | reason, 0)
+  return Buffer.concat([
+    tlv.encode(OperatingStateResponseTypes.STATE, state),
+    ...(reasons
+      ? [
+          tlv.encode(OperatingStateResponseTypes.ABNORMAL_REASONS, reasons),
+        ]
+      : []),
+  ]).toString('base64')
+}
 
 /**
  * Options which are additionally supplied for a {@link DoorbellController}.
@@ -72,6 +132,35 @@ export class DoorbellController extends CameraController {
     }
 
     this.doorbellService.updateCharacteristic(Characteristic.ProgrammableSwitchEvent, Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS)
+  }
+
+  /**
+   * Call this method to tell the Home app how well the doorbell is working, for example that it is too hot or
+   * too cold to work fully. It sets the Operating State Response characteristic of the doorbell service, and adds
+   * that characteristic on the first call.
+   *
+   * For a doorbell service which was not made with this controller, see {@link encodeOperatingStateResponse}.
+   *
+   * @example
+   * ```ts
+   * doorbellController.setOperatingState(DoorbellOperatingState.LIMITED_FUNCTIONALITY, [
+   *   DoorbellOperatingStateAbnormalReason.HIGH_TEMPERATURE,
+   * ]);
+   *
+   * // when it has cooled down
+   * doorbellController.setOperatingState(DoorbellOperatingState.NORMAL);
+   * ```
+   * @param state - how well the doorbell is working
+   * @param abnormalReasons - why it is not working normally. Leave it out for {@link DoorbellOperatingState.NORMAL}.
+   */
+  public setOperatingState(state: DoorbellOperatingState, abnormalReasons: DoorbellOperatingStateAbnormalReason[] = []): void {
+    if (!this.doorbellService) {
+      // as with ringDoorbell(): a call from a plugin event must not end the process of the plugin
+      console.warn('HAP-NodeJS WARNING: setOperatingState() was called while the doorbell controller is not added to an accessory. The state was ignored.')
+      return
+    }
+
+    this.doorbellService.updateCharacteristic(Characteristic.OperatingStateResponse, encodeOperatingStateResponse(state, abnormalReasons))
   }
 
   override constructServices(): CameraControllerServiceMap {
