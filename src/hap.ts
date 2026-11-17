@@ -32,6 +32,7 @@ export * from './lib/tv/AccessControlManagement.js'
 
 export * from './lib/util/clone.js'
 export * from './lib/util/color-utils.js'
+export * from './lib/util/error-status.js'
 export * from './lib/util/eventedhttp.js'
 export * from './lib/util/hapStatusError.js'
 export * from './lib/util/once.js'
