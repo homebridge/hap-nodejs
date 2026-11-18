@@ -41,6 +41,7 @@ import {
 } from './HAPServer.js'
 import { AccessoryInfo, PermissionTypes } from './model/AccessoryInfo.js'
 import { Service } from './Service.js'
+import { EventedHTTPServerEvent } from './util/eventedhttp.js'
 import * as hapCrypto from './util/hapCrypto.js'
 import { awaitEventOnce, PromiseTimeout } from './util/promise-utils.js'
 import * as tlv from './util/tlv.js'
@@ -279,6 +280,47 @@ describe('HAPServer', () => {
     const M3 = await pairSetup.prepareM3(M2, accessoryInfoUnpaired.pincode)
     const responseM3 = await pairSetup.sendM3(M3)
     pairSetup.parseM4(responseM3.body, M3) // checks there is no error and the proof of the server is right
+  })
+
+  describe('the srp session of a pair-setup', () => {
+    // the connection of the server, as the server sees it, once the first request of the client has been answered
+    async function startPairSetup(): Promise<[PairSetupClient, () => HAPConnection]> {
+      server = new HAPServer(accessoryInfoUnpaired)
+      const [port] = await bindServer(server)
+      let connection: HAPConnection | undefined
+      // @ts-expect-error: private access
+      server.httpServer.once(EventedHTTPServerEvent.CONNECTION_OPENED, (opened: HAPConnection) => {
+        connection = opened
+      })
+      const pairSetup = new PairSetupClient(await connectClient(port))
+      return [
+        pairSetup,
+        () => connection!,
+      ]
+    }
+
+    it('is dropped from the connection once pair-setup worked', async () => {
+      const [pairSetup, connection] = await startPairSetup()
+      server.on(HAPServerEventTypes.PAIR, (_username, _clientLTPK, callback) => callback())
+
+      await pairSetup.sendPairSetup(accessoryInfoUnpaired.pincode, clientInfo)
+
+      expect(connection().srpServer).toBeUndefined()
+      expect(connection()._pairSetupState).toBeUndefined()
+    })
+
+    it('is dropped from the connection after a wrong setup code', async () => {
+      const [pairSetup, connection] = await startPairSetup()
+
+      const M2 = pairSetup.parseM2((await pairSetup.sendM1()).body)
+      expect(connection().srpServer).toBeDefined()
+
+      const response = await pairSetup.sendM3(await pairSetup.prepareM3(M2, '111-22-333'))
+      expect(tlv.decode(response.body)[TLVValues.ERROR_CODE].readUInt8(0)).toEqual(TLVErrorCode.AUTHENTICATION)
+
+      expect(connection().srpServer).toBeUndefined()
+      expect(connection()._pairSetupState).toBeUndefined()
+    })
   })
 
   it('successful /pair-verify', async () => {

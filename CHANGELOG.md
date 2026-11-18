@@ -259,6 +259,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - fix(storage): say how to fix a persist file which the user can not read, like one saved with sudo
 - fix: stop publish() when unpublish() or destroy() is called while it checks the advertiser
 - fix(pair-setup): mix the setup code verifier into the one-time srp key
+- fix(pair-setup): drop the srp session from the connection once pair-setup ends
 
 ### Homebridge Dependencies
 

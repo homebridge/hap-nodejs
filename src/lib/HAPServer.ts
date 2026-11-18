@@ -584,6 +584,15 @@ export class HAPServer extends EventEmitter {
     }
   }
 
+  /**
+   * Ends a pair-setup on the connection, whether it worked or not. The SRP session holds the verifier of the setup
+   * code and the shared key, so it is dropped here rather than kept for as long as the connection stays open.
+   */
+  private static endPairSetup(connection: HAPConnection): void {
+    connection._pairSetupState = undefined
+    connection.srpServer = undefined
+  }
+
   private handlePairSetupM1(connection: HAPConnection, response: ServerResponse): void {
     debug('[%s] Pair step 1/5', this.accessoryInfo.username)
     const salt = crypto.randomBytes(16)
@@ -625,7 +634,7 @@ export class HAPServer extends EventEmitter {
       debug('[%s] M3: Invalid request: %s', this.accessoryInfo.username, errorMessage(err))
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M4, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
-      connection._pairSetupState = undefined
+      HAPServer.endPairSetup(connection)
       return
     }
     try {
@@ -636,7 +645,7 @@ export class HAPServer extends EventEmitter {
       debug('[%s] Error while checking pincode: %s', this.accessoryInfo.username, errorMessage(err))
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M4, TLVValues.ERROR_CODE, TLVErrorCode.AUTHENTICATION))
-      connection._pairSetupState = undefined
+      HAPServer.endPairSetup(connection)
       return
     }
     // "M2 is the proof that the server actually knows your password."
@@ -655,7 +664,7 @@ export class HAPServer extends EventEmitter {
       debug('[%s] M5: Encrypted data missing or too short', this.accessoryInfo.username)
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M6, TLVValues.ERROR_CODE, TLVErrorCode.AUTHENTICATION))
-      connection._pairSetupState = undefined
+      HAPServer.endPairSetup(connection)
       return
     }
     const messageData = Buffer.alloc(encryptedData.length - 16)
@@ -674,7 +683,7 @@ export class HAPServer extends EventEmitter {
       debug('[%s] Error while decrypting and verifying M5 subTlv: %s', this.accessoryInfo.username, error)
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M6, TLVValues.ERROR_CODE, TLVErrorCode.AUTHENTICATION))
-      connection._pairSetupState = undefined
+      HAPServer.endPairSetup(connection)
       return
     }
     // decode the client payload and pass it on to the next step
@@ -685,7 +694,7 @@ export class HAPServer extends EventEmitter {
       debug('[%s] M5: Failed to decode decrypted TLV payload: %s', this.accessoryInfo.username, errorMessage(error))
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M6, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
-      connection._pairSetupState = undefined
+      HAPServer.endPairSetup(connection)
       return
     }
     const clientUsername = M5Packet[TLVValues.USERNAME]
@@ -695,7 +704,7 @@ export class HAPServer extends EventEmitter {
       debug('[%s] M5: Missing required TLV fields in decrypted payload', this.accessoryInfo.username)
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M6, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
-      connection._pairSetupState = undefined
+      HAPServer.endPairSetup(connection)
       return
     }
     this.handlePairSetupM5_2(connection, response, clientUsername, clientLTPK, clientProof, outputKey)
@@ -720,7 +729,7 @@ export class HAPServer extends EventEmitter {
       debug('[%s] Invalid signature', this.accessoryInfo.username)
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M6, TLVValues.ERROR_CODE, TLVErrorCode.AUTHENTICATION))
-      connection._pairSetupState = undefined
+      HAPServer.endPairSetup(connection)
       return
     }
     this.handlePairSetupM5_3(connection, response, clientUsername, clientLTPK, hkdfEncKey)
@@ -754,13 +763,13 @@ export class HAPServer extends EventEmitter {
         debug('[%s] Error adding pairing info: %s', this.accessoryInfo.username, err.message)
         response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
         response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M6, TLVValues.ERROR_CODE, TLVErrorCode.UNKNOWN))
-        connection._pairSetupState = undefined
+        HAPServer.endPairSetup(connection)
         return
       }
       // send final pairing response to client
       response.writeHead(HAPPairingHTTPCode.OK, { 'Content-Type': 'application/pairing+tlv8' })
       response.end(tlv.encode(TLVValues.SEQUENCE_NUM, PairingStates.M6, TLVValues.ENCRYPTED_DATA, Buffer.concat([encrypted.ciphertext, encrypted.authTag])))
-      connection._pairSetupState = undefined
+      HAPServer.endPairSetup(connection)
     }))
   }
 
