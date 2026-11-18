@@ -17,6 +17,7 @@ import crypto from 'node:crypto'
 import net from 'node:net'
 
 import createDebug from 'debug'
+import { SRP, SrpServer } from 'fast-srp-hap'
 import tweetnacl from 'tweetnacl'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -258,6 +259,26 @@ describe('HAPServer', () => {
     const objectsM4 = tlv.decode(response.body)
     expect(objectsM4[TLVValues.STATE].readUInt8(0)).toEqual(PairingStates.M6)
     expect(objectsM4[TLVValues.ERROR_CODE].readUInt8(0)).toEqual(TLVErrorCode.UNKNOWN)
+  })
+
+  it('pair-setup does not use the random key as the srp secret as it is, and still pairs', async () => {
+    const key = crypto.randomBytes(32)
+    vi.spyOn(SRP, 'genKey').mockResolvedValueOnce(key)
+    server = new HAPServer(accessoryInfoUnpaired)
+    const [port] = await bindServer(server)
+
+    const pairSetup = new PairSetupClient(await connectClient(port))
+    const responseM1 = await pairSetup.sendM1()
+    const M2 = pairSetup.parseM2(responseM1.body)
+
+    // the B a server would send if it used the random key as b. From that B and the key, the verifier can be worked out
+    const plainB = new SrpServer(SRP.params.hap, M2.salt, Buffer.from('Pair-Setup'), Buffer.from(accessoryInfoUnpaired.pincode), key).computeB()
+    expect(M2.serverPublicKey.equals(plainB)).toBe(false)
+
+    // the controller does not see a difference: the setup code is accepted and the server proves it knows it too
+    const M3 = await pairSetup.prepareM3(M2, accessoryInfoUnpaired.pincode)
+    const responseM3 = await pairSetup.sendM3(M3)
+    pairSetup.parseM4(responseM3.body, M3) // checks there is no error and the proof of the server is right
   })
 
   it('successful /pair-verify', async () => {

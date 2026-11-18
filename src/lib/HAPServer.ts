@@ -589,9 +589,14 @@ export class HAPServer extends EventEmitter {
     const salt = crypto.randomBytes(16)
 
     const srpParams = SRP.params.hap
+    const identity = Buffer.from('Pair-Setup')
     SRP.genKey(32).then((key) => {
+      const verifier = SRP.computeVerifier(srpParams, salt, identity, Buffer.from(this.accessoryInfo.pincode))
+      // B = k*v + g^b, so whoever learns b (and sees B) can work out the verifier v. Hashing the random key with
+      // the verifier means b alone gives nothing away. The controller can not tell the difference.
+      const secret = crypto.createHash('sha512').update(key).update(verifier).digest()
       // create a new SRP server
-      const srpServer = new SrpServer(srpParams, salt, Buffer.from('Pair-Setup'), Buffer.from(this.accessoryInfo.pincode), key)
+      const srpServer = new SrpServer(srpParams, { username: identity, salt, verifier }, secret)
       const srpB = srpServer.computeB()
       // attach it to the current TCP session
       connection.srpServer = srpServer
