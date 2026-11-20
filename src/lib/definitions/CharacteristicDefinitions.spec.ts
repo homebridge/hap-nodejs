@@ -114,15 +114,87 @@ describe('characteristicDefinitions', () => {
     })
   })
 
+  describe('bufferActivityCommand', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.BufferActivityCommand()).not.toThrow()
+    })
+  })
+
+  describe('bufferEventCommand', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.BufferEventCommand()).not.toThrow()
+    })
+  })
+
+  describe('bufferEventSequenceNumber', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.BufferEventSequenceNumber()).not.toThrow()
+    })
+  })
+
+  describe('bufferUploadCommand', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.BufferUploadCommand()).not.toThrow()
+    })
+  })
+
   describe('buttonEvent', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ButtonEvent()).not.toThrow()
     })
   })
 
+  describe('cameraCapabilitiesConfiguration', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.CameraCapabilitiesConfiguration()).not.toThrow()
+    })
+  })
+
+  describe('cameraClientCertificate', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.CameraClientCertificate()).not.toThrow()
+    })
+  })
+
+  describe('cameraClientCertificateStatus', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.CameraClientCertificateStatus()).not.toThrow()
+    })
+  })
+
+  describe('cameraClientCSR', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.CameraClientCSR()).not.toThrow()
+    })
+  })
+
+  describe('cameraKey', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.CameraKey()).not.toThrow()
+    })
+  })
+
+  describe('cameraKeyID', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.CameraKeyID()).not.toThrow()
+    })
+  })
+
   describe('cameraOperatingModeIndicator', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.CameraOperatingModeIndicator()).not.toThrow()
+    })
+  })
+
+  describe('cameraRecordingPublishingPoint', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.CameraRecordingPublishingPoint()).not.toThrow()
+    })
+  })
+
+  describe('cameraZones', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.CameraZones()).not.toThrow()
     })
   })
 
@@ -225,6 +297,12 @@ describe('characteristicDefinitions', () => {
   describe('contactSensorState', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.ContactSensorState()).not.toThrow()
+    })
+  })
+
+  describe('contributingSensors', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.ContributingSensors()).not.toThrow()
     })
   })
 
@@ -642,6 +720,12 @@ describe('characteristicDefinitions', () => {
     })
   })
 
+  describe('motionEnabled', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.MotionEnabled()).not.toThrow()
+    })
+  })
+
   describe('multifunctionButton', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.MultifunctionButton()).not.toThrow()
@@ -930,6 +1014,12 @@ describe('characteristicDefinitions', () => {
     })
   })
 
+  describe('rTPStreamingControl', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.RTPStreamingControl()).not.toThrow()
+    })
+  })
+
   describe('saturation', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.Saturation()).not.toThrow()
@@ -987,6 +1077,12 @@ describe('characteristicDefinitions', () => {
   describe('selectedSleepConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SelectedSleepConfiguration()).not.toThrow()
+    })
+  })
+
+  describe('sensorUUID', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.SensorUUID()).not.toThrow()
     })
   })
 
@@ -1146,6 +1242,12 @@ describe('characteristicDefinitions', () => {
     })
   })
 
+  describe('streamingEnabled', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.StreamingEnabled()).not.toThrow()
+    })
+  })
+
   describe('streamingStatus', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.StreamingStatus()).not.toThrow()
@@ -1173,6 +1275,12 @@ describe('characteristicDefinitions', () => {
   describe('supportedAudioStreamConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedAudioStreamConfiguration()).not.toThrow()
+    })
+  })
+
+  describe('supportedAudioStreamTiers', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.SupportedAudioStreamTiers()).not.toThrow()
     })
   })
 
@@ -1257,6 +1365,12 @@ describe('characteristicDefinitions', () => {
   describe('supportedVideoStreamConfiguration', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.SupportedVideoStreamConfiguration()).not.toThrow()
+    })
+  })
+
+  describe('supportedVideoStreamTiers', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.SupportedVideoStreamTiers()).not.toThrow()
     })
   })
 
@@ -1503,6 +1617,54 @@ describe('characteristicDefinitions', () => {
   describe('waterLevel', () => {
     it('should be able to construct', () => {
       expect(() => new Characteristic.WaterLevel()).not.toThrow()
+    })
+  })
+
+  describe('webRTCNumberOfActiveSessions', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.WebRTCNumberOfActiveSessions()).not.toThrow()
+    })
+  })
+
+  describe('webRTCProvideAnswer', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.WebRTCProvideAnswer()).not.toThrow()
+    })
+  })
+
+  describe('webRTCReoffer', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.WebRTCReoffer()).not.toThrow()
+    })
+  })
+
+  describe('webRTCSolicitOffer', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.WebRTCSolicitOffer()).not.toThrow()
+    })
+  })
+
+  describe('webRTCStreamingControl', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.WebRTCStreamingControl()).not.toThrow()
+    })
+  })
+
+  describe('webRTCSupportedAudioStreamTiers', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.WebRTCSupportedAudioStreamTiers()).not.toThrow()
+    })
+  })
+
+  describe('webRTCSupportedVideoStreamTiers', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.WebRTCSupportedVideoStreamTiers()).not.toThrow()
+    })
+  })
+
+  describe('webRTCUpdateSession', () => {
+    it('should be able to construct', () => {
+      expect(() => new Characteristic.WebRTCUpdateSession()).not.toThrow()
     })
   })
 
