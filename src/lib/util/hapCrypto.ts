@@ -4,11 +4,21 @@ import type { HAPEncryption } from './eventedhttp.js'
 import assert from 'node:assert'
 import { Buffer } from 'node:buffer'
 import crypto from 'node:crypto'
-import process from 'node:process'
 
-if (!crypto.getCiphers().includes('chacha20-poly1305')) {
-  // every supported Node.js version has this cipher, unless its OpenSSL was built without it or runs in FIPS mode
-  assert.fail(`The cipher 'chacha20-poly1305' is not supported by your Node.js ${process.version}. HAP-NodeJS cannot work without it!`)
+import { chacha20poly1305 } from '@noble/ciphers/chacha.js'
+import createDebug from 'debug'
+
+const debug = createDebug('HAP-NodeJS:Crypto')
+
+/**
+ * Whether `node:crypto` provides the ChaCha20-Poly1305 AEAD that HAP sessions use.
+ * Every supported Node.js version has it, unless its OpenSSL was built without it or runs in FIPS mode,
+ * and runtimes that implement the Node.js API on another crypto backend (Bun on BoringSSL) do not expose it.
+ * When it is missing, the pure-JavaScript implementation from `@noble/ciphers` is used instead.
+ */
+const NATIVE_CHACHA20_POLY1305 = crypto.getCiphers().includes('chacha20-poly1305')
+if (!NATIVE_CHACHA20_POLY1305) {
+  debug('node:crypto does not provide chacha20-poly1305; using the @noble/ciphers implementation')
 }
 
 const X25519_PKCS8_PREFIX = Buffer.from('302e020100300506032b656e04220420', 'hex')
@@ -180,6 +190,12 @@ export function chacha20_poly1305_decryptAndVerify(key: Buffer, nonce: Buffer, a
     ])
   }
 
+  if (!NATIVE_CHACHA20_POLY1305) {
+    // noble expects ciphertext || tag and throws if the tag does not verify
+    const sealed = Buffer.concat([ciphertext, authTag])
+    return Buffer.from(chacha20poly1305(key, nonce, aad ?? undefined).decrypt(sealed))
+  }
+
   const decipher = crypto.createDecipheriv('chacha20-poly1305', key, nonce, { authTagLength: 16 })
   if (aad) {
     decipher.setAAD(aad, { plaintextLength: ciphertext.length })
@@ -208,6 +224,15 @@ export function chacha20_poly1305_encryptAndSeal(key: Buffer, nonce: Buffer, aad
       Buffer.alloc(12 - nonce.length, 0),
       nonce,
     ])
+  }
+
+  if (!NATIVE_CHACHA20_POLY1305) {
+    // noble returns ciphertext || tag
+    const sealed = Buffer.from(chacha20poly1305(key, nonce, aad ?? undefined).encrypt(plaintext))
+    return {
+      ciphertext: sealed.subarray(0, sealed.length - 16),
+      authTag: sealed.subarray(sealed.length - 16),
+    }
   }
 
   const cipher = crypto.createCipheriv('chacha20-poly1305', key, nonce, { authTagLength: 16 })

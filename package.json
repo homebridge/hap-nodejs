@@ -54,6 +54,7 @@
   },
   "dependencies": {
     "@homebridge/ciao": "1.4.1-beta.0",
+    "@noble/ciphers": "^2.4.0",
     "bonjour-hap": "3.11.1-beta.0",
     "dbus-native": "^0.16.3",
     "debug": "^4.4.3",

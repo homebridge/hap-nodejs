@@ -2,7 +2,7 @@ import { Buffer } from 'node:buffer'
 import crypto from 'node:crypto'
 
 import tweetnacl from 'tweetnacl'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { HAPEncryption } from './eventedhttp.js'
 import * as hapCrypto from './hapCrypto.js'
@@ -54,6 +54,61 @@ describe('hapCrypto', () => {
       manipulated[3] = 5
 
       expect(() => hapCrypto.chacha20_poly1305_decryptAndVerify(key, nonce, aad, manipulated, tag)).toThrow()
+    })
+
+    describe('without native chacha20-poly1305 (fallback implementation)', () => {
+      // Runtimes implementing the node:crypto API on another backend (e.g. Bun on BoringSSL) lack this cipher.
+      // Load a fresh copy of hapCrypto with getCiphers() reporting it absent, so the @noble/ciphers path is used.
+      async function loadFallback(): Promise<typeof hapCrypto> {
+        vi.resetModules()
+        vi.doMock('node:crypto', async () => {
+          const actual = await vi.importActual<typeof import('node:crypto')>('node:crypto')
+          const getCiphers = () => actual.getCiphers().filter(name => name !== 'chacha20-poly1305')
+          return {
+            ...actual,
+            getCiphers,
+            default: { ...actual, getCiphers },
+          }
+        })
+        try {
+          return await import('./hapCrypto.js')
+        } finally {
+          vi.doUnmock('node:crypto')
+        }
+      }
+
+      it('should produce the same ciphertext and tag as the native implementation', async () => {
+        const fallback = await loadFallback()
+        const encrypted = fallback.chacha20_poly1305_encryptAndSeal(key, nonce, aad, input)
+        expect(encrypted.ciphertext.toString('hex')).toBe(output.toString('hex'))
+        expect(encrypted.authTag.toString('hex')).toBe(tag.toString('hex'))
+      })
+
+      it('should decrypt what the native implementation encrypted', async () => {
+        const fallback = await loadFallback()
+        const plaintext = fallback.chacha20_poly1305_decryptAndVerify(key, nonce, aad, output, tag)
+        expect(plaintext.toString('hex')).toBe(input.toString('hex'))
+      })
+
+      it('should fail verification on manipulated data', async () => {
+        const fallback = await loadFallback()
+        const manipulated = Buffer.alloc(output.length)
+        output.copy(manipulated)
+        manipulated[3] = 5
+
+        expect(() => fallback.chacha20_poly1305_decryptAndVerify(key, nonce, aad, manipulated, tag)).toThrow()
+      })
+
+      it('should match the RFC 8439 section 2.8.2 AEAD test vector without AAD padding tricks', async () => {
+        const fallback = await loadFallback()
+        const rfcKey = fromHex('80818283 84858687 88898a8b 8c8d8e8f 90919293 94959697 98999a9b 9c9d9e9f')
+        const rfcNonce = fromHex('07000000 40414243 44454647')
+        const rfcAad = fromHex('50515253 c0c1c2c3 c4c5c6c7')
+        const rfcPlaintext = Buffer.from('Ladies and Gentlemen of the class of \'99: If I could offer you only one tip for the future, sunscreen would be it.')
+        const encrypted = fallback.chacha20_poly1305_encryptAndSeal(rfcKey, rfcNonce, rfcAad, rfcPlaintext)
+        expect(encrypted.ciphertext.subarray(0, 16).toString('hex')).toBe('d31a8d34648e60db7b86afbc53ef7ec2')
+        expect(encrypted.authTag.toString('hex')).toBe('1ae10b594f09e26a7e902ecbd0600691')
+      })
     })
   })
 
