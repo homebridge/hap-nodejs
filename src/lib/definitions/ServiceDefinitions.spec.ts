@@ -249,6 +249,160 @@ describe('serviceDefinitions', () => {
     })
   })
 
+  describe('cameraBufferManagement', () => {
+    it('should be able to construct', () => {
+      const service0 = new Service.CameraBufferManagement()
+      const service1 = new Service.CameraBufferManagement('test name')
+      const service2 = new Service.CameraBufferManagement('test name', 'test sub type')
+
+      expect(service0.displayName).toBe('')
+      expect(service0.testCharacteristic(Characteristic.Name)).toBe(false)
+      expect(service0.subtype).toBeUndefined()
+
+      expect(service1.displayName).toBe('test name')
+      expect(service1.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service1.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service1.subtype).toBeUndefined()
+
+      expect(service2.displayName).toBe('test name')
+      expect(service2.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service2.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service2.subtype).toBe('test sub type')
+    })
+  })
+
+  describe('cameraCapabilities', () => {
+    it('should be able to construct', () => {
+      const service0 = new Service.CameraCapabilities()
+      const service1 = new Service.CameraCapabilities('test name')
+      const service2 = new Service.CameraCapabilities('test name', 'test sub type')
+
+      expect(service0.displayName).toBe('')
+      expect(service0.testCharacteristic(Characteristic.Name)).toBe(false)
+      expect(service0.subtype).toBeUndefined()
+
+      expect(service1.displayName).toBe('test name')
+      expect(service1.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service1.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service1.subtype).toBeUndefined()
+
+      expect(service2.displayName).toBe('test name')
+      expect(service2.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service2.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service2.subtype).toBe('test sub type')
+    })
+  })
+
+  describe('cameraClientCertificateManagement', () => {
+    it('should be able to construct', () => {
+      const service0 = new Service.CameraClientCertificateManagement()
+      const service1 = new Service.CameraClientCertificateManagement('test name')
+      const service2 = new Service.CameraClientCertificateManagement('test name', 'test sub type')
+
+      expect(service0.displayName).toBe('')
+      expect(service0.testCharacteristic(Characteristic.Name)).toBe(false)
+      expect(service0.subtype).toBeUndefined()
+
+      expect(service1.displayName).toBe('test name')
+      expect(service1.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service1.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service1.subtype).toBeUndefined()
+
+      expect(service2.displayName).toBe('test name')
+      expect(service2.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service2.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service2.subtype).toBe('test sub type')
+    })
+  })
+
+  describe('cameraGlobalOperatingMode', () => {
+    it('should be able to construct', () => {
+      const service0 = new Service.CameraGlobalOperatingMode()
+      const service1 = new Service.CameraGlobalOperatingMode('test name')
+      const service2 = new Service.CameraGlobalOperatingMode('test name', 'test sub type')
+
+      expect(service0.displayName).toBe('')
+      expect(service0.testCharacteristic(Characteristic.Name)).toBe(false)
+      expect(service0.subtype).toBeUndefined()
+
+      expect(service1.displayName).toBe('test name')
+      expect(service1.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service1.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service1.subtype).toBeUndefined()
+
+      expect(service2.displayName).toBe('test name')
+      expect(service2.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service2.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service2.subtype).toBe('test sub type')
+    })
+  })
+
+  describe('cameraKeyManagement', () => {
+    it('should be able to construct', () => {
+      const service0 = new Service.CameraKeyManagement()
+      const service1 = new Service.CameraKeyManagement('test name')
+      const service2 = new Service.CameraKeyManagement('test name', 'test sub type')
+
+      expect(service0.displayName).toBe('')
+      expect(service0.testCharacteristic(Characteristic.Name)).toBe(false)
+      expect(service0.subtype).toBeUndefined()
+
+      expect(service1.displayName).toBe('test name')
+      expect(service1.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service1.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service1.subtype).toBeUndefined()
+
+      expect(service2.displayName).toBe('test name')
+      expect(service2.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service2.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service2.subtype).toBe('test sub type')
+    })
+  })
+
+  describe('cameraMotionZones', () => {
+    it('should be able to construct', () => {
+      const service0 = new Service.CameraMotionZones()
+      const service1 = new Service.CameraMotionZones('test name')
+      const service2 = new Service.CameraMotionZones('test name', 'test sub type')
+
+      expect(service0.displayName).toBe('')
+      expect(service0.testCharacteristic(Characteristic.Name)).toBe(false)
+      expect(service0.subtype).toBeUndefined()
+
+      expect(service1.displayName).toBe('test name')
+      expect(service1.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service1.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service1.subtype).toBeUndefined()
+
+      expect(service2.displayName).toBe('test name')
+      expect(service2.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service2.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service2.subtype).toBe('test sub type')
+    })
+  })
+
+  describe('cameraMultiTierRTPStreamManagement', () => {
+    it('should be able to construct', () => {
+      const service0 = new Service.CameraMultiTierRTPStreamManagement()
+      const service1 = new Service.CameraMultiTierRTPStreamManagement('test name')
+      const service2 = new Service.CameraMultiTierRTPStreamManagement('test name', 'test sub type')
+
+      expect(service0.displayName).toBe('')
+      expect(service0.testCharacteristic(Characteristic.Name)).toBe(false)
+      expect(service0.subtype).toBeUndefined()
+
+      expect(service1.displayName).toBe('test name')
+      expect(service1.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service1.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service1.subtype).toBeUndefined()
+
+      expect(service2.displayName).toBe('test name')
+      expect(service2.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service2.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service2.subtype).toBe('test sub type')
+    })
+  })
+
   describe('cameraOperatingMode', () => {
     it('should be able to construct', () => {
       const service0 = new Service.CameraOperatingMode()
@@ -298,6 +452,28 @@ describe('serviceDefinitions', () => {
       const service0 = new Service.CameraRTPStreamManagement()
       const service1 = new Service.CameraRTPStreamManagement('test name')
       const service2 = new Service.CameraRTPStreamManagement('test name', 'test sub type')
+
+      expect(service0.displayName).toBe('')
+      expect(service0.testCharacteristic(Characteristic.Name)).toBe(false)
+      expect(service0.subtype).toBeUndefined()
+
+      expect(service1.displayName).toBe('test name')
+      expect(service1.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service1.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service1.subtype).toBeUndefined()
+
+      expect(service2.displayName).toBe('test name')
+      expect(service2.testCharacteristic(Characteristic.Name)).toBe(true)
+      expect(service2.getCharacteristic(Characteristic.Name).value).toBe('test name')
+      expect(service2.subtype).toBe('test sub type')
+    })
+  })
+
+  describe('cameraWebRTCStreamManagement', () => {
+    it('should be able to construct', () => {
+      const service0 = new Service.CameraWebRTCStreamManagement()
+      const service1 = new Service.CameraWebRTCStreamManagement('test name')
+      const service2 = new Service.CameraWebRTCStreamManagement('test name', 'test sub type')
 
       expect(service0.displayName).toBe('')
       expect(service0.testCharacteristic(Characteristic.Name)).toBe(false)
