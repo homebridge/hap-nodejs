@@ -2,7 +2,7 @@
 
 All notable changes to `@homebridge/hap-nodejs` will be documented in this file. This project tries to adhere to [Semantic Versioning](http://semver.org/).
 
-## v2.3.1 (Pending Release)
+## v2.3.1 (2026-11-27)
 
 ### ⚠️ Upgrade notes
 
@@ -31,6 +31,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 
 ### Changes
 
+- fix(deps): update `fast-srp-hap` to v2.0.5, which hardens how the SRP server derives its secret exponent during pair-setup
 - docs: fix the api documentation link in the readme
 - fix: let generate-definitions find and write the es module import paths
 - feat: add the homekit definitions from apple's v891 metadata
@@ -270,8 +271,9 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 
 ### Homebridge Dependencies
 
-- `@homebridge/ciao` @ `v1.4.1-beta`
-- `bonjour-hap` @ `v3.11.1-beta`
+- `@homebridge/ciao` @ `v1.4.1`
+- `bonjour-hap` @ `v3.11.1`
+- `fast-srp-hap` @ `v2.0.5`
 
 ## v2.3.0 (2026-11-01)
 

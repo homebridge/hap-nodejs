@@ -1,7 +1,7 @@
 {
   "name": "@homebridge/hap-nodejs",
   "type": "module",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "HAP-NodeJS is a Node.js implementation of HomeKit Accessory Server.",
   "author": "Khaos Tian <khaos.tian@gmail.com> (https://tz.is/)",
   "license": "Apache-2.0",
@@ -53,11 +53,11 @@
     "lint:fix": "npm run lint -- --fix"
   },
   "dependencies": {
-    "@homebridge/ciao": "1.4.1-beta.0",
-    "bonjour-hap": "3.11.1-beta.0",
+    "@homebridge/ciao": "^1.4.1",
+    "bonjour-hap": "^3.11.1",
     "dbus-native": "^0.16.3",
     "debug": "^4.4.3",
-    "fast-srp-hap": "2.0.5-beta.5",
+    "fast-srp-hap": "^2.0.5",
     "source-map-support": "^0.5.21"
   },
   "devDependencies": {
