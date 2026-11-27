@@ -519,6 +519,32 @@ describe('Accessory', () => {
       expect(restoredAccessory.getService(Service.Outlet)).toBeDefined()
       expect(restoredAccessory.getService(Service.Switch)).toBeUndefined()
     })
+
+    it('should keep a deleted service on the accessory which the controller still links to', () => {
+      accessory.configureController(new HandOverController())
+
+      const restoredAccessory = Accessory.deserialize(Accessory.serialize(accessory))
+      restoredAccessory.configureController(new HandOverController())
+
+      const sensor = restoredAccessory.getService(Service.LightSensor)
+      expect(sensor).toBeDefined()
+      expect(restoredAccessory.getService(Service.Lightbulb)!.linkedServices).toContain(sensor)
+      expect(restoredAccessory.getService(Service.Switch)).toBeUndefined()
+    })
+
+    it('should keep a cached camera sensor which the plugin supplies as its own, linked to the recording management', () => {
+      accessory.configureController(new CameraController(createCameraControllerOptions()))
+
+      const restoredAccessory = Accessory.deserialize(Accessory.serialize(accessory))
+      const cached = restoredAccessory.getService(Service.MotionSensor)!
+      const options = createCameraControllerOptions()
+      options.sensors = { motion: cached }
+      const controller = new CameraController(options)
+      restoredAccessory.configureController(controller)
+
+      expect(restoredAccessory.services).toContain(cached)
+      expect(controller.recordingManagement!.recordingManagementService.linkedServices).toContain(cached)
+    })
   })
 
   describe('publish', () => {
@@ -3380,6 +3406,42 @@ class TestController implements Controller {
     delete serviceMap.switch
     serviceMap.light = new Service.LightSensor('', '')
     serviceMap.outlet = new Service.Outlet('', '')
+
+    return serviceMap
+  }
+
+  configureServices(): void {
+    // do nothing
+  }
+
+  handleControllerRemoved(): void {
+    // do nothing
+  }
+}
+
+/**
+ * Hands its light sensor over to the plugin on restore, still linked from its light.
+ */
+class HandOverController implements Controller {
+  controllerId(): ControllerIdentifier {
+    return 'hand-over-id'
+  }
+
+  constructServices(): ControllerServiceMap {
+    const lightService = new Service.Lightbulb('', '')
+    const sensorService = new Service.LightSensor('', '')
+    lightService.addLinkedService(sensorService)
+
+    return {
+      light: lightService,
+      sensor: sensorService,
+      switch: new Service.Switch('', ''),
+    }
+  }
+
+  initWithServices(serviceMap: ControllerServiceMap): void | ControllerServiceMap {
+    delete serviceMap.sensor
+    delete serviceMap.switch
 
     return serviceMap
   }

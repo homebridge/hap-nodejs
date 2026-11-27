@@ -998,6 +998,7 @@ export class Accessory extends EventEmitter {
   }
 
   private handleUpdatedControllerServiceMap(originalServiceMap: ControllerServiceMap, updatedServiceMap: ControllerServiceMap) {
+    const controllerServices = Object.values(updatedServiceMap)
     updatedServiceMap = clone(updatedServiceMap) // clone it so we can alter it
 
     Object.keys(originalServiceMap).forEach((name) => { // this loop removed any services contained in both ServiceMaps
@@ -1018,7 +1019,9 @@ export class Accessory extends EventEmitter {
     // now originalServiceMap contains only deleted services and updateServiceMap only added services
 
     Object.values(originalServiceMap).forEach((service) => {
-      if (service) {
+      // a deleted service which the controller still links to was handed over to the plugin,
+      // like a cached sensor a camera is now given as its own, so it stays on the accessory
+      if (service && !controllerServices.some(controllerService => controllerService?.linkedServices.includes(service))) {
         this.removeService(service)
       }
     })
