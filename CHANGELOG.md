@@ -22,6 +22,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - **For developers**: `addBridgedAccessory()` throws when an accessory with the same UUID is already bridged.
 - **For developers**: `removeBridgedAccessory()` and `AdaptiveLightingController.handleControllerRemoved()` no longer remove the event listeners the plugin added to the accessory or the controller.
 - **For developers**: a camera restored from the cache with `sensors.motion` or `sensors.occupancy` set to `true` now gets that sensor, which a camera saved without it was missing. If the accessory already has its own sensor of that type without a subtype, `configureController()` throws, as it does for a new accessory. Pass your sensor as `sensors.motion: service` instead, or remove it.
+- **For developers**: a camera restored from the cache unlinks a motion or occupancy sensor from its recording management when that sensor is no longer one of its `sensors`, like one supplied before and since replaced or dropped. A sensor of that type the plugin linked to the recording management itself is unlinked too. The service stays on the accessory.
 - **For developers**: a camera delegate now gets a STOP request after a START or RECONFIGURE it answered with an error.
 - **For developers**: `setProps({ minStep })` with a step which is not a whole number, for a characteristic of an integer format, is ignored with a warning. Before, it was published, and the Home app could write a value like 21.5.
 - **For developers**: a data stream `sendRequest()` or `sendResponse()` before the hello message throws an `HDSConnectionError`. A request which is still waiting when the connection closes is answered at once with an error, not after 10 seconds.
@@ -267,6 +268,7 @@ All notable changes to `@homebridge/hap-nodejs` will be documented in this file.
 - docs(typedoc): link the source of the docs to the latest branch, not to a commit
 - docs: regenerate `typedoc` docs
 - chore(deps): dependency updates
+- fix(camera): unlink a manually supplied sensor which was replaced or dropped from the recording management of a saved camera
 
 ### Homebridge Dependencies
 

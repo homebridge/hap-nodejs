@@ -215,6 +215,25 @@ describe('CameraController', () => {
 
       expect(new CameraController(createCameraControllerOptions()).initWithServices(savedServices)).toBeUndefined()
     })
+
+    it('should unlink a manually supplied sensor which was replaced or dropped from the recording management', () => {
+      const suppliedMotion = new Service.MotionSensor('Supplied Motion', 'supplied-motion')
+      const suppliedOccupancy = new Service.OccupancySensor('Supplied Occupancy', 'supplied-occupancy')
+      const savedOptions = createCameraControllerOptions()
+      savedOptions.sensors = { motion: suppliedMotion, occupancy: suppliedOccupancy }
+      const savedServices = new CameraController(savedOptions).constructServices()
+      const recordingManagement = savedServices.cameraEventRecordingManagement!
+      expect(recordingManagement.linkedServices).toEqual(expect.arrayContaining([suppliedMotion, suppliedOccupancy]))
+
+      const replacement = new Service.MotionSensor('Replacement Motion', 'replacement-motion')
+      const options = createCameraControllerOptions()
+      options.sensors = { motion: replacement }
+      new CameraController(options).initWithServices(savedServices)
+
+      expect(recordingManagement.linkedServices).toContain(replacement)
+      expect(recordingManagement.linkedServices).not.toContain(suppliedMotion)
+      expect(recordingManagement.linkedServices).not.toContain(suppliedOccupancy)
+    })
   })
 
   describe('retrieveEventTriggerOptions', () => {

@@ -780,6 +780,18 @@ export class CameraController extends EventEmitter implements SerializableContro
       }
     }
 
+    // the restored recording management may still link a sensor which is none of the above anymore,
+    // like a manually supplied one which was replaced or dropped. the controller owns these links
+    if (this.recordingManagement) {
+      const recordingManagementService = this.recordingManagement.recordingManagementService
+      for (const linkedService of [...recordingManagementService.linkedServices]) {
+        if ((linkedService.UUID === Service.MotionSensor.UUID && linkedService !== this.motionService)
+          || (linkedService.UUID === Service.OccupancySensor.UUID && linkedService !== this.occupancyService)) {
+          recordingManagementService.removeLinkedService(linkedService)
+        }
+      }
+    }
+
     if (this.migrateFromDoorbell(serviceMap)) {
       modifiedServiceMap = true
     }
