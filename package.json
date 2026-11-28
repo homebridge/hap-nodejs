@@ -53,7 +53,7 @@
     "lint:fix": "npm run lint -- --fix"
   },
   "dependencies": {
-    "@homebridge/ciao": "2.0.0-alpha.11",
+    "@homebridge/ciao": "1.4.1",
     "bonjour-hap": "3.11.1",
     "dbus-native": "^0.16.3",
     "debug": "^4.4.3",
