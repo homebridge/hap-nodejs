@@ -11,7 +11,7 @@
     {
       "directory": ".",
       "packages": [
-        { "name": "@homebridge/ciao", "tag": ["alpha", "beta", "latest"] },
+        { "name": "@homebridge/ciao", "tag": ["beta", "latest"] },
         { "name": "bonjour-hap", "tag": ["beta", "latest"] },
         { "name": "fast-srp-hap", "tag": ["beta", "latest"] }
       ]
